@@ -16,8 +16,8 @@ Servo 1 is the Tilt servo and can tilt from 0-150 degrees, or .5 ms to 2.08 ms
 //./servod --step-size=10us //default step size
 // echo 0=120 > /dev/servoblaster  //sends servo 0 a pulse of 1.2 ms (120 us)
 // udelay(100) //delays 100 us, or .1 ms
-void ADC_Rd_0();
-void ADC_Rd_1();
+unsigned short ADC_Rd_0();
+unsigned short ADC_Rd_1();
 unsigned short Rd_Rev(unsigned short);
 void Pan_Gusset(int Pan_Loc);
 void Mov_Motor(int Motor_Num, int Motor_Loc);
@@ -25,7 +25,7 @@ void Tilt_Gusset(int Tilt_Loc);
 
 const unsigned char butPin = 18; // Active something
 
-void ADC_Rd_0() //Read channel 0 adc, Pan Motor
+unsigned short ADC_Rd_0() //Read channel 0 adc, Pan Motor
     {
     unsigned short adc_hex = 0;
     int result;
@@ -38,9 +38,11 @@ void ADC_Rd_0() //Read channel 0 adc, Pan Motor
     printf("0x%04x \n", adc_hex);
     adc_hex = Rd_Rev(adc_hex);
     printf("0x%04x\n %d\n",adc_hex,adc_hex);
+
+    return adc_hex;
     }
 
-void ADC_Rd_1() //Read channel 1 adc, Tilt Motor
+unsigned short ADC_Rd_1() //Read channel 1 adc, Tilt Motor
     {
     unsigned short adc_hex = 0;
     int result;
@@ -53,6 +55,8 @@ void ADC_Rd_1() //Read channel 1 adc, Tilt Motor
     printf("0x%04x \n", adc_hex);
     adc_hex = Rd_Rev(adc_hex);
     printf("0x%04x\n %d\n",adc_hex,adc_hex);
+
+    return adc_hex;
     }
 
 
@@ -63,15 +67,14 @@ unsigned short Rd_Rev(unsigned short a)
 
 void Pan_Gusset(int Pan_Loc)
 {
-    Motor_Loc=Pan_Loc;
     static int i=0;
-    Mov_Motor(0, Motor_Loc);
+    Mov_Motor(0, Pan_Loc);
     sleep(1);
         if(Pan_Loc==150)
         {
-            if(ADC_Rd_0()< 1665 | ADC_Rd_0() > 1670 ) //actual value of 1668, or 1.668V
+            if(ADC_Rd_0()< 1660 || ADC_Rd_0() > 1670 ) //actual value of 1668, or 1.668V
             {
-            i=i++;   //incrementing i to prevent from continuous failing
+            i++;   //incrementing i to prevent from continuous failing
             Pan_Gusset(150);
             }
             if(i>=5)
@@ -82,9 +85,9 @@ void Pan_Gusset(int Pan_Loc)
         }
         else if(Pan_Loc==180)
         {
-            if(ADC_Rd_0()< 1967 | ADC_Rd_0() > 1973 ) //actual value of 1970, or 1.970V
+            if(ADC_Rd_0()< 1967 || ADC_Rd_0() > 1973 ) //actual value of 1970, or 1.970V
             {
-            i=i++;   //incrementing i to prevent from continuous failing
+            i++;   //incrementing i to prevent from continuous failing
             Pan_Gusset(180);
             }
             if(i>=5)
@@ -95,9 +98,9 @@ void Pan_Gusset(int Pan_Loc)
         }
         else if(Pan_Loc==100)
         {
-            if(ADC_Rd_0()< 1139 | ADC_Rd_0() > 1145 ) //actual value of 1142, or 1.142V
+            if(ADC_Rd_0()< 1139 || ADC_Rd_0() > 1145 ) //actual value of 1142, or 1.142V
             {
-            i=i++;   //incrementing i to prevent from continuous failing
+            i++;   //incrementing i to prevent from continuous failing
             Pan_Gusset(100);
             }
             if(i>=5)
@@ -110,11 +113,9 @@ void Pan_Gusset(int Pan_Loc)
 
 void Mov_Motor(int Motor_Num, int Motor_Loc) //Motor number (0 or 1), and Motor Location (50-250)
 {
-    if(Motor_Num>1)
-        printf("Incorrect Servo Motor Address");
-    int n=30;
+    int n=35;
     int cx=0;
-    char*command[n];
+    char command[n];
     cx=snprintf(command, n, "echo %d=%d > /dev/servoblaster", Motor_Num, Motor_Loc); //assigns the echo call as the command, with the limit of n characters
     if(cx>n)
         printf("Command Length Too Long");
@@ -124,15 +125,14 @@ void Mov_Motor(int Motor_Num, int Motor_Loc) //Motor number (0 or 1), and Motor 
 
 void Tilt_Gusset(int Tilt_Loc)
     {
-    Motor_Loc=Tilt_Loc;
     static int i=0;
-    Mov_Motor(1, Motor_Loc);
+    Mov_Motor(1, Tilt_Loc);
     sleep(1); //Wait for 1 second
         if (Tilt_Loc==150)
         {
-            if(ADC_Rd_1()< 1634 | ADC_Rd_1() > 1640) //1637 or 1.637V feedback
+            if(ADC_Rd_1()< 1634 || ADC_Rd_1() > 1640) //1637 or 1.637V feedback
             {
-            i=i++;
+            i++;
             Tilt_Gusset(150);
             }
             if(i>=5)
@@ -143,9 +143,9 @@ void Tilt_Gusset(int Tilt_Loc)
         }
         else if (Tilt_Loc==180)
         {
-            if(ADC_Rd_1()< 1927 | ADC_Rd_1() > 1933) //1930 or 1.93V feedback
+            if(ADC_Rd_1()< 1927 || ADC_Rd_1() > 1933) //1930 or 1.93V feedback
             {
-            i=i++;
+            i++;
             Tilt_Gusset(180);
             }
             if(i>=5)
@@ -156,9 +156,9 @@ void Tilt_Gusset(int Tilt_Loc)
         }
         else if (Tilt_Loc==100)
         {
-            if(ADC_Rd_1()< 1124 | ADC_Rd_1() > 1130) //1127 or 1.127V feedback
+            if(ADC_Rd_1()< 1124 || ADC_Rd_1() > 1130) //1127 or 1.127V feedback
             {
-            i=i++;
+            i++;
             Tilt_Gusset(100);
             }
             if(i>=5)
@@ -182,10 +182,10 @@ pullUpDnControl(butPin, PUD_DOWN);
         {
          Pan_Gusset(150);
          Tilt_Gusset(150);
-         Pan_Gusset(180);
-         Tilt_Gusset(180);
-         Pan_Gusset(100);
-         Tilt_Gusset(100);
+//         Pan_Gusset(180);
+//         Tilt_Gusset(180);
+//         Pan_Gusset(100);
+//         Tilt_Gusset(100);
         }
 
     }
