@@ -10,25 +10,30 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <wiringPi.h>
 
-void ADC_write ()
-    if (write(file,buf,1) != 1)
+void ADC_write (char * buf,int file)
     {
+    const gchar *buffer;
+    int addr = 0b01001000; // I2C address of the ADC
+	if (write(file,buf,1) != 1)
+    	{
         /* ERROR HANDLING: i2c transaction failed */
         printf("Failed to write to the i2c bus.\n");
         buffer = g_strerror(errno);
         printf(buffer);
         printf("\n\n");
+    	}
     }
 
-void
-sensors_ADC_init(void) {
+int sensors_ADC_init(void) 
+{
     int file;
     char filename[40];
     const gchar *buffer;
-    int addr = 0b00101001;        // The I2C address of the ADC
+    int addr = 0b01001000;        // The I2C address of the ADC
 
-    sprintf(filename,"/dev/i2c-2");
+    sprintf(filename,"/dev/i2c-1");
     if ((file = open(filename,O_RDWR)) < 0) {
         printf("Failed to open the bus.");
         /* ERROR HANDLING; you can check errno to see what went wrong */
@@ -42,53 +47,42 @@ sensors_ADC_init(void) {
     }
 
     char buf[10] = {0};
-    float data;
-    char channel;
-
-    for(int i = 0; i<4; i++) {
-        // Using I2C Read
-        if (read(file,buf,2) != 2) {
-            /* ERROR HANDLING: i2c transaction failed */
-            printf("Failed to read from the i2c bus.\n");
-            buffer = g_strerror(errno);
-            printf(buffer);
-            printf("\n\n");
-        } else {
-            data = (float)((buf[0] & 0b00001111)<<8)+buf[1];
-            data = data/4096*5;
-            channel = ((buf[0] & 0b00110000)>>4);
-            printf("Channel %02d Data:  %04f\n",channel,data);
-        }
-    }
 
     //unsigned char reg = 0x10; // Device register to access
     //buf[0] = reg;
     //ads1015 datasheet settings pg 16
     buf[0] = 0b10010000; //Writing to Config Register: Address
-    ADC_write ();
+    ADC_write (buf,file);
     buf[0] = 0b00000001; //Points to the config register
-    ADC_write ();
-    buf[0] = 0b10000101; //Bits 15-8, Single Conversion, dafult multiplexer config, default voltage range (+-2.048)
-    ADC_write ();
+    ADC_write (buf,file);
+    buf[0] = 0b11000101; //Bits 15-8, Single Conversion, CH0 multiplexer config, default voltage range (+-2.048)
+    ADC_write (buf,file);
     buf[0] = 0b10000011; //bits 7-0, Comparator settings, comparator disabled
-    ADC_write ();
+    ADC_write (buf,file);
 
+return file;
 }
 
-int adc_read()
+void adc_read(char * buf,int  file)
 {
-    char buf[10] = {0};
+  //  char buf[10] = {0}; //defaults buf to zero
     float data;
     char channel;
+    buf[0]=0b10010000; //pointer register
+    ADC_write(buf, file);
+    buf[0]=0b00000000;//conversion reister
+    ADC_write(buf, file);
+    buf[0]=0b10010001; //
+    ADC_write(buf, file);
 
     for(int i = 0; i<4; i++)
-        {
+    {
         // Using I2C Read
             if (read(file,buf,2) != 2)
             {
             /* ERROR HANDLING: i2c transaction failed */
             printf("Failed to read from the i2c bus.\n");
-            buffer = g_strerror(errno);
+            const gchar * buffer = g_strerror(errno);
             printf(buffer);
             printf("\n\n");
             }
@@ -98,12 +92,17 @@ int adc_read()
             data = data/4096*3.3;
             channel = ((buf[0] & 0b00110000)>>4);
             printf("Channel %02d Data:  %04f\n",channel,data);
-            }
+	    delay(10);
+	    }
+    }
 }
 
 int main()
 {
-sensors_ADC_init();
-adc_read();
+char buf[10]={0};
+int file = sensors_ADC_init();
+delay(1); //1ms delay
+adc_read(buf, file);
 
+return 0;
 }
