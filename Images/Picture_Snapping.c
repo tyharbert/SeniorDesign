@@ -12,7 +12,7 @@ void Cap_Image()
     int cx=0;
     static int i=0;
     char command[n];
-    cx=snprintf(command, n, "fswebcam -r 1280x720 --jpeg 100 -D 60 -S 13 1 testing%d.jpeg", i);
+    cx=snprintf(command, n, "fswebcam -r 1280x720 --jpeg 100 -D 30 -S 13 1 test%d.jpeg", i);
     if(cx>n)
         printf("Command Length Too Long");
     else
