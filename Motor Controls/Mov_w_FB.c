@@ -31,7 +31,6 @@ unsigned short ADC_Rd(unsigned short address) //Read channel 0 adc, Pan Motor
 
     result=wiringPiI2CSetup(0x48);
     wiringPiI2CWriteReg16(result, 0x01, address); //Address for the register, and configuring the read channel 0
-
     adc_hex = wiringPiI2CReadReg16(result,0x00);
     adc_hex = Rd_Rev(adc_hex);
     printf("0x%04x\n %d\n",adc_hex,adc_hex);
@@ -50,11 +49,12 @@ void Pan_Gusset(int Pan_Loc, int Lower_Bound, int Upper_Bound)
     printf("Pan Gusset....\n");
     static int i=0;
     Mov_Motor(0, Pan_Loc);
-    sleep(1);
-    int Read;
-    while (Read = ADC_Rd(0x83C5)< Lower_Bound || Read > Upper_Bound)
+    int Read=-1;
+
+    while (Read < Lower_Bound || Read > Upper_Bound)
     {
         Mov_Motor(0, Pan_Loc);
+	Read=ADC_Rd(0x83C5);
         i++;
 
         if(i>=5)
@@ -76,18 +76,18 @@ void Mov_Motor(int Motor_Num, int Motor_Loc) //Motor number (0 or 1), and Motor 
         printf("Command Length Too Long");
     else
         system(command);
-    sleep(1)
+    sleep(1);
 }
 
 void Tilt_Gusset(int Tilt_Loc, int Lower_Bound, int Upper_Bound)
 {
     printf("Tilt Gusset....\n");
     static int i=0;
-    sleep(1); //Wait for 1 second
-    int Read;
-    while (Read = ADC_Rd(0x83D5) < Lower_Bound || Read > Upper_Bound) //Upper and Lower Bounds for each Location
+    int Read=-1;
+    while (Read < Lower_Bound || Read > Upper_Bound) //Upper and Lower Bounds for each Location
     {
         Mov_Motor(1, Tilt_Loc);
+	Read=ADC_Rd(0x83D5);
         i++;
 
         if(i>=5)
@@ -111,10 +111,10 @@ pullUpDnControl(butPin, PUD_DOWN);
         {
          Pan_Gusset(150, 1660, 1675);  //actual value 1669 or 1.669V
          Tilt_Gusset(150, 1630, 1645); //actual value 1637 or 1.637V
-         Pan_Gusset(180, 1967, 1973); //actual value 1970 or 1.970V
-         Tilt_Gusset(180,1927,1933);  // actual value 1930, or 1.93V
-         Pan_Gusset(100,1139, 1145); //actual value 1142 or 1.142V
-         Tilt_Gusset(100, 1120, 1133); //actual value 1127 or 1.127V feedback
+         Pan_Gusset(180, 1960, 1973); //actual value 1970 or 1.970V
+         Tilt_Gusset(180,1920,1937);  // actual value 1930, or 1.93V
+         Pan_Gusset(100,1130, 1150); //actual value 1142 or 1.142V
+         Tilt_Gusset(100, 1120, 1135); //actual value 1127 or 1.127V feedback
         }
     }
 
