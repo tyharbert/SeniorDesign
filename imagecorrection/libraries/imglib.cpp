@@ -2,7 +2,7 @@
 
 // this runs the complete image transformation process
 void transformGusset(const char* source_file, const char* destination_file) {
-    printf("Reading %s\n", source_file);
+    printf("\nReading %s\n", source_file);
     BMP* bmp = new BMP(source_file);
     
     printf("Finding Corners\n");
@@ -25,18 +25,28 @@ void transformGusset(const char* source_file, const char* destination_file) {
     printf("Performing Transformation\n");
     BMP* final = new BMP(bmp, H, original, destination);
 
-    printf("Writing %s\n", destination_file);
+    printf("Writing %s\n\n", destination_file);
     final->write(destination_file);
 }
 
 // this converts an image from JPEG to BMP
 void JPEG_to_BMP(std::string j_image_path, std::string b_image_path) {
+    printf("Converting %s to %s.\n", j_image_path.c_str(), b_image_path.c_str());
+
     std::string command = "djpeg -BMP " + j_image_path + " > " + b_image_path;
     system(command.c_str());
+    sleep(2);
+
+    printf("Conversion complete.\n\n");
 }
 
 // this converts an image from BMP to JPEG
 void BMP_to_JPEG(std::string b_image_path, std::string j_image_path) {
+    printf("Converting %s to %s.\n", b_image_path.c_str(), j_image_path.c_str());
+
     std::string command = "cjpeg " + b_image_path + " > " + j_image_path;
     system(command.c_str());
+    sleep(2);
+
+    printf("Conversion complete.\n\n");
 }
