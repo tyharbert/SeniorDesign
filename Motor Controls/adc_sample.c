@@ -63,3 +63,11 @@ sensors_ADC_init(void) {
         printf("\n\n");
     }
 }
+
+
+int main()
+{
+sensors_ADC_init();
+
+return 0;
+}
