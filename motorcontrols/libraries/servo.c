@@ -49,7 +49,7 @@ void CaptureSavedLocations(const char* location_file_path) {
                 i++;
 		move_and_check_Position(positions[i-2], 0);//Double check Pan Motor
 		move_and_check_Position(positions[i-1], 1);//Double check Tilt Motor
-                Cap_Image();
+//                Cap_Image();
             }
             break;
         }
@@ -105,7 +105,7 @@ void Pan_Gusset(int feedbackTarget)
 	for (i=0; i<change_in_echo-1; i++)
             {
             system("echo 0=-1 > /dev/servoblaster");
-	    delayMicroseconds(10000);
+	    delayMicroseconds(30000);
             }
         }
     else
@@ -114,7 +114,7 @@ void Pan_Gusset(int feedbackTarget)
 	for (i=0; i<change_in_echo-1; i++)
             {
             system("echo 0=+1 > /dev/servoblaster");
-	    delayMicroseconds(10000);
+	    delayMicroseconds(30000);
             }
         }
     sleep(3);
@@ -127,7 +127,7 @@ void move_and_check_Position(int feedbackTarget, int motor)
     int Read=-1;
     if (motor==0)
     {
-        while (Read < (feedbackTarget - 20) || Read > (feedbackTarget + 20))
+        while (Read < (feedbackTarget - 10) || Read > (feedbackTarget + 10))
         {
 	Pan_Gusset(feedbackTarget);
         Read=ADC_Rd(0x83C5);
@@ -144,7 +144,7 @@ void move_and_check_Position(int feedbackTarget, int motor)
     else
     {
 
-    while (Read < (feedbackTarget - 20) || Read > (feedbackTarget + 20))
+    while (Read < (feedbackTarget - 10) || Read > (feedbackTarget + 10))
         {
 	Tilt_Gusset(feedbackTarget);
         Read=ADC_Rd(0x83D5);
@@ -157,7 +157,7 @@ void move_and_check_Position(int feedbackTarget, int motor)
         }
 	i=0;
     }
-	sleep(3);
+	sleep(1);
 }
 
 void Tilt_Gusset(int feedbackTarget)
