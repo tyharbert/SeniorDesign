@@ -16,12 +16,14 @@ Servo 1 is the Tilt servo and can tilt from 0-150 degrees, or .5 ms to 2.08 ms
 //./servod --step-size=10us //default step size
 // echo 0=120 > /dev/servoblaster  //sends servo 0 a pulse of 1.2 ms (120 us)
 // udelay(100) //delays 100 us, or .1 ms
+unsigned short Rd_Rev(unsigned short);
+void ADC_Rd();
 
 const unsigned char butPin = 18; // Active something
 
 void ADC_Rd()
     {
-    int adc_hex = 0;
+    unsigned short adc_hex = 0;
     int result;
     printf("%08x\n", adc_hex);
 
@@ -31,9 +33,16 @@ void ADC_Rd()
    printf("%d \n", wiringPiI2CWriteReg16(result, 0x01, 0x83C5)); 
 
    adc_hex = wiringPiI2CReadReg16(result,0x00);
-    printf("%08x \n", adc_hex);
+    printf("0x%04x \n", adc_hex);
+   adc_hex = Rd_Rev(adc_hex);
+   printf("0x%04x\n %d\n",adc_hex,adc_hex);
+
     }
 
+unsigned short Rd_Rev(unsigned short a)
+    {
+     return ((a << 4) | (a >> 12)) & 0x0FFF;
+    }
 int main()
 {
 
