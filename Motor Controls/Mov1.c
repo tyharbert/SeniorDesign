@@ -27,10 +27,10 @@ int i;
 //system("echo 0=150 > /dev/servoblaster");
 while(1)
 {
-//	if (digitalRead(butPin)==1)
-//	{
-//		for(i=0; i<=5; i++)
-  //          	{
+	if (digitalRead(butPin)==1)
+	{
+		for(i=0; i<=5; i++)
+           	{
 		system("echo 0=150 > /dev/servoblaster"); //move servo to center/middle position
 		sleep(1);  //sleep for 1 second
 /*
@@ -47,8 +47,8 @@ int Servo1FB=GetADC(5);
 		sleep(1);
 		system("echo 0=100 > /dev/servoblaster");
 		sleep(1);
-//		}
- //       }
+		}
+        }
 }
 return 0;
 }
