@@ -29,13 +29,17 @@ unsigned short ADC_Rd(unsigned short address) //Read channel 0 or 1 adc, Pan Mot
     unsigned short adc_hex = 0;
     int result;
 
-    result=wiringPiI2CSetup(0x48);
-    wiringPiI2CWriteReg16(result, 0x01, address); //Address for the register, and configuring the read channel 0
-    sleep(.5);
-    adc_hex = wiringPiI2CReadReg16(result,0x00);
-    adc_hex = Rd_Rev(adc_hex);
-    printf("0x%04x\n %d\n",adc_hex,adc_hex);
+    result=wiringPiI2CSetup(0x48); //device address
 
+    wiringPiI2CWriteReg16(result, 0x01, address); //Address for the register, and configuring the read channel 0
+    adc_hex= wiringPiI2CReadReg16(result, 0x00);
+
+    wiringPiI2CWriteReg16(result, 0x01, address);
+    adc_hex = wiringPiI2CReadReg16(result,0x00); //device address, assigning device to read only
+
+    adc_hex = Rd_Rev(adc_hex); //Reverses the order of the hex value taken in
+    printf("%d\n",adc_hex);
+    sleep(5);
     return adc_hex;
     }
 
@@ -85,6 +89,7 @@ void Tilt_Gusset(int Tilt_Loc, int Lower_Bound, int Upper_Bound)
     printf("Tilt Gusset....\n");
     static int i=0;
     int Read=-1;
+
     while (Read < Lower_Bound || Read > Upper_Bound) //Upper and Lower Bounds for each Location
     {
         Mov_Motor(1, Tilt_Loc);
@@ -115,7 +120,7 @@ pullUpDnControl(butPin, PUD_DOWN);
          Pan_Gusset(180, 1960, 1973); //actual value 1970 or 1.970V
          Tilt_Gusset(180,1920,1937);  // actual value 1930, or 1.93V
          Pan_Gusset(100,1130, 1150); //actual value 1142 or 1.142V
-         Tilt_Gusset(100, 1120, 1135); //actual value 1127 or 1.127V feedback
+         Tilt_Gusset(100, 1120, 1140); //actual value 1127 or 1.127V feedback
         }
     }
 
