@@ -75,6 +75,8 @@ void Mov_Motor(int Motor_Num, int Motor_Loc) //Motor number (0 or 1), and Motor 
 {
     int n=35;
     int cx=0;
+    if(Motor_Num==1)
+	system("echo ./servod min={100}");
     char command[n];
     cx=snprintf(command, n, "echo %d=%d > /dev/servoblaster", Motor_Num, Motor_Loc); //assigns the echo call as the command, with the limit of n characters
     if(cx>n)
