@@ -13,18 +13,15 @@ extern "C"
 
 void transmitImageToBase(const char*);
 void calibrationNeeded();
-const char* imgPath(std::string, int, std::string);
+std::string imgPath(std::string, int, std::string);
 
 int main()
 {
 	int locations = 4; // max locations 4
 
 	// remove amx of 4 existing images
-	//for (int i=0; i < locations; i++)
-//	  remove("../images/testing0.jpeg");
-//	  remove("../images/testing1.jpeg");
-//	  remove("../images/testing2.jpeg");
-//	  remove("../images/testing3.jpeg");
+	for (int i=0; i < locations; i++)
+	  remove(imgPath("temp", i, ".jpeg").c_str());
 
 	calibrationNeeded(); // checks if jumper is set to calibrate system
 
@@ -32,23 +29,26 @@ int main()
 	//saves images in image folder called testing0.jpeg, testing1.jpeg, etc.
 	locations = CaptureSavedLocations("../motorcontrols/locations/locations.txt");
 
-	//for (int i=0; i < locations; i++ ) {
+	std::cout << "locations " << locations << std::endl;
+	if (locations == 0) {
+		std::cout << "No locations saved. Add calibration jumper and reboot." << std::endl;
+		return 1;
+	}
+
+	for (int i=0; i < locations; i++ ) {
 	    //fucntions to convert .jpeg to .bmp
-//	    JPEG_to_BMP("../images/testing0.jpeg", "../images/test_in0.bmp");
-//	    JPEG_to_BMP("../images/testing1.jpeg", "../images/test_in1.bmp");
-//	    JPEG_to_BMP("../images/testing2.jpeg", "../images/test_in2.bmp");
+	    JPEG_to_BMP(imgPath("temp", i, ".jpeg").c_str(), imgPath("temp_in", i, ".bmp").c_str());
 
 	    //transforms gussets
-//	    transformGusset("../images/test_in0.bmp", "../images/test_out0.bmp");
+	    transformGusset(imgPath("temp_in", i, ".bmp").c_str(), imgPath("temp_out", i, ".bmp").c_str());
 
 	    //function to convert .bmp to .jpeg
-//	    BMP_to_JPEG("../images/test_out0.bmp", "../images/test_out0.jpeg");
+	    BMP_to_JPEG(imgPath("temp_out", i, ".bmp").c_str(), imgPath("temp_out", i, ".jpeg").c_str());
 
 	    //transmits all images to base station
-//	    transmitImageToBase("../images/test_out0.jpeg");
-//	    transmitImageToBase("../images/testing1.jpeg");
-//	    transmitImageToBase("../images/testing2.jpeg");
-	//}
+	    transmitImageToBase(imgPath("temp_out", i, ".jpeg").c_str());
+
+	}
 
         //send PIC micro command to cut power after R Pi shutdown
 	SPI_shutdown();
@@ -94,8 +94,8 @@ void calibrationNeeded()
 	}
 }
 
-const char* imgPath(std::string name, int index, std::string extension) {
-	std::string path = "../images/";
+std::string imgPath(std::string name, int index, std::string extension) {
+	const static std::string path = "../images/";
 
-	return (path + name + std::to_string(index) + extension).c_str();
+	return path + name + std::to_string(index) + extension;
 }
