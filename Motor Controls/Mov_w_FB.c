@@ -21,16 +21,26 @@ const unsigned char butPin = 18; // Active something
 
 void ADC_Rd()
     {
-    short int adc_hex;
-    system("i2cset -y 1 0x48 0x01 0x83C5 w"); //Turns on and sets up the configuration register of ADC
-    adc_hex = system("i2cget -y 1 0x48 0x00");
-    printf("%x", adc_hex);
+    int adc_hex = 0;
+    int result;
+    printf("%08x\n", adc_hex);
+
+   //system("i2cset -y 1 0x48 0x01 0x83C5 w"); //Turns on and sets up the configuration register of ADC
+   //  adc_hex = system("i2cget -y 1 0x48 0x00 w");
+   result=wiringPiI2CSetup(0x48);
+   printf("%d \n", wiringPiI2CWriteReg16(result, 0x01, 0x83C5)); 
+
+   adc_hex = wiringPiI2CReadReg16(result,0x00);
+    printf("%08x \n", adc_hex);
     }
 
 int main()
 {
 
+
+
     ADC_Rd();
+
 /*stem("echo ./servod --p1pins=7, 11, 0, 0, 0, 0, 0, 0");
 wiringPiSetupGpio();
 pinMode(butPin, INPUT);
