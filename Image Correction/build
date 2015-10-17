@@ -1,0 +1,4 @@
+#!/bin/bash
+cd /Users/harbertt11/_The\ University\ of\ Akron/GENERAL/Senior\ Design\ Trunk/Image\ Correction/bin
+cmake /Users/harbertt11/_The\ University\ of\ Akron/GENERAL/Senior\ Design\ Trunk/Image\ Correction 
+make
