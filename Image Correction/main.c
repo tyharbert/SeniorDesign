@@ -17,33 +17,77 @@ This function is used to realixe the h vector below from the 8 equations shown:
 (0  0  0  x3  y3 1  -x3*y'3 -y3*y'3)   (h32)   (y'3)
 
 */
-//double* realize_H(double* x, double* y, double* x_p, double* y_p){
-//    
-//}
 
-int main()
-{
+// dynamically allocates a 2-d double matrix initialized to zero
+// a double** must be passed by reference from main to keep it
+// from being allocated into the stack memory
+void zeros(double*** m, int rows, int cols){
+    // create double* array of double*
+    (*m) = (double**)malloc(rows*sizeof(double));
+
+    for (int i=0; i<rows; i++)
+        (*m)[i] = (double*)malloc(cols*sizeof(double));
+
+    // intialize to zeros
+    for (int i=0; i<rows; i++){
+        for (int j=0; j<cols; j++){
+            (*m)[i][j] = 0;   
+        }
+    }
+}
+
+// this will create the determinate of the array recursively
+double** determinate(double** m, int rows, int cols){
+    printf("%dx%d:\n",rows,cols);
+    for (int i=0; i<rows; i++){
+        for (int j=0; j<cols; j++){
+            printf("%f ",m[i][j]);
+        }
+        printf("\n");
+    }
+    printf("\n");
+    return m;
+}
+
+// Opens the file passed in
+FILE* openFile(char* f){
     // variable declarations and initializations
     FILE* in_f;
-    unsigned char buffer[BUFFER_SIZE];
-    int bytes_read = 0;
 
     // open image file
     // TODO: when using CMAKE change this to read from a relative path...
-    in_f = fopen("/Users/harbertt11/_The University Of Akron/General/Senior Design Trunk/Image Correction/Images/QR2.jpg","r");
+    in_f = fopen(f,"r");
     if (!in_f){
         printf("Error opening file...");
-        return 1;
     }
+    
+    return in_f;
+}
+
+// prints the files data as Hex
+void printFileDataHex(FILE* f){
+    // variable declarations
+    unsigned char buffer[BUFFER_SIZE];
+    int bytes_read = 0;
 
     // read a buffer of binary data of max size BUFFER_SIZE
-    while ((bytes_read = fread(buffer, sizeof(unsigned char), BUFFER_SIZE, in_f)) > 0){
+    while ((bytes_read = fread(buffer, sizeof(unsigned char), BUFFER_SIZE, f)) > 0){
         // print buffer as hex
         for (int i = 0; i < bytes_read; i++){
             printf("%x ", buffer[i]);
         }
         printf("\b\n");
     }
+}
+
+int main()
+{   
+    int rows = 3;
+    int cols = 2;
+    
+    double** m;
+    zeros(&m,rows,cols);
+    determinate(m,rows,cols);
 
     return 0;
 }
