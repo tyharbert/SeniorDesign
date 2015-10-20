@@ -23,17 +23,10 @@ This function is used to realixe the h vector below from the 8 equations shown:
 // from being allocated into the stack memory
 void zeros(double*** m, int rows, int cols){
     // create double* array of double*
-    (*m) = (double**)malloc(rows*sizeof(double));
+    (*m) = (double**)calloc(rows,sizeof(double));
 
     for (int i=0; i<rows; i++)
-        (*m)[i] = (double*)malloc(cols*sizeof(double));
-
-    // intialize to zeros
-    for (int i=0; i<rows; i++){
-        for (int j=0; j<cols; j++){
-            (*m)[i][j] = 0;   
-        }
-    }
+        (*m)[i] = (double*)calloc(cols,sizeof(double));
 }
 
 // this will create the determinate of the array recursively
