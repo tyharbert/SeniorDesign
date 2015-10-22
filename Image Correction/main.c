@@ -1,4 +1,4 @@
-#include "Libraries/full_lib.h"
+#include "Libraries/my_lib.h"
 
 /*
 This function is used to realixe the h vector below from the 8 equations shown:
