@@ -1,29 +1,19 @@
 cmake_minimum_required(VERSION 3.3)
 
 # project declarations
-project(imglib C)
-project(filelib C)
-project(utilslib C)
+project(full_lib C)
 project(main C)
 
-# image library
-add_library (imglib STATIC
- Libraries/imglib.c	
+# all library .c files
+file(GLOB full_lib_src
+    "Libraries/*.c"
 )
 
-# file io library
-add_library (filelib STATIC
- Libraries/file_io.c	
-)
-
-# utilities library
-add_library (utilslib STATIC
- Libraries/utils.c	
+add_library (full_lib STATIC
+    ${full_lib_src}
 )
 
 #Evaluation program
 add_executable(main main.c)
 
-target_link_libraries(main LINK_PUBLIC imglib)
-target_link_libraries(main LINK_PUBLIC filelib)
-target_link_libraries(main LINK_PUBLIC utilslib)
+target_link_libraries(main LINK_PUBLIC full_lib)

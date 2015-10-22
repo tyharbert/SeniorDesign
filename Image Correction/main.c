@@ -1,6 +1,4 @@
-#include "Libraries/file_io.h"
-#include "Libraries/imglib.h"
-#include "Libraries/utils.h"
+#include "Libraries/full_lib.h"
 
 /*
 This function is used to realixe the h vector below from the 8 equations shown:
