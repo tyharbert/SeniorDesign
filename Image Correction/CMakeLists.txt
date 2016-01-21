@@ -6,7 +6,7 @@ project(main C)
 
 # all library .c files
 file(GLOB full_lib_src
-    "Libraries/*.c"
+    "libraries/*.c"
 )
 
 add_library (full_lib STATIC
