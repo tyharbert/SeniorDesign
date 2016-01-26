@@ -1,19 +1,19 @@
 cmake_minimum_required(VERSION 3.3)
 
-# project declarations
-project(full_lib C)
-project(main C)
+#project declarations
+project(full_lib CXX)
+project(main CXX)
 
-# all library .c files
+#add library .cpp files
 file(GLOB full_lib_src
-    "libraries/*.c"
+    libraries/*.cpp
 )
 
-add_library (full_lib STATIC
+add_library(full_lib STATIC
     ${full_lib_src}
 )
 
-#Evaluation program
-add_executable(main main.c)
+#main program
+add_executable(main main.cpp)
 
 target_link_libraries(main LINK_PUBLIC full_lib)
