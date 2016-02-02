@@ -2,8 +2,7 @@
 
 int main()
 {   
-    FILE* f = openFile("../images/1.bmp");
-    readBMP(f);
+    readBMP("../images/2.bmp");
 
     return 0;
 }
