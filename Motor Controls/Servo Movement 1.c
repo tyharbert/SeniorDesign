@@ -30,7 +30,7 @@ for{i=0, i<=5, i++}
 wiringPiSetupGpio();
 pinMode(butPin, Input);
 
-echo 0=150 > /dev/servoblaster //move servo to center/middle position
+system("echo 0=150 > /dev/servoblaster"); //move servo to center/middle position
 sleep(1000)  //sleep for 1 second
 /*
 GetADC(5)
@@ -42,9 +42,9 @@ int Servo1FB=GetADC(5);
             sleep(1000)
         }
 */
-echo 0=180 > /dev/servoblaster
+system("echo 0=180 > /dev/servoblaster");
 sleep(1000)
-echo 0=120 > /dev/servoblaster
+system("echo 0=100 > /dev/servoblaster");
 sleep(1000)
             }
         }
