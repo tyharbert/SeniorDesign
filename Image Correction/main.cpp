@@ -1,8 +1,10 @@
-#include "libraries/imglib.hpp"
+#include "libraries/bmp.hpp"
 
 int main()
 {   
-    readBMP("../images/2.bmp");
-
+    BMP bmp("../images/2.bmp");
+    bmp.w2b(); // makes everything not WHITE to BLACK for testing
+    bmp.write("../images/3.bmp");
+    
     return 0;
 }
