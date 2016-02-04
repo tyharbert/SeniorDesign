@@ -28,7 +28,7 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="E:/Servo Movement 1.c">
+		<Unit filename="Servo Movement 1.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Extensions>
