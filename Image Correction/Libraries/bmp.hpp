@@ -1,8 +1,9 @@
 #ifndef BMP_HPP
 #define BMP_HPP
 
-#include <stdio.h>
 #include <stdint.h>
+
+#include "utils.hpp"
 
 // 2-Bytes
 struct Word {
@@ -78,12 +79,18 @@ struct DIBHead {
     DWord _reserved;
 };
 
+// Holds pixel data
 struct Pixel {
-    unsigned char red;
-    unsigned char green;
-    unsigned char blue;
+    unsigned char _red;
+    unsigned char _green;
+    unsigned char _blue;
+    
+    Pixel() { }
+    Pixel(uint32_t);
+    uint32_t to_uint32() { return 0 << 24 | _blue << 16 | _green << 8 | _red; }
 };
 
+// Holds a row of pixels
 struct Row {
     Pixel* pixels;
     unsigned char padding;
@@ -97,25 +104,11 @@ private:
     
 public:
     Row* rows;
-    BMP(FILE*);
+    BMP(const char*);
     int32_t width() { return _dibHead._width.be(); }
     int32_t height() { return _dibHead._height.be(); }
-    
+    void write(const char*);    
+    void invert();
 };
-
-inline BMP::BMP(FILE* f) {
-    fread(&_bmpHead, sizeof(BMPHead), 1, f);
-    fread(&_dibHead, sizeof(DIBHead), 1, f);
-    
-    uint32_t height = _dibHead._height.be();
-    uint32_t width = _dibHead._width.be();
-    
-    rows = new Row[height];
-    for(uint32_t i = 0; i < height; i++) {
-        rows[i].pixels = new Pixel[width];
-        fread(rows[i].pixels, sizeof(Pixel), width, f);
-        fread(&rows[i].padding, sizeof(unsigned char), 1, f);
-    }
-}
 
 #endif
