@@ -45,16 +45,13 @@ void BMP::write(const char* path) {
     fclose(f);
 }
 
-// test function turns everything not white to black
-void BMP::w2b() {
+// test function inverts
+void BMP::invert() {
     uint32_t height = _dibHead._height.be();
     uint32_t width = _dibHead._width.be();
     
     for(int i = 0; i < height; i++)
         for(int j = 0; j < width; j++) {
-            uint32_t temp = rows[i].pixels[j].to_uint32();
-            if (temp != 0x00FFFFFF) {
-                rows[i].pixels[j] = Pixel(0);
-            }
+            rows[i].pixels[j] = Pixel(0xFFFFFFFF - rows[i].pixels[j].to_uint32());
         }
 }

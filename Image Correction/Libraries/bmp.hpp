@@ -107,9 +107,8 @@ public:
     BMP(const char*);
     int32_t width() { return _dibHead._width.be(); }
     int32_t height() { return _dibHead._height.be(); }
-    void write(const char*);
-    void w2b();
-    
+    void write(const char*);    
+    void invert();
 };
 
 #endif
