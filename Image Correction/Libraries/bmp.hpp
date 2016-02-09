@@ -88,6 +88,7 @@ struct Pixel {
     Pixel() { }
     Pixel(uint32_t);
     uint32_t to_uint32() { return 0 << 24 | _blue << 16 | _green << 8 | _red; }
+    float luminance() { return 0.299f*(float)_red + 0.587f*(float)_green + 0.114f*(float)_blue; }
 };
 
 // Holds a row of pixels
@@ -101,6 +102,7 @@ class BMP {
 private:
     BMPHead _bmpHead;
     DIBHead _dibHead;
+    bool is_corner(int,int);
     
 public:
     Row* rows;
@@ -108,7 +110,7 @@ public:
     int32_t width() { return _dibHead._width.be(); }
     int32_t height() { return _dibHead._height.be(); }
     void write(const char*);    
-    void invert();
+    void fast();
 };
 
 #endif
