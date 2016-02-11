@@ -28,7 +28,10 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="Servo Movement 1.c">
+		<Unit filename="Mov1.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="adc_practice.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Extensions>
