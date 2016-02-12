@@ -34,6 +34,9 @@
 		<Unit filename="adc_practice.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="adc_sample.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Extensions>
 			<code_completion />
 			<envvars />
