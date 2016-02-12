@@ -2,6 +2,7 @@
 #define BMP_HPP
 
 #include <stdint.h>
+#include <pthread.h>
 
 #include "utils.hpp"
 
@@ -94,7 +95,7 @@ struct Pixel {
 // Holds a row of pixels
 struct Row {
     Pixel* pixels;
-    unsigned char padding;
+    unsigned char* padding;
 };
 
 // BMP class
@@ -102,15 +103,22 @@ class BMP {
 private:
     BMPHead _bmpHead;
     DIBHead _dibHead;
+    int _rowPadding;
+    Row* rows;
     bool is_corner(int,int);
+    void fast(int,int,int,int,int*,bool(BMP::*)(int,int,int,int));
+    bool fast_sw(int,int,int,int);
+    bool fast_nw(int,int,int,int);
+    bool fast_ne(int,int,int,int);
+    bool fast_se(int,int,int,int);
     
 public:
-    Row* rows;
     BMP(const char*);
     int32_t width() { return _dibHead._width.be(); }
     int32_t height() { return _dibHead._height.be(); }
-    void write(const char*);    
+    void write(const char*);
     void fast();
+    
 };
 
 #endif
