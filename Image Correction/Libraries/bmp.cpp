@@ -86,7 +86,7 @@ void BMP::fast(int x_min, int x_max, int y_min, int y_max, int* corner, bool(BMP
     for (int y=y_min; y < y_max; y++)
         for (int x=x_min; x < x_max; x++) {
             if (this->is_corner(x,y)) {
-                if ((this->*condit)(x, y, corner[0], corner[1])) {
+                if ((!corner[0] && !corner[1]) || (this->*condit)(x, y, corner[0], corner[1])) {
                     corner[0] = x;
                     corner[1] = y;
                 }
@@ -95,34 +95,22 @@ void BMP::fast(int x_min, int x_max, int y_min, int y_max, int* corner, bool(BMP
 }
 
 // SW quadrant condition to compare current corner
-bool BMP::fast_sw(int x, int y, int xCorner, int yCorner) {
-    if (xCorner+yCorner == 0) // if the corner is 0,0 then none have been compared
-        return true;
-    
+bool BMP::fast_sw(int x, int y, int xCorner, int yCorner) {    
     return (x+y) < (xCorner+yCorner);
 }
 
 // NW quadrant condition to compare current corner
 bool BMP::fast_nw(int x, int y, int xCorner, int yCorner) {
-    if (xCorner+yCorner == 0) // if the corner is 0,0 then none have been compared
-        return true;
-    
     return (x <= xCorner) || (y >= yCorner);
 }
 
 // NE quadrant condition to compare current corner
 bool BMP::fast_ne(int x, int y, int xCorner, int yCorner) {
-    if (xCorner+yCorner == 0) // if the corner is 0,0 then none have been compared
-        return true;
-    
     return (x+y) > (xCorner+yCorner);
 }
 
 // SE quadrant condition to compare current corner
 bool BMP::fast_se(int x, int y, int xCorner, int yCorner) {
-    if (xCorner+yCorner == 0) // if the corner is 0,0 then none have been compared
-        return true;
-    
     return (x >= xCorner) || (y <= yCorner);
 }
 
