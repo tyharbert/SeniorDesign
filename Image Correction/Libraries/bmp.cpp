@@ -77,7 +77,7 @@ void BMP::fast() {
     
     // print pink square on corner
     for (int i = 0; i < 4; i++) {
-        this->rows[corners[i][1]].pixels[corners[i][0]] = Pixel(0xFF1493);
+        this->rows[corners[i][1]].pixels[corners[i][0]] = Pixel(0x32CD32);
     }
 }
 
@@ -135,10 +135,10 @@ bool BMP::is_corner(int x, int y) {
     // this is used to keep track of the first
     // count we get to add it back to the last
     // count we get to keep continuity around the
-    // ends of the loop
+    // ends of the circle
     int begin_cnt = 0;
     
-    y -= 3; // start with top center pixel
+    y -= 3; // start with bottom center pixel
     for (int i=0; i<16; i++){
         
         // if it is outside of bounds count it, otherwise reset count
