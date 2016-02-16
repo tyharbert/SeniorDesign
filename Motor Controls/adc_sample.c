@@ -107,11 +107,3 @@ sensors_ADC_init();
 adc_read();
 
 }
-
-
-int main()
-{
-sensors_ADC_init();
-
-return 0;
-}
