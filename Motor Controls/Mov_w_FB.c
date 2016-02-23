@@ -29,13 +29,11 @@ unsigned short ADC_Rd_0() //Read channel 0 adc, Pan Motor
     {
     unsigned short adc_hex = 0;
     int result;
-    printf("%08x\n", adc_hex);
 
     result=wiringPiI2CSetup(0x48);
-    printf("%d \n", wiringPiI2CWriteReg16(result, 0x01, 0x83C5)); //Address for the register, and configuring the read channel 0
+    wiringPiI2CWriteReg16(result, 0x01, 0x83C5); //Address for the register, and configuring the read channel 0
 
     adc_hex = wiringPiI2CReadReg16(result,0x00);
-    printf("0x%04x \n", adc_hex);
     adc_hex = Rd_Rev(adc_hex);
     printf("0x%04x\n %d\n",adc_hex,adc_hex);
 
@@ -46,13 +44,11 @@ unsigned short ADC_Rd_1() //Read channel 1 adc, Tilt Motor
     {
     unsigned short adc_hex = 0;
     int result;
-    printf("%08x\n", adc_hex);
 
     result=wiringPiI2CSetup(0x48);
-    printf("%d \n", wiringPiI2CWriteReg16(result, 0x01, 0xA3C5)); //Address for the register, and configuring the read channel 1
+    wiringPiI2CWriteReg16(result, 0x01, 0xA3C5); //Address for the register, and configuring the read channel 1
 
     adc_hex = wiringPiI2CReadReg16(result,0x00);
-    printf("0x%04x \n", adc_hex);
     adc_hex = Rd_Rev(adc_hex);
     printf("0x%04x\n %d\n",adc_hex,adc_hex);
 
@@ -67,23 +63,24 @@ unsigned short Rd_Rev(unsigned short a)
 
 void Pan_Gusset(int Pan_Loc)
 {
+    printf("Pan Gusset....\n");
     static int i=0;
     Mov_Motor(0, Pan_Loc);
     sleep(1);
         if(Pan_Loc==150)
         {
-            if(ADC_Rd_0()< 1660 || ADC_Rd_0() > 1670 ) //actual value of 1668, or 1.668V
-            {
-            i++;   //incrementing i to prevent from continuous failing
-            Pan_Gusset(150);
-            }
-            if(i>=5)
-            {
-            printf("Issue with Pan Motor For Location %d", Pan_Loc);
-            i=0;   //reset i
+            while (ADC_Rd_0()< 1660 || ADC_Rd_0() > 1670) { //1668 or 1.668V feedback
+                Mov_Motor(0, Pan_Loc);
+                i++;
+
+                if(i>=5)
+                {
+                    printf("Issue with Pan Motor for location %d", Pan_Loc);
+                    break;
+                }
             }
         }
-        else if(Pan_Loc==180)
+        /*else if(Pan_Loc==180)
         {
             if(ADC_Rd_0()< 1967 || ADC_Rd_0() > 1973 ) //actual value of 1970, or 1.970V
             {
@@ -108,7 +105,7 @@ void Pan_Gusset(int Pan_Loc)
             printf("Issue with Pan Motor For Location %d", Pan_Loc);
             i=0;   //reset i
             }
-        }
+        }*/
     }
 
 void Mov_Motor(int Motor_Num, int Motor_Loc) //Motor number (0 or 1), and Motor Location (50-250)
@@ -125,23 +122,23 @@ void Mov_Motor(int Motor_Num, int Motor_Loc) //Motor number (0 or 1), and Motor 
 
 void Tilt_Gusset(int Tilt_Loc)
     {
+    printf("Tilt Gusset....\n");
     static int i=0;
-    Mov_Motor(1, Tilt_Loc);
     sleep(1); //Wait for 1 second
         if (Tilt_Loc==150)
         {
-            if(ADC_Rd_1()< 1634 || ADC_Rd_1() > 1640) //1637 or 1.637V feedback
-            {
-            i++;
-            Tilt_Gusset(150);
-            }
-            if(i>=5)
-            {
-            printf("Issue with Tilt Motor for location %d", Tilt_Loc);
-            i=0;
+            while (ADC_Rd_1()< 1634 || ADC_Rd_1() > 1640) { //1637 or 1.637V feedback
+                Mov_Motor(1, Tilt_Loc);
+                i++;
+
+                if(i>=5)
+                {
+                    printf("Issue with Tilt Motor for location %d", Tilt_Loc);
+                    break;
+                }
             }
         }
-        else if (Tilt_Loc==180)
+       /*else if (Tilt_Loc==180)
         {
             if(ADC_Rd_1()< 1927 || ADC_Rd_1() > 1933) //1930 or 1.93V feedback
             {
@@ -166,7 +163,7 @@ void Tilt_Gusset(int Tilt_Loc)
             printf("Issue with Tilt Motor for location %d", Tilt_Loc);
             i=0;
             }
-        }
+        }*/
     }
 
 int main()
