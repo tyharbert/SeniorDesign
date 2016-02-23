@@ -1,6 +1,7 @@
 /*
- * serial.c:
- *	Example program to read bytes from the Serial line
+ * serialTest.c:
+ *	Very simple program to test the serial port. Expects
+ *	the port to be looped back to itself
  *
  * Copyright (c) 2012-2013 Gordon Henderson. <projects@drogon.net>
  ***********************************************************************
@@ -26,11 +27,14 @@
 #include <string.h>
 #include <errno.h>
 
+#include <wiringPi.h>
 #include <wiringSerial.h>
 
 int main ()
 {
   int fd ;
+  int count ;
+  unsigned int nextTime ;
 
   if ((fd = serialOpen ("/dev/ttyUSB1", 9600)) < 0)
   {
@@ -38,24 +42,40 @@ int main ()
     return 1 ;
   }
 
-// Loop, getting and printing characters
-char temp;
-  for (;;)
+  if (wiringPiSetup () == -1)
   {
-	temp = serialGetchar(fd);
-/*
-	if (temp == '\r'){
-	 puts("new line");
-	}
-	else if (temp == '5'){
-	puts("Enter 5!");
-	}
-
-    	else {
-*/
-	putchar (temp) ;
-	fflush (stdout) ;
-//	putchar ('\n');
-//    	}
+    fprintf (stdout, "Unable to start wiringPi: %s\n", strerror (errno)) ;
+    return 1 ;
   }
+/*
+  nextTime = millis () + 300 ;
+
+  for (count = 0 ; count < 256 ; )
+  {
+    if (millis () > nextTime)
+    {
+      printf ("\nOut: %3d: ", count) ;
+      fflush (stdout) ;
+      serialPutchar (fd, count) ;
+      nextTime += 300 ;
+      ++count ;
+    }
+
+    delay (3) ;
+*/
+for(;;)
+{
+    int bytesRead = 0;
+    if (serialDataAvail (fd) > 0)
+    {
+//      bytesRead = serialDataAvail(fd);
+      printf (" -> %3d", serialDataAvail (fd)) ;
+      fflush (stdout) ;
+    }
+}
+
+//  }
+
+  printf ("\n") ;
+  return 0 ;
 }
