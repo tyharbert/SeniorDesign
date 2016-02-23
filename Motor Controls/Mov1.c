@@ -39,16 +39,7 @@ while(1)
 		sleep(1);
 		system("echo 1=150 > /dev/servoblaster"); //move servo 1 to center/middle position
 		sleep(1); //Wait for 1 second
-/*
-GetADC(5)
-int Servo1FB=GetADC(5);
-        Rvolts=Servo1FB*3.3/1024;
-        while (Rvolts<=1.6 && >= 1.7)
-        {
-            echo 0=150 > /dev/servoblaster //move servo to center/middle position
-            sleep(1000)
-        }
-*/
+
 		system("echo 0=180 > /dev/servoblaster");
 		sleep(1);
 		system("echo 1=180 > /dev/servoblaster");
