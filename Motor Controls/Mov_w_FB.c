@@ -16,8 +16,7 @@ Servo 1 is the Tilt servo and can tilt from 0-150 degrees, or .5 ms to 2.08 ms
 //./servod --step-size=10us //default step size
 // echo 0=120 > /dev/servoblaster  //sends servo 0 a pulse of 1.2 ms (120 us)
 // udelay(100) //delays 100 us, or .1 ms
-unsigned short ADC_Rd_0();
-unsigned short ADC_Rd_1();
+unsigned short ADC_Rd(unsigned short address);
 unsigned short Rd_Rev(unsigned short);
 void Pan_Gusset(int Pan_Loc, int Lower_Bound, int Upper_Bound);
 void Mov_Motor(int Motor_Num, int Motor_Loc);
@@ -25,28 +24,13 @@ void Tilt_Gusset(int Tilt_Loc, int Lower_Bound, int Upper_Bound);
 
 const unsigned char butPin = 18; // Active something
 
-unsigned short ADC_Rd_0() //Read channel 0 adc, Pan Motor
+unsigned short ADC_Rd(unsigned short address) //Read channel 0 adc, Pan Motor
     {
     unsigned short adc_hex = 0;
     int result;
 
     result=wiringPiI2CSetup(0x48);
-    wiringPiI2CWriteReg16(result, 0x01, 0x83C5); //Address for the register, and configuring the read channel 0
-
-    adc_hex = wiringPiI2CReadReg16(result,0x00);
-    adc_hex = Rd_Rev(adc_hex);
-    printf("0x%04x\n %d\n",adc_hex,adc_hex);
-
-    return adc_hex;
-    }
-
-unsigned short ADC_Rd_1() //Read channel 1 adc, Tilt Motor
-    {
-    unsigned short adc_hex = 0;
-    int result;
-
-    result=wiringPiI2CSetup(0x48);
-    wiringPiI2CWriteReg16(result, 0x01, 0xA3C5); //Address for the register, and configuring the read channel 1
+    wiringPiI2CWriteReg16(result, 0x01, address); //Address for the register, and configuring the read channel 0
 
     adc_hex = wiringPiI2CReadReg16(result,0x00);
     adc_hex = Rd_Rev(adc_hex);
@@ -69,7 +53,7 @@ void Pan_Gusset(int Pan_Loc, int Lower_Bound, int Upper_Bound)
     sleep(1);
         if(Pan_Loc==150)
         {
-            while (ADC_Rd_0()< Lower_Bound || ADC_Rd_0() > Upper_Bound)
+            while (ADC_Rd(0x83C5)< Lower_Bound || ADC_Rd(0x83C5) > Upper_Bound)
             {
                 Mov_Motor(0, Pan_Loc);
                 i++;
@@ -102,7 +86,7 @@ void Tilt_Gusset(int Tilt_Loc, int Lower_Bound, int Upper_Bound)
     sleep(1); //Wait for 1 second
         if (Tilt_Loc==150)
         {
-            while (ADC_Rd_1()< Lower_Bound || ADC_Rd_1() > Upper_Bound) //Upper and Lower Bounds for each Location
+            while (ADC_Rd(0x83D5)< Lower_Bound || ADC_Rd(0x83D5) > Upper_Bound) //Upper and Lower Bounds for each Location
             {
                 Mov_Motor(1, Tilt_Loc);
                 i++;
