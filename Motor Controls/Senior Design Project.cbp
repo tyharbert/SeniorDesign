@@ -28,13 +28,7 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="Mov1.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="adc_practice.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="adc_sample.c">
+		<Unit filename="Mov_w_FB.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Extensions>
