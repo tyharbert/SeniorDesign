@@ -19,9 +19,9 @@ Servo 1 is the Tilt servo and can tilt from 0-150 degrees, or .5 ms to 2.08 ms
 unsigned short ADC_Rd_0();
 unsigned short ADC_Rd_1();
 unsigned short Rd_Rev(unsigned short);
-void Pan_Gusset(int Pan_Loc);
+void Pan_Gusset(int Pan_Loc, int Lower_Bound, int Upper_Bound);
 void Mov_Motor(int Motor_Num, int Motor_Loc);
-void Tilt_Gusset(int Tilt_Loc);
+void Tilt_Gusset(int Tilt_Loc, int Lower_Bound, int Upper_Bound);
 
 const unsigned char butPin = 18; // Active something
 
@@ -61,7 +61,7 @@ unsigned short Rd_Rev(unsigned short a)
      return ((a << 4) | (a >> 12)) & 0x0FFF;
     }
 
-void Pan_Gusset(int Pan_Loc)
+void Pan_Gusset(int Pan_Loc, int Lower_Bound, int Upper_Bound)
 {
     printf("Pan Gusset....\n");
     static int i=0;
@@ -69,7 +69,8 @@ void Pan_Gusset(int Pan_Loc)
     sleep(1);
         if(Pan_Loc==150)
         {
-            while (ADC_Rd_0()< 1660 || ADC_Rd_0() > 1670) { //1668 or 1.668V feedback
+            while (ADC_Rd_0()< Lower_Bound || ADC_Rd_0() > Upper_Bound)
+            {
                 Mov_Motor(0, Pan_Loc);
                 i++;
 
@@ -80,32 +81,6 @@ void Pan_Gusset(int Pan_Loc)
                 }
             }
         }
-        /*else if(Pan_Loc==180)
-        {
-            if(ADC_Rd_0()< 1967 || ADC_Rd_0() > 1973 ) //actual value of 1970, or 1.970V
-            {
-            i++;   //incrementing i to prevent from continuous failing
-            Pan_Gusset(180);
-            }
-            if(i>=5)
-            {
-            printf("Issue with Pan Motor For Location %d", Pan_Loc);
-            i=0;   //reset i
-            }
-        }
-        else if(Pan_Loc==100)
-        {
-            if(ADC_Rd_0()< 1139 || ADC_Rd_0() > 1145 ) //actual value of 1142, or 1.142V
-            {
-            i++;   //incrementing i to prevent from continuous failing
-            Pan_Gusset(100);
-            }
-            if(i>=5)
-            {
-            printf("Issue with Pan Motor For Location %d", Pan_Loc);
-            i=0;   //reset i
-            }
-        }*/
     }
 
 void Mov_Motor(int Motor_Num, int Motor_Loc) //Motor number (0 or 1), and Motor Location (50-250)
@@ -120,14 +95,15 @@ void Mov_Motor(int Motor_Num, int Motor_Loc) //Motor number (0 or 1), and Motor 
         system(command);
 }
 
-void Tilt_Gusset(int Tilt_Loc)
+void Tilt_Gusset(int Tilt_Loc, int Lower_Bound, int Upper_Bound)
     {
     printf("Tilt Gusset....\n");
     static int i=0;
     sleep(1); //Wait for 1 second
         if (Tilt_Loc==150)
         {
-            while (ADC_Rd_1()< 1634 || ADC_Rd_1() > 1640) { //1637 or 1.637V feedback
+            while (ADC_Rd_1()< Lower_Bound || ADC_Rd_1() > Upper_Bound) //Upper and Lower Bounds for each Location
+            {
                 Mov_Motor(1, Tilt_Loc);
                 i++;
 
@@ -138,32 +114,7 @@ void Tilt_Gusset(int Tilt_Loc)
                 }
             }
         }
-       /*else if (Tilt_Loc==180)
-        {
-            if(ADC_Rd_1()< 1927 || ADC_Rd_1() > 1933) //1930 or 1.93V feedback
-            {
-            i++;
-            Tilt_Gusset(180);
-            }
-            if(i>=5)
-            {
-            printf("Issue with Tilt Motor for location %d", Tilt_Loc);
-            i=0;
-            }
-        }
-        else if (Tilt_Loc==100)
-        {
-            if(ADC_Rd_1()< 1124 || ADC_Rd_1() > 1130) //1127 or 1.127V feedback
-            {
-            i++;
-            Tilt_Gusset(100);
-            }
-            if(i>=5)
-            {
-            printf("Issue with Tilt Motor for location %d", Tilt_Loc);
-            i=0;
-            }
-        }*/
+
     }
 
 int main()
@@ -177,12 +128,12 @@ pullUpDnControl(butPin, PUD_DOWN);
     {
         if (digitalRead(butPin)==1)
         {
-         Pan_Gusset(150);
-         Tilt_Gusset(150);
-//         Pan_Gusset(180);
-//         Tilt_Gusset(180);
-//         Pan_Gusset(100);
-//         Tilt_Gusset(100);
+         Pan_Gusset(150, 1660, 1675);  //actual value 1669 or 1.669V
+         Tilt_Gusset(150, 1630, 1645); //actual value 1637 or 1.637V
+//         Pan_Gusset(180, 1967, 1973); //actual value 1970 or 1.970V
+//         Tilt_Gusset(180,1927,1933);  // actual value 1930, or 1.93V
+//         Pan_Gusset(100,1139, 1145); //actual value 1142 or 1.142V
+//         Tilt_Gusset(100, 1120, 1133); //actual value 1127 or 1.127V feedback
         }
 
     }
