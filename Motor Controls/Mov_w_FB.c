@@ -51,20 +51,19 @@ void Pan_Gusset(int Pan_Loc, int Lower_Bound, int Upper_Bound)
     static int i=0;
     Mov_Motor(0, Pan_Loc);
     sleep(1);
-        if(Pan_Loc==150)
-        {
-            while (ADC_Rd(0x83C5)< Lower_Bound || ADC_Rd(0x83C5) > Upper_Bound)
-            {
-                Mov_Motor(0, Pan_Loc);
-                i++;
+    int Read;
+    while (Read = ADC_Rd(0x83C5)< Lower_Bound || Read > Upper_Bound)
+    {
+        Mov_Motor(0, Pan_Loc);
+        i++;
 
-                if(i>=5)
-                {
-                    printf("Issue with Pan Motor for location %d", Pan_Loc);
-                    break;
-                }
-            }
+        if(i>=5)
+        {
+            printf("Issue with Pan Motor for location %d", Pan_Loc);
+            break;
         }
+    }
+
     }
 
 void Mov_Motor(int Motor_Num, int Motor_Loc) //Motor number (0 or 1), and Motor Location (50-250)
@@ -77,29 +76,27 @@ void Mov_Motor(int Motor_Num, int Motor_Loc) //Motor number (0 or 1), and Motor 
         printf("Command Length Too Long");
     else
         system(command);
+    sleep(1)
 }
 
 void Tilt_Gusset(int Tilt_Loc, int Lower_Bound, int Upper_Bound)
-    {
+{
     printf("Tilt Gusset....\n");
     static int i=0;
     sleep(1); //Wait for 1 second
-        if (Tilt_Loc==150)
+    int Read;
+    while (Read = ADC_Rd(0x83D5) < Lower_Bound || Read > Upper_Bound) //Upper and Lower Bounds for each Location
+    {
+        Mov_Motor(1, Tilt_Loc);
+        i++;
+
+        if(i>=5)
         {
-            while (ADC_Rd(0x83D5)< Lower_Bound || ADC_Rd(0x83D5) > Upper_Bound) //Upper and Lower Bounds for each Location
-            {
-                Mov_Motor(1, Tilt_Loc);
-                i++;
-
-                if(i>=5)
-                {
-                    printf("Issue with Tilt Motor for location %d", Tilt_Loc);
-                    break;
-                }
-            }
+            printf("Issue with Tilt Motor for location %d", Tilt_Loc);
+            break;
         }
-
     }
+}
 
 int main()
 {
@@ -114,12 +111,11 @@ pullUpDnControl(butPin, PUD_DOWN);
         {
          Pan_Gusset(150, 1660, 1675);  //actual value 1669 or 1.669V
          Tilt_Gusset(150, 1630, 1645); //actual value 1637 or 1.637V
-//         Pan_Gusset(180, 1967, 1973); //actual value 1970 or 1.970V
-//         Tilt_Gusset(180,1927,1933);  // actual value 1930, or 1.93V
-//         Pan_Gusset(100,1139, 1145); //actual value 1142 or 1.142V
-//         Tilt_Gusset(100, 1120, 1133); //actual value 1127 or 1.127V feedback
+         Pan_Gusset(180, 1967, 1973); //actual value 1970 or 1.970V
+         Tilt_Gusset(180,1927,1933);  // actual value 1930, or 1.93V
+         Pan_Gusset(100,1139, 1145); //actual value 1142 or 1.142V
+         Tilt_Gusset(100, 1120, 1133); //actual value 1127 or 1.127V feedback
         }
-
     }
 
 return 0;
