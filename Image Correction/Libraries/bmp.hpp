@@ -2,7 +2,6 @@
 #define BMP_HPP
 
 #include <stdint.h>
-#include <pthread.h>
 
 #include "utils.hpp"
 

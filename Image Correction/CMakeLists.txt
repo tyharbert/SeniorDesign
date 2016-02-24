@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.3)
 
+# some of the project requires c++ 11
+SET(CMAKE_CXX_FLAGS "-std=c++11")
+
 #project declarations
 project(full_lib CXX)
 project(main CXX)
