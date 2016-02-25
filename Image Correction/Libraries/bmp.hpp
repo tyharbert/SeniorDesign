@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 #include "utils.hpp"
+#include "corner.hpp"
 
 // 2-Bytes
 struct Word {
@@ -116,7 +117,7 @@ public:
     int32_t width() { return _dibHead._width.be(); }
     int32_t height() { return _dibHead._height.be(); }
     void write(const char*);
-    void fast();
+    Corners fast();
     
 };
 

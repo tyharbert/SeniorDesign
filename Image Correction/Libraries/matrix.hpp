@@ -4,6 +4,8 @@
 #include <cassert>
 #include <iostream>
 
+#include "corner.hpp"
+
 class Matrix {
 private:
     float** _values;
@@ -14,6 +16,8 @@ public:
     Matrix(int, int);
     Matrix(const Matrix& m);
     Matrix(int n): Matrix(n, n) { }
+    Matrix(Corners, Corners);
+    ~Matrix();
     void gausianOP();
     void print();
 };

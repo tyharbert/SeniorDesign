@@ -62,7 +62,7 @@ void BMP::write(const char* path) {
 }
 
 // FAST corner detection algorithm
-void BMP::fast() {
+Corners BMP::fast() {
     int corners[4][2] = {{0}}; // intialized to 0
     
     int min_x = 3;
@@ -75,10 +75,8 @@ void BMP::fast() {
     this->fast(max_x/2, max_x, max_y/2, max_y, corners[2], &BMP::fast_ne);
     this->fast(max_x/2, max_x, min_y, max_y/2, corners[3], &BMP::fast_se);
     
-    // print pink square on corner
-    for (int i = 0; i < 4; i++) {
-        this->rows[corners[i][1]].pixels[corners[i][0]] = Pixel(0x32CD32);
-    }
+    // return the Corners object
+    return Corners(corners);
 }
 
 // FAST corner detection for quadrants of the image
