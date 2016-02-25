@@ -24,13 +24,14 @@ void Tilt_Gusset(int Tilt_Loc, int Lower_Bound, int Upper_Bound);
 
 const unsigned char butPin = 18; // Active something
 
-unsigned short ADC_Rd(unsigned short address) //Read channel 0 adc, Pan Motor
+unsigned short ADC_Rd(unsigned short address) //Read channel 0 or 1 adc, Pan Motor
     {
     unsigned short adc_hex = 0;
     int result;
 
     result=wiringPiI2CSetup(0x48);
     wiringPiI2CWriteReg16(result, 0x01, address); //Address for the register, and configuring the read channel 0
+    sleep(.5);
     adc_hex = wiringPiI2CReadReg16(result,0x00);
     adc_hex = Rd_Rev(adc_hex);
     printf("0x%04x\n %d\n",adc_hex,adc_hex);
@@ -54,7 +55,7 @@ void Pan_Gusset(int Pan_Loc, int Lower_Bound, int Upper_Bound)
     while (Read < Lower_Bound || Read > Upper_Bound)
     {
         Mov_Motor(0, Pan_Loc);
-	Read=ADC_Rd(0x83C5);
+        Read=ADC_Rd(0x83C5);
         i++;
 
         if(i>=5)
@@ -87,7 +88,7 @@ void Tilt_Gusset(int Tilt_Loc, int Lower_Bound, int Upper_Bound)
     while (Read < Lower_Bound || Read > Upper_Bound) //Upper and Lower Bounds for each Location
     {
         Mov_Motor(1, Tilt_Loc);
-	Read=ADC_Rd(0x83D5);
+        Read=ADC_Rd(0x83D5);
         i++;
 
         if(i>=5)
