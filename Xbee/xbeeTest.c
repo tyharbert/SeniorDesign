@@ -1,35 +1,21 @@
-#include <iostream>
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
-//#include <wiringPi.h>
-#include <wiringSerial.h>
-#include "xmodem.c"
+#ifndef XSERIAL_HPP
+#define XSERIAL_HPP
 
-using namespace std;
+#include "xSerial.hpp"
+
 
 int main(){
 
-	int fd;
-	if ((fd = serialOpen ("/dev/ttyUSB1", 9600)) < 0)
-	  {
-	    fprintf (stderr, "Unable to open serial device: %s\n", strerror (errno)) ;
-	    return 1 ;
-  	  }
+	char *device = (char *)"/dev/ttyUSB1";
 
-/*	if (wiringPiSetup () == -1)
-	  {
-	    fprintf (stdout, "Unable to start wiringPi: %s\n", strerror (errno)) ;
-	    return 1 ;
-	  }
-*/
-
-	int result;
-	result = XSend(fd, "tylerUseThisImage.jpeg");
-
-	std::cout << result << std::endl;
+	Serial xbee(device, 9600);
+//	xbee.Open();
+	xbee.PutMsg("This is a test");
+//	xbee.Close();
 	return 0;
 
 
 
 }
+
+#endif
