@@ -144,3 +144,6 @@ pullUpDnControl(butPin, PUD_DOWN);
 return 0;
 }
 
+//Write up an equation to convert a feedback value to a corresponding pulse width. We will be taking in a feedback
+//value when setting up the gusset plate locations.
+
