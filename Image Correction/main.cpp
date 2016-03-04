@@ -7,18 +7,16 @@ int main()
    Corners original = bmp.fast();
 
    Corners destination = original.findDest();
-   
+
    original.print();
    destination.print();
 
-   Matrix A(original, destination);
-   Matrix U(A);
-  
-   A.print();
+   Matrix U(original, destination);
+
+   U.lu();
+
+   std::cout << "U:\n";
    U.print();
-  
-   //U.gausianOP();
-   //U.print();
-    
+
     return 0;
 }

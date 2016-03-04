@@ -42,6 +42,15 @@ BMP::BMP(const char* path) {
     fclose(f);
 }
 
+// destructor
+BMP::~BMP() {
+    for (int r=0; r < _dibHead._height.be(); r++) {
+        delete rows[r].pixels;
+        delete rows[r].padding;
+    }
+    delete rows;
+}
+
 // writes to a BMP class to a BMP file
 void BMP::write(const char* path) {
     FILE* f = openFile(path, "w");
