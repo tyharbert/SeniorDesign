@@ -27,7 +27,7 @@ public:
     Matrix(int n): Matrix(n, n) { }
     Matrix(Corners, Corners);
     ~Matrix();
-    void lu();
+    void lu(bool = true);
     Matrix operator* (Matrix);
     void print();
 };

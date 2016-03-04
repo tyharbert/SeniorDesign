@@ -57,7 +57,7 @@ Matrix::~Matrix() {
 
 // computes the LU decomposition
 // of an NxN matrix
-void Matrix::lu() {
+void Matrix::lu(bool up) {
     assert(_height == _width); // must be a square matrix
     int n = _height - 1;
     int mu;
@@ -69,7 +69,7 @@ void Matrix::lu() {
     // partial pivot gaussian elimination
     for (int k = 0; k < n; k++) {
         mu = inf_norm(Range(k, n),k);
-        row_swap(k, mu, Range(k, n));
+        row_swap(k, mu, Range((up?k:0), n));
         // p[k] = mu;
 
         if (_values[k][k] != 0) {
@@ -79,9 +79,14 @@ void Matrix::lu() {
     }
 
     // set upper or lower values to 0
-    for (int c = 0; c < n; c++)
-        for (int r = c+1; r <= n; r++)
-            _values[r][c] = 0;
+    for (int i = 0; i < n; i++)
+        for (int j = i+1; j <= n; j++)
+            _values[(up?j:i)][(up?i:j)] = 0;
+
+    // set diagonal to 1 for lower matrix
+    if (!up)
+        for (int i = 0; i <= n; i++)
+            _values[i][i] = 1;
 }
 
 // performs a Gauss Transform

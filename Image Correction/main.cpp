@@ -12,11 +12,15 @@ int main()
    destination.print();
 
    Matrix U(original, destination);
+   Matrix L(U);
 
    U.lu();
+   L.lu(false);
 
    std::cout << "U:\n";
    U.print();
+   std::cout << "L:\n";
+   L.print();
 
     return 0;
 }
