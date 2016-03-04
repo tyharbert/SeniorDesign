@@ -26,8 +26,10 @@ public:
     Matrix(const Matrix& m);
     Matrix(int n): Matrix(n, n) { }
     Matrix(Corners, Corners);
+    Matrix(Corners);
     ~Matrix();
     void lu(bool = true);
+    Matrix forward_sub(Matrix);
     Matrix operator* (Matrix);
     void print();
 };

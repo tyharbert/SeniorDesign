@@ -13,6 +13,7 @@ int main()
 
    Matrix U(original, destination);
    Matrix L(U);
+   Matrix B(destination);
 
    U.lu();
    L.lu(false);
@@ -21,6 +22,13 @@ int main()
    U.print();
    std::cout << "L:\n";
    L.print();
+   std::cout << "B:\n";
+   B.print();
+
+   Matrix Y = L.forward_sub(B);
+
+   std::cout << "Y:\n";
+   Y.print();
 
     return 0;
 }

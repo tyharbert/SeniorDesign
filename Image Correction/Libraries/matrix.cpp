@@ -15,13 +15,13 @@ Matrix::Matrix(const Matrix& m): Matrix(m._height, m._width) {
         }
 }
 
-// constructor for transformation matrix
+// constructor for A matrix
 Matrix::Matrix(Corners orig, Corners dest): Matrix(8) {
-    int row;
     int* ox = orig.xArray();
     int* oy = orig.yArray();
     int* dx = dest.xArray();
     int* dy = dest.yArray();
+    int row;
 
     for (int i=0; i < 4; i++) {
         _values[i][0] = ox[i];
@@ -45,6 +45,20 @@ Matrix::Matrix(Corners orig, Corners dest): Matrix(8) {
         row = i+4;
         _values[row][6] = -((float)ox[i])*dy[i];
         _values[row][7] = -((float)oy[i])*dy[i];
+    }
+}
+
+// constructor for B matrix
+Matrix::Matrix(Corners dest): Matrix(8, 1) {
+    int* dx = dest.xArray();
+    int* dy = dest.yArray();
+
+    for (int i=0; i < 4; i++) {
+        _values[i][0] = dx[i];
+    }
+
+    for (int i=0; i < 4; i++) {
+        _values[i+4][0] = dy[i];
     }
 }
 
@@ -132,6 +146,23 @@ void Matrix::row_swap(int row1, int row2, Range cols) {
     for (int c = cols.start; c <= cols.end; c++) {
         std::swap(_values[row1][c], _values[row2][c]);
     }
+}
+
+// preforms forward substitiution
+Matrix Matrix::forward_sub(Matrix m) { 
+    assert(m._width == 1 && _height == m._height);
+    float temp;
+
+    Matrix result(_height, 1);
+
+    for (int r = 0; r < _height; r++) {
+        temp = m._values[r][0];
+        for (int n = 0; n < r; n++)
+            temp -= _values[r][n]*result._values[n][0];
+        result._values[r][0] = temp / _values[r][r];
+    }
+
+    return result;
 }
 
 // multiplies two matricies
