@@ -14,7 +14,7 @@ using namespace std;
 int main(){
 
 	int fd;
-	if ((fd = serialOpen ("/dev/ttyUSB1", 9600)) < 0)
+	if ((fd = serialOpen ("/dev/ttyUSB1", 115200)) < 0)
 	  {
 	    fprintf (stderr, "Unable to open serial device: %s\n", strerror (errno)) ;
 	    return 1 ;
