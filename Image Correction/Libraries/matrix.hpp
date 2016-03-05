@@ -20,6 +20,7 @@ private:
     void gauss_app(Range, Range);
     int inf_norm(Range, int);
     void row_swap(int, int, Range);
+    void deallocate_values();
     
 public:
     Matrix(int, int);
@@ -27,11 +28,14 @@ public:
     Matrix(int n): Matrix(n, n) { }
     Matrix(Corners, Corners);
     Matrix(Corners);
+    Matrix(int*, int);
     ~Matrix();
-    void lu(bool = true);
-    Matrix forward_sub(Matrix);
-    Matrix operator* (Matrix);
-    void print();
+    Matrix lu(bool = true);
+    Matrix forward_sub(const Matrix&);
+    Matrix back_sub(const Matrix&);
+    void reshape(int, int, int = 1);
+    Matrix operator* (const Matrix&);
+    friend std::ostream& operator<<(std::ostream&, const Matrix&);
 };
 
 struct Range

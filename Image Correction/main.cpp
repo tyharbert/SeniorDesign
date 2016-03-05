@@ -15,20 +15,17 @@ int main()
    Matrix L(U);
    Matrix B(destination);
 
-   U.lu();
+   Matrix P = U.lu();
    L.lu(false);
 
-   std::cout << "U:\n";
-   U.print();
-   std::cout << "L:\n";
-   L.print();
-   std::cout << "B:\n";
-   B.print();
+   Matrix Y = L.forward_sub(P*B);
+   Matrix H = U.back_sub(Y);
 
-   Matrix Y = L.forward_sub(B);
+   std::cout << "H:\n" << H << std::endl;
 
-   std::cout << "Y:\n";
-   Y.print();
+   H.reshape(3, 3);
+
+   std::cout << "H:\n" << H << std::endl;
 
     return 0;
 }

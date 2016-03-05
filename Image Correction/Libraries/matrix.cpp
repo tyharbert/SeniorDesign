@@ -62,29 +62,62 @@ Matrix::Matrix(Corners dest): Matrix(8, 1) {
     }
 }
 
+// constructor for P matrix
+Matrix::Matrix(int* piv, int n): Matrix(n+1) {
+    int col;
+
+    for (int row = 0; row < n; row++) {
+        col = piv[row];
+        // if the column was previously set
+        // change col to the last row it was
+        // set on
+        for (int i = row-1; i >= 0; i--) {
+            if (_values[i][col] == 1) {
+                col = i;
+                break;
+            }
+        }
+        _values[row][col] = 1;
+    }
+
+    // find the coulmn without a 1 in the last row
+    bool found1 = false;
+    for (int c = 0; c < _width; c++) {
+        found1 = false;
+        for (int r = 0; r < n; r++) {
+            if (_values[r][c] == 1) {
+                found1 = true;
+                break;
+            }
+        }
+        if (!found1) {
+            _values[n][c] = 1;
+            break;
+        }
+    }
+}
+
 // matrix destructor
 Matrix::~Matrix() {
-    for (int i=0; i < _height; i++)
-        delete _values[i];
-    delete _values;
+    deallocate_values();
 }
 
 // computes the LU decomposition
 // of an NxN matrix
-void Matrix::lu(bool up) {
+Matrix Matrix::lu(bool up) {
     assert(_height == _width); // must be a square matrix
     int n = _height - 1;
     int mu;
 
-    // int* p = new int[n]; // contains pivot values
-    // for (int i = 0; i < n; i++)
-    //     p[i] = -1;
+    int* p = new int[n](); // contains pivot values
+    for (int i = 0; i < n; i++)
+        p[i] = -1;
 
     // partial pivot gaussian elimination
     for (int k = 0; k < n; k++) {
         mu = inf_norm(Range(k, n),k);
         row_swap(k, mu, Range((up?k:0), n));
-        // p[k] = mu;
+        p[k] = mu;
 
         if (_values[k][k] != 0) {
             gauss(Range(k+1, n), k);
@@ -101,6 +134,8 @@ void Matrix::lu(bool up) {
     if (!up)
         for (int i = 0; i <= n; i++)
             _values[i][i] = 1;
+
+    return Matrix(p, n);
 }
 
 // performs a Gauss Transform
@@ -148,8 +183,15 @@ void Matrix::row_swap(int row1, int row2, Range cols) {
     }
 }
 
+// deallocates the float** of values
+void Matrix::deallocate_values() {
+    for (int i=0; i < _height; i++)
+        delete _values[i];
+    delete _values;
+}
+
 // preforms forward substitiution
-Matrix Matrix::forward_sub(Matrix m) { 
+Matrix Matrix::forward_sub(const Matrix& m) { 
     assert(m._width == 1 && _height == m._height);
     float temp;
 
@@ -165,9 +207,54 @@ Matrix Matrix::forward_sub(Matrix m) {
     return result;
 }
 
+// preforms forward substitiution
+Matrix Matrix::back_sub(const Matrix& m) { 
+    assert(m._width == 1 && _height == m._height);
+    float temp;
+
+    Matrix result(_height, 1);
+
+    for (int r = _height-1; r >= 0; r--) {
+        temp = m._values[r][0];
+        for (int n = _height-1; n > r; n--)
+            temp -= _values[r][n]*result._values[n][0];
+        result._values[r][0] = temp / _values[r][r];
+    }
+
+    return result;
+}
+
+void Matrix::reshape(int height, int width, int defaults) {
+    assert(_height*_width <= height*width); // can only reshape into larger or equal
+    int size = height*width;
+    int row = -1;
+    int _size = _height*_width;
+    int _row = -1;
+
+    float** temp = new float*[height];
+    for (int i=0; i < height; i++)
+        temp[i] = new float[width];
+
+    for (int i = 0; i < size; i++) {
+        if (i%width == 0) row++;
+        if (i%_width == 0) _row++;
+
+        if (i < _size)
+            temp[row][i%width] = _values[_row][i%_width];
+        else
+            temp[row][i%width] = defaults;
+    }
+
+    deallocate_values();
+
+    _height = height;
+    _width = width;
+    _values = temp;
+}
+
 // multiplies two matricies
 // axb * bxc = axc
-Matrix Matrix::operator* (Matrix m) {
+Matrix Matrix::operator* (const Matrix& m) {
     assert(_width == m._height); // matrix multiplication requires this
     int a = _height;
     int b = _width;
@@ -180,7 +267,7 @@ Matrix Matrix::operator* (Matrix m) {
         for (int col = 0; col < c; col++) {
             sum = 0;
             for (int i = 0; i < b; i++) {
-                sum += _values[row][i] * _values[i][col];
+                sum += _values[row][i] * m._values[i][col];
             }
             result._values[row][col] = sum;
         }
@@ -189,13 +276,14 @@ Matrix Matrix::operator* (Matrix m) {
 }
 
 // prints an matrix
-void Matrix::print() {
-    std::cout << std::scientific << std::setprecision(2);
-    for (int r=0; r < _height; r++) {
-        for (int c=0; c < _width; c++) {
-            std::cout << _values[r][c] << '\t';
+std::ostream& operator<<(std::ostream& os, const Matrix& m) {
+    os << std::scientific << std::setprecision(2);
+    for (int r=0; r < m._height; r++) {
+        for (int c=0; c < m._width; c++) {
+            os << m._values[r][c] << '\t';
         }
-        std::cout << std::endl;
+        os << std::endl;
     }
-    std::cout << std::endl;
+
+    return os;
 }
