@@ -1,7 +1,7 @@
 #include "libraries/bmp.hpp"
 #include "libraries/matrix.hpp"
 
-typedef Matrix<double> DMatrix;
+typedef Matrix<float> FMatrix;
 
 int main()
 {   
@@ -13,23 +13,19 @@ int main()
    original.print();
    destination.print();
 
-   DMatrix U(original, destination);
-   DMatrix L(U);
-   DMatrix B(destination);
+   FMatrix U(original, destination);
+   FMatrix L(U);
+   FMatrix B(destination);
 
-   DMatrix P = U.lu();
+   FMatrix P = U.lu();
    L.lu(false);
 
-   DMatrix Y = L.forward_sub(P*B);
-   DMatrix H = U.back_sub(Y);
+   FMatrix Y = L.forward_sub(P*B);
+   FMatrix H = U.back_sub(Y);
 
    H.reshape(3, 3);
 
-   std::cout << "H:\n" << H << std::endl;
-
-   DMatrix p(3044.0f, 2542.0f);
-
-   std::cout << "p:\n" << p << "\np':\n" << H*p << std::endl;
+   bmp.transform(H);
 
     return 0;
 }

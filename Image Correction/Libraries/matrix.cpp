@@ -276,15 +276,23 @@ void Matrix<T>::reshape(int height, int width, int defaults) {
     _values = temp;
 }
 
+// return the x and y for a 3-vector
+template<typename T>
+Point Matrix<T>::get_3v_point() {
+    assert(_height == 3 && _width == 1); // must be a 3-vector
+
+    return Point(int_round(_values[0][0]/_values[2][0]), int_round(_values[1][0]/_values[2][0]));
+}
+
 // multiplies two matricies
 // axb * bxc = axc
 template<typename T>
-Matrix<T> Matrix<T>::operator* (const Matrix<T>& m) {
+Matrix<T> Matrix<T>::operator* (const Matrix<T>& m) const {
     assert(_width == m._height); // matrix multiplication requires this
     int a = _height;
     int b = _width;
     int c = m._width;
-    int sum;
+    T sum;
 
     Matrix<T> result(a, c);   
 
@@ -305,4 +313,3 @@ Matrix<T> Matrix<T>::operator* (const Matrix<T>& m) {
 http://stackoverflow.com/questions/312115/c-linking-errors-undefined-symbols-using-a-templated-class/312402#312402
 */
 template class Matrix<float>;
-template class Matrix<double>;

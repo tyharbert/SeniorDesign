@@ -11,8 +11,7 @@ Corners Corners::findDest() {
 	if (temp_height < height)
 		height = temp_height;
 
-	// TODO: currently truncates to integer, may want to round??
-	width = height * h2w_ratio;
+	width = int_round(height * h2w_ratio);
 
 	Corner sw = Corner(0,0);
  	Corner nw = Corner(0, height);

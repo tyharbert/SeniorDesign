@@ -5,6 +5,7 @@
 
 #include "utils.hpp"
 #include "corner.hpp"
+#include "matrix.hpp"
 
 // 2-Bytes
 struct Word {
@@ -118,8 +119,19 @@ public:
     int32_t width() { return _dibHead._width.be(); }
     int32_t height() { return _dibHead._height.be(); }
     void write(const char*);
+    template<typename T>
+    void transform(const Matrix<T>&);
     Corners fast();
-    
 };
+
+// uses the H matrix to translate the image
+template<typename T>
+void BMP::transform(const Matrix<T>& H) {
+   Matrix<T> p((T)779, (T)182);
+
+   Point test = (H*p).get_3v_point();
+
+   std::cout << "x: " << test._x << " y: " << test._y << std::endl;
+}
 
 #endif

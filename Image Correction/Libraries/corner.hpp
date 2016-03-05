@@ -3,17 +3,25 @@
 
 #include <iostream>
 
+#include "utils.hpp"
+
 // these are based on the reference rectangle
 // ratio from height to width
 const double h2w_ratio = 17.0/21.0; 
 
-struct Corner {
+struct Point {
 	int _x;
 	int _y;
 
-	Corner(): _x(0), _y(0) { }
-	Corner(int c[2]): _x(c[0]), _y(c[1]) { }
-	Corner(int x, int y): _x(x), _y(y) { }
+	Point(): _x(0), _y(0) { }
+	Point(int p[2]): _x(p[0]), _y(p[1]) { }
+	Point(int x, int y): _x(x), _y(y) { }
+};
+
+struct Corner: Point {
+	Corner() : Point() { }
+	Corner(int c[2]): Point(c) { }
+	Corner(int x, int y) : Point(x, y) { }
 };
 
 struct Corners {

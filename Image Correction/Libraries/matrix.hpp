@@ -36,7 +36,8 @@ public:
     Matrix<T> forward_sub(const Matrix<T>&);
     Matrix<T> back_sub(const Matrix<T>&);
     void reshape(int, int, int = 1);
-    Matrix<T> operator* (const Matrix<T>&);
+    Point get_3v_point();
+    Matrix<T> operator* (const Matrix<T>&) const;
     template<typename T1>
     friend std::ostream& operator<<(std::ostream&, const Matrix<T1>&);
 };

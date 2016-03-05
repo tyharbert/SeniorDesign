@@ -18,8 +18,6 @@ FILE* openFile(const char* f, const char* setting){
 // less than or equal to the second
 void assert_le(int& first, int& second) {
 	if (first > second) {
-		int temp = second;
-		second = first;
-		first = temp;
+        std::swap(first, second);
 	}
 }
