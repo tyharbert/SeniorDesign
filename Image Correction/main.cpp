@@ -1,6 +1,8 @@
 #include "libraries/bmp.hpp"
 #include "libraries/matrix.hpp"
 
+typedef Matrix<double> DMatrix;
+
 int main()
 {   
    BMP bmp("../images/5.bmp");
@@ -11,21 +13,23 @@ int main()
    original.print();
    destination.print();
 
-   Matrix U(original, destination);
-   Matrix L(U);
-   Matrix B(destination);
+   DMatrix U(original, destination);
+   DMatrix L(U);
+   DMatrix B(destination);
 
-   Matrix P = U.lu();
+   DMatrix P = U.lu();
    L.lu(false);
 
-   Matrix Y = L.forward_sub(P*B);
-   Matrix H = U.back_sub(Y);
-
-   std::cout << "H:\n" << H << std::endl;
+   DMatrix Y = L.forward_sub(P*B);
+   DMatrix H = U.back_sub(Y);
 
    H.reshape(3, 3);
 
    std::cout << "H:\n" << H << std::endl;
+
+   DMatrix p(3044.0f, 2542.0f);
+
+   std::cout << "p:\n" << p << "\np':\n" << H*p << std::endl;
 
     return 0;
 }

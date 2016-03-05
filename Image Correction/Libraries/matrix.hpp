@@ -11,9 +11,10 @@
 // forward declaration of helper structs
 struct Range;
 
+template<typename T>
 class Matrix {
 private:
-    float** _values;
+    T** _values;
     int _height;
     int _width;
     void gauss(Range, int);
@@ -24,19 +25,35 @@ private:
     
 public:
     Matrix(int, int);
-    Matrix(const Matrix& m);
+    Matrix(const Matrix<T>& m);
     Matrix(int n): Matrix(n, n) { }
     Matrix(Corners, Corners);
     Matrix(Corners);
     Matrix(int*, int);
+    Matrix(T, T);
     ~Matrix();
-    Matrix lu(bool = true);
-    Matrix forward_sub(const Matrix&);
-    Matrix back_sub(const Matrix&);
+    Matrix<T> lu(bool = true);
+    Matrix<T> forward_sub(const Matrix<T>&);
+    Matrix<T> back_sub(const Matrix<T>&);
     void reshape(int, int, int = 1);
-    Matrix operator* (const Matrix&);
-    friend std::ostream& operator<<(std::ostream&, const Matrix&);
+    Matrix<T> operator* (const Matrix<T>&);
+    template<typename T1>
+    friend std::ostream& operator<<(std::ostream&, const Matrix<T1>&);
 };
+
+// prints a matrix
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const Matrix<T>& m) {
+    os << std::scientific << std::setprecision(4);
+    for (int r=0; r < m._height; r++) {
+        for (int c=0; c < m._width; c++) {
+            os << m._values[r][c] << '\t';
+        }
+        os << std::endl;
+    }
+
+    return os;
+}
 
 struct Range
 {

@@ -1,14 +1,16 @@
 #include "matrix.hpp"
 
 // matrix class constructor
-Matrix::Matrix(int h, int w): _height(h), _width(w) {
-    _values = new float*[h]();
+template<typename T>
+Matrix<T>::Matrix(int h, int w): _height(h), _width(w) {
+    _values = new T*[h]();
     for (int i=0; i < h; i++)
-        _values[i] = new float[w]();
+        _values[i] = new T[w]();
 }
 
 // matrix copy constructor
-Matrix::Matrix(const Matrix& m): Matrix(m._height, m._width) {
+template<typename T>
+Matrix<T>::Matrix(const Matrix<T>& m): Matrix<T>(m._height, m._width) {
     for (int r=0; r < m._height; r++)
         for (int c=0; c < m._width; c++){
             _values[r][c] = m._values[r][c];
@@ -16,7 +18,8 @@ Matrix::Matrix(const Matrix& m): Matrix(m._height, m._width) {
 }
 
 // constructor for A matrix
-Matrix::Matrix(Corners orig, Corners dest): Matrix(8) {
+template<typename T>
+Matrix<T>::Matrix(Corners orig, Corners dest): Matrix<T>(8) {
     int* ox = orig.xArray();
     int* oy = orig.yArray();
     int* dx = dest.xArray();
@@ -37,19 +40,20 @@ Matrix::Matrix(Corners orig, Corners dest): Matrix(8) {
     }
 
     for (int i=0; i < 4; i++) {
-        _values[i][6] = -((float)ox[i])*dx[i];
-        _values[i][7] = -((float)oy[i])*dx[i];
+        _values[i][6] = -((T)ox[i])*dx[i];
+        _values[i][7] = -((T)oy[i])*dx[i];
     }
 
     for (int i=0; i < 4; i++) {
         row = i+4;
-        _values[row][6] = -((float)ox[i])*dy[i];
-        _values[row][7] = -((float)oy[i])*dy[i];
+        _values[row][6] = -((T)ox[i])*dy[i];
+        _values[row][7] = -((T)oy[i])*dy[i];
     }
 }
 
 // constructor for B matrix
-Matrix::Matrix(Corners dest): Matrix(8, 1) {
+template<typename T>
+Matrix<T>::Matrix(Corners dest): Matrix<T>(8, 1) {
     int* dx = dest.xArray();
     int* dy = dest.yArray();
 
@@ -63,7 +67,8 @@ Matrix::Matrix(Corners dest): Matrix(8, 1) {
 }
 
 // constructor for P matrix
-Matrix::Matrix(int* piv, int n): Matrix(n+1) {
+template<typename T>
+Matrix<T>::Matrix(int* piv, int n): Matrix<T>(n+1) {
     int col;
 
     for (int row = 0; row < n; row++) {
@@ -97,14 +102,24 @@ Matrix::Matrix(int* piv, int n): Matrix(n+1) {
     }
 }
 
-// matrix destructor
-Matrix::~Matrix() {
+// creates a vector-3 representing a point
+template<typename T>
+Matrix<T>::Matrix(T x, T y): Matrix<T>(3, 1) {
+    _values[0][0] = x;
+    _values[1][0] = y;
+    _values[2][0] = 1;
+}
+
+// matrix 
+template<typename T>
+Matrix<T>::~Matrix() {
     deallocate_values();
 }
 
 // computes the LU decomposition
 // of an NxN matrix
-Matrix Matrix::lu(bool up) {
+template<typename T>
+Matrix<T> Matrix<T>::lu(bool up) {
     assert(_height == _width); // must be a square matrix
     int n = _height - 1;
     int mu;
@@ -140,14 +155,16 @@ Matrix Matrix::lu(bool up) {
 
 // performs a Gauss Transform
 // of the column over the range of rows supplied
-void Matrix::gauss(Range rows, int col) {
+template<typename T>
+void Matrix<T>::gauss(Range rows, int col) {
     for (int r = rows.start; r <= rows.end; r++) { 
         _values[r][col] = _values[r][col]/_values[rows.start-1][col];
     }
 }
 
 // performs an NxN Gauss Transform
-void Matrix::gauss_app(Range rows, Range cols) {
+template<typename T>
+void Matrix<T>::gauss_app(Range rows, Range cols) {
     assert(rows.length() == cols.length()); // must be a square matrix
 
     for (int c = cols.start; c <= cols.end ; c++) {
@@ -158,7 +175,8 @@ void Matrix::gauss_app(Range rows, Range cols) {
 }
 
 // finds the row location of the infinite norm of the values in a specified range
-int Matrix::inf_norm(Range rows, int col) {
+template<typename T>
+int Matrix<T>::inf_norm(Range rows, int col) {
     float max = -1;
     float test;
     int row;
@@ -175,7 +193,8 @@ int Matrix::inf_norm(Range rows, int col) {
 }
 
 // swaps the values in one row with the values on another row
-void Matrix::row_swap(int row1, int row2, Range cols) {
+template<typename T>
+void Matrix<T>::row_swap(int row1, int row2, Range cols) {
     if (row1 == row2) return; // don't swap for the same row
 
     for (int c = cols.start; c <= cols.end; c++) {
@@ -183,19 +202,21 @@ void Matrix::row_swap(int row1, int row2, Range cols) {
     }
 }
 
-// deallocates the float** of values
-void Matrix::deallocate_values() {
+// deallocates the _values double pointer
+template<typename T>
+void Matrix<T>::deallocate_values() {
     for (int i=0; i < _height; i++)
         delete _values[i];
     delete _values;
 }
 
 // preforms forward substitiution
-Matrix Matrix::forward_sub(const Matrix& m) { 
+template<typename T>
+Matrix<T> Matrix<T>::forward_sub(const Matrix<T>& m) { 
     assert(m._width == 1 && _height == m._height);
-    float temp;
+    T temp;
 
-    Matrix result(_height, 1);
+    Matrix<T> result(_height, 1);
 
     for (int r = 0; r < _height; r++) {
         temp = m._values[r][0];
@@ -208,11 +229,12 @@ Matrix Matrix::forward_sub(const Matrix& m) {
 }
 
 // preforms forward substitiution
-Matrix Matrix::back_sub(const Matrix& m) { 
+template<typename T>
+Matrix<T> Matrix<T>::back_sub(const Matrix<T>& m) { 
     assert(m._width == 1 && _height == m._height);
-    float temp;
+    T temp;
 
-    Matrix result(_height, 1);
+    Matrix<T> result(_height, 1);
 
     for (int r = _height-1; r >= 0; r--) {
         temp = m._values[r][0];
@@ -224,16 +246,18 @@ Matrix Matrix::back_sub(const Matrix& m) {
     return result;
 }
 
-void Matrix::reshape(int height, int width, int defaults) {
+// this reshapes a matrix into a bigger or equal matrix
+template<typename T>
+void Matrix<T>::reshape(int height, int width, int defaults) {
     assert(_height*_width <= height*width); // can only reshape into larger or equal
     int size = height*width;
     int row = -1;
     int _size = _height*_width;
     int _row = -1;
 
-    float** temp = new float*[height];
+    T** temp = new T*[height];
     for (int i=0; i < height; i++)
-        temp[i] = new float[width];
+        temp[i] = new T[width];
 
     for (int i = 0; i < size; i++) {
         if (i%width == 0) row++;
@@ -254,14 +278,15 @@ void Matrix::reshape(int height, int width, int defaults) {
 
 // multiplies two matricies
 // axb * bxc = axc
-Matrix Matrix::operator* (const Matrix& m) {
+template<typename T>
+Matrix<T> Matrix<T>::operator* (const Matrix<T>& m) {
     assert(_width == m._height); // matrix multiplication requires this
     int a = _height;
     int b = _width;
     int c = m._width;
     int sum;
 
-    Matrix result(a, c);   
+    Matrix<T> result(a, c);   
 
     for (int row = 0; row < a; row++)
         for (int col = 0; col < c; col++) {
@@ -275,15 +300,9 @@ Matrix Matrix::operator* (const Matrix& m) {
     return result;
 }
 
-// prints an matrix
-std::ostream& operator<<(std::ostream& os, const Matrix& m) {
-    os << std::scientific << std::setprecision(2);
-    for (int r=0; r < m._height; r++) {
-        for (int c=0; c < m._width; c++) {
-            os << m._values[r][c] << '\t';
-        }
-        os << std::endl;
-    }
-
-    return os;
-}
+/*
+"When you define your template in a .cpp file, you have to explicitly instantiate it with all the types / template parameters known the template will be used beforehand like this (put it in the .cpp file):"
+http://stackoverflow.com/questions/312115/c-linking-errors-undefined-symbols-using-a-templated-class/312402#312402
+*/
+template class Matrix<float>;
+template class Matrix<double>;
