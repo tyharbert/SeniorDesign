@@ -5,8 +5,8 @@ typedef Matrix<float> FMatrix;
 
 int main()
 {   
-   BMP bmp("../images/5.bmp");
-   Corners original = bmp.fast();
+   BMP* bmp = new BMP("../images/5.bmp");
+   Corners original = bmp->fast();
 
    Corners destination = original.findDest();
 
@@ -25,7 +25,7 @@ int main()
 
    H.reshape(3, 3);
 
-   bmp.transform(H);
+   BMP* final = new BMP(bmp, H, original, destination);
 
     return 0;
 }

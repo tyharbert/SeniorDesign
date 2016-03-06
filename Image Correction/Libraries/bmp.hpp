@@ -13,9 +13,9 @@ struct Word {
     unsigned char b2;
     
     // little endian (the way microsoft documents)
-    uint16_t le() { return b1 << 8 | b2; }
+    uint16_t le() const { return b1 << 8 | b2; }
     // big endian
-    uint16_t be() { return b2 << 8 | b1; }
+    uint16_t be() const { return b2 << 8 | b1; }
 };
 
 // 4-Bytes
@@ -24,9 +24,9 @@ struct DWord : Word {
     unsigned char b4;
     
     // little endian (the way microsoft documents)
-    uint32_t le() { return Word::le() << 16 | b3 << 8 | b4; }
+    uint32_t le() const { return Word::le() << 16 | b3 << 8 | b4; }
     // big endian
-    uint32_t be() { return b4 << 24 | b3 << 16 | Word::be(); }
+    uint32_t be() const { return b4 << 24 | b3 << 16 | Word::be(); }
 };
 
 // holds xyz of color in specified color space
@@ -115,23 +115,42 @@ private:
     
 public:
     BMP(const char*);
-    ~BMP();
-    int32_t width() { return _dibHead._width.be(); }
-    int32_t height() { return _dibHead._height.be(); }
-    void write(const char*);
     template<typename T>
-    void transform(const Matrix<T>&);
+    BMP(BMP*, Matrix<T>&, Corners, Corners);
+    ~BMP();
+    int32_t width() const { return _dibHead._width.be(); }
+    int32_t height() const { return _dibHead._height.be(); }
+    void write(const char*);
     Corners fast();
 };
 
-// uses the H matrix to translate the image
+// constructor for BMP created during transform
 template<typename T>
-void BMP::transform(const Matrix<T>& H) {
-   Matrix<T> p((T)779, (T)182);
+inline BMP::BMP(BMP* bmp, Matrix<T>& H, Corners orig, Corners dest) {
+    // copy the headers before updating them
+    _bmpHead = bmp->_bmpHead;
+    _dibHead = bmp->_dibHead;
 
-   Point test = (H*p).get_3v_point();
+    int width = dest._nw._x - dest._ne._x;
+    int height = dest._nw._y - dest._sw._y;
 
-   std::cout << "x: " << test._x << " y: " << test._y << std::endl;
+    // // if a row is not divisible by 32 bits padding is added on
+    // _rowPadding = 4 - width*3%4;
+    // if (_rowPadding == 4) // padding can only be 0 to 3
+    //     _rowPadding = 0;
+    
+    // // dynamically allocate rows
+    // rows = new Row[height];
+    // for(int i = 0; i < height; i++) {
+    //     // dynamically allocate pixels and read them in
+    //     rows[i].pixels = new Pixel[width];
+    //     //fread(rows[i].pixels, sizeof(Pixel), width, f);
+    //     // dynamically allocate row padding and read it in
+    //     if (_rowPadding > 0) {
+    //         rows[i].padding = new unsigned char[_rowPadding];
+    //         //fread(rows[i].padding, sizeof(unsigned char), _rowPadding, f);
+    //     }
+    // }
 }
 
 #endif
