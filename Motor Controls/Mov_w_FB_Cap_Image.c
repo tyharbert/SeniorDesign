@@ -39,7 +39,7 @@ unsigned short ADC_Rd(unsigned short address) //Read channel 0 or 1 adc, Pan Mot
 
     adc_hex = Rd_Rev(adc_hex); //Reverses the order of the hex value taken in
     printf("%d\n",adc_hex);
-    sleep(5);
+    sleep(3);
     return adc_hex;
     }
 
@@ -83,7 +83,7 @@ void Mov_Motor(int Motor_Num, int Motor_Loc) //Motor number (0 or 1), and Motor 
         printf("Command Length Too Long");
     else
         system(command);
-    sleep(1);
+    sleep(2);
 }
 
 void Tilt_Gusset(int Tilt_Loc, int Lower_Bound, int Upper_Bound)
@@ -111,7 +111,7 @@ void Cap_Image() //Motor number (0 or 1), and Motor Location (50-250)
     int cx=0;
     static int i=0;
     char command[n];
-    cx=snprintf(command, n, "fswebcam -r 1280x720 --jpeg 100 -D 60 -S 13 1 testing%d.jpeg", i); //assigns the echo call as the command, with the limit of n characters
+    cx=snprintf(command, n, "fswebcam -r 1280x720 --jpeg 100 -D 30 -S 13 1 testing%d.jpeg", i); //assigns the echo call as the command, with the limit of n characters
     if(cx>n)
         printf("Command Length Too Long");
     else
