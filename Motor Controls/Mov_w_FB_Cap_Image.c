@@ -131,14 +131,14 @@ pullUpDnControl(butPin, PUD_DOWN);
     {
         if (digitalRead(butPin)==1)
         {
-         Pan_Gusset(150, 1660, 1675);  //actual value 1669 or 1.669V
-         Tilt_Gusset(150, 1630, 1645); //actual value 1637 or 1.637V
+         Pan_Gusset(150, 1655, 1664);  //actual value 1669 or 1.669V
+         Tilt_Gusset(120, 1320, 1331); //actual value 1637 or 1.637V
          Cap_Image();
-         Pan_Gusset(180, 1960, 1973); //actual value 1970 or 1.970V
-         Tilt_Gusset(180,1920,1937);  // actual value 1930, or 1.93V
+         Pan_Gusset(180, 1955, 1965); //actual value 1970 or 1.970V
+         Tilt_Gusset(150,1627,1635);  // actual value 1930, or 1.93V
          Cap_Image();
-         Pan_Gusset(100,1130, 1150); //actual value 1142 or 1.142V
-         Tilt_Gusset(100, 1120, 1140); //actual value 1127 or 1.127V feedback
+         Pan_Gusset(130,1450, 1460); //actual value 1142 or 1.142V
+         Tilt_Gusset(120, 1320, 1331); //actual value 1127 or 1.127V feedback
          Cap_Image();
         }
     }
