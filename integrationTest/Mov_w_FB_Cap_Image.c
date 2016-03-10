@@ -7,9 +7,19 @@
 Servo 1 is the Tilt servo and can tilt from 0-150 degrees, or .5 ms to 2.08 ms
 */
 
+#include "xMessage.hpp"
 #include <unistd.h>
-#include <wiringPi.h>
 #include <stdio.h>
+
+extern "C" {
+#include <wiringPi.h>
+#include <wiringPiI2C.h>
+}
+
+
+//#include <unistd.h>
+//#include <wiringPi.h>
+//#include <stdio.h>
 
 //./servod --min={50|Nus|2.5%} //2.5% as minimum PW
 //./servod --max={200|Nus|75%} //75% to prevent servo1 (tilt) from hitting at max pulse
@@ -127,6 +137,12 @@ wiringPiSetupGpio();
 pinMode(butPin, INPUT);
 pullUpDnControl(butPin, PUD_DOWN);
 
+        char *device = (char *)"/dev/ttyUSB0";
+        Serial xbee(device, 57600);
+        Message msg;
+        int result;
+        int fd;
+
     while(1)
     {
         if (digitalRead(butPin)==1)
@@ -134,12 +150,29 @@ pullUpDnControl(butPin, PUD_DOWN);
          Pan_Gusset(150, 1655, 1664);  //actual value 1669 or 1.669V
          Tilt_Gusset(120, 1320, 1331); //actual value 1637 or 1.637V
          Cap_Image();
+	 sleep(2);
+	 result = XSend(fd, "testImage.jpeg");
+         if(result == 0){
+                printf("Image transmitted successfully\n");
+//               std::cout << "Image transmitted successfully\n";
+         }
+         else{
+                printf("Error during transmission\n");
+//                 std::cout << "Error during image transmission\n";
+         }
+
+
+
+/*
          Pan_Gusset(180, 1955, 1965); //actual value 1970 or 1.970V
          Tilt_Gusset(150,1627,1635);  // actual value 1930, or 1.93V
          Cap_Image();
+
+
          Pan_Gusset(130,1450, 1460); //actual value 1142 or 1.142V
          Tilt_Gusset(120, 1320, 1331); //actual value 1127 or 1.127V feedback
          Cap_Image();
+*/
         }
     }
 
