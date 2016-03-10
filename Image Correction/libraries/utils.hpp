@@ -2,6 +2,7 @@
 #define UTILS_HPP
 
 #include <stdexcept>
+#include <cstring>
 
 // Opens the file passed in
 FILE* openFile(const char*, const char*);
@@ -20,5 +21,9 @@ inline int int_round(T val) {
 	else
 		return temp+1;
 }
+
+// void jpeg_to_bmp(const char*, const char *);
+
+// void bmp_to_jpeg(const char*, const char *);
 
 #endif

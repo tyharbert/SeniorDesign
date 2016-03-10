@@ -21,3 +21,21 @@ void assert_le(int& first, int& second) {
         std::swap(first, second);
 	}
 }
+
+// void jpeg_to_bmp(const char* src, const char* dest) {
+//     char buffer[256];
+//     buffer = std::strcpy("djpeg ");
+//     buffer = std::strcat(src);
+//     buffer = std::strcat(" > ");
+//     buffer = std::strcat(dest);
+//     system(buffer);
+// }
+
+// void bmp_to_jpeg(const char* src, const char* dest) {
+//     char buffer[256];
+//     buffer = std::strcpy("cjpeg ");
+//     buffer = std::strcat(src);
+//     buffer = std::strcat(" > ");
+//     buffer = std::strcat(dest);
+//     system(buffer);
+// }

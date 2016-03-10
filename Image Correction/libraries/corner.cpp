@@ -21,11 +21,16 @@ Corners Corners::findDest() {
 	return Corners(sw, nw, ne, se);
 }
 
+void Point::print() {
+	std::cout << "x: " << _x << " y: " << _y << std::endl;
+}
+
 void Corners::print() {
-	std::cout << "sw: x: " << _sw._x << " y: " << _sw._y << std::endl;
-	std::cout << "nw: x: " << _nw._x << " y: " << _nw._y << std::endl;
-	std::cout << "ne: x: " << _ne._x << " y: " << _ne._y << std::endl;
-	std::cout << "se: x: " << _se._x << " y: " << _se._y << std::endl << std::endl;
+	std::cout << "sw: "; _sw.print();
+	std::cout << "nw: "; _nw.print();
+	std::cout << "ne: "; _ne.print();
+	std::cout << "se: "; _se.print();
+	std::cout << std::endl;
 }
 
 int* Corners::xArray() {
