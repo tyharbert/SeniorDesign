@@ -1,23 +1,3 @@
-//////////////////////////////////////////////////////////////////////////////
-//                                                                          //
-//                                      _                                   //
-//         __  __ _ __ ___    ___    __| |  ___  _ __ ___      ___          //
-//         \ \/ /| '_ ` _ \  / _ \  / _` | / _ \| '_ ` _ \    / __|         //
-//          >  < | | | | | || (_) || (_| ||  __/| | | | | | _| (__          //
-//         /_/\_\|_| |_| |_| \___/  \__,_| \___||_| |_| |_|(_)\___|         //
-//                                                                          //
-//                                                                          //
-//////////////////////////////////////////////////////////////////////////////
-//                                                                          //
-//          Copyright (c) 2012 by S.F.T. Inc. - All rights reserved         //
-//  Use, copying, and distribution of this software are licensed according  //
-//    to the GPLv2, LGPLv2, or BSD license, as appropriate (see COPYING)    //
-//                                                                          //
-//////////////////////////////////////////////////////////////////////////////
-
-
-// XMODEM adapted for arduino and POSIX systems.  Windows code incomplete
-
 #include "xmodem.h"
 
 // internal structure definitions
@@ -37,27 +17,6 @@
 #define _NAK_ 21 /* NAK character */
 #define _CAN_ 24 /* CAN character CTRL+X */
 
-/** \file xmodem.c
-  * \brief main source file for S.F.T. XMODEM library
-  *
-  * S.F.T. XMODEM library
-**/
-
-/** \ingroup xmodem_internal
-  * \brief Structure defining an XMODEM CHECKSUM packet
-  *
-\code
-typedef struct _XMODEM_BUF_
-{
-   char cSOH;                   // ** SOH byte goes here             **
-   unsigned char aSEQ, aNotSEQ; // ** 1st byte = seq#, 2nd is ~seq#  **
-   char aDataBuf[128];          // ** the actual data itself!        **
-   unsigned char bCheckSum;     // ** checksum gets 1 byte           **
-} PACKED XMODEM_BUF;
-
-\endcode
-  *
-**/
 typedef struct _XMODEM_BUF_
 {
    char cSOH;                   ///< SOH byte goes here
@@ -66,21 +25,6 @@ typedef struct _XMODEM_BUF_
    unsigned char bCheckSum;     ///< checksum gets 1 byte
 } PACKED XMODEM_BUF;
 
-/** \ingroup xmodem_internal
-  * \brief Structure defining an XMODEM CRC packet
-  *
-\code
-typedef struct _XMODEMC_BUF_
-{
-   char cSOH;                   // ** SOH byte goes here             **
-   unsigned char aSEQ, aNotSEQ; // ** 1st byte = seq#, 2nd is ~seq#  **
-   char aDataBuf[128];          // ** the actual data itself!        **
-   unsigned short wCRC;         // ** CRC gets 2 bytes, high endian  **
-} PACKED XMODEMC_BUF;
-
-\endcode
-  *
-**/
 typedef struct _XMODEMC_BUF_
 {
    char cSOH;                   ///< SOH byte goes here
@@ -94,28 +38,6 @@ typedef struct _XMODEMC_BUF_
 #pragma pack(pop)
 #endif // WIN32
 
-/** \ingroup xmodem_internal
-  * \brief Structure that identifies the XMODEM communication state
-  *
-\code
-typedef struct _XMODEM_
-{
-  SERIAL_TYPE ser;     // identifies the serial connection, data type is OS-dependent
-  FILE_TYPE file;      // identifies the file handle, data type is OS-dependent
-
-  union
-  {
-    XMODEM_BUF xbuf;   // XMODEM CHECKSUM buffer
-    XMODEMC_BUF xcbuf; // XMODEM CRC buffer
-  } buf;               // union of both buffers, total length 133 bytes
-
-  unsigned char bCRC;  // non-zero for CRC, zero for checksum
-
-} XMODEM;
-
-\endcode
-  *
-**/
 typedef struct _XMODEM_
 {
   SERIAL_TYPE ser;     ///< identifies the serial connection, data type is OS-dependent
@@ -222,17 +144,6 @@ const unsigned char *p1, *p2;
 }
 #endif // STAND_ALONE, DEBUG_CODE
 
-
-//char iBinaryTransfer = 0, iDisableRXOVER = 0;
-
-/** \ingroup xmodem_internal
-  * \brief Calculate checksum for XMODEM packet
-  *
-  * \param lpBuf A pointer to the XMODEM data buffer
-  * \param cbBuf The length of the XMODEM data buffer (typically 128)
-  * \return An unsigned char value to be assigned to the 'checksum' element in the XMODEM packet
-  *
-**/
 unsigned char CalcCheckSum(const char *lpBuf, short cbBuf)
 {
 short iC, i1;
@@ -247,15 +158,6 @@ short iC, i1;
   return (unsigned char)(iC & 0xff);
 }
 
-/** \ingroup xmodem_internal
-  * \brief Calculate checksum for XMODEM packet
-  *
-  * \param sVal An unsigned short integer to be made 'high endian' by flipping bytes (as needed)
-  * \return A (possibly) byte-flipped high-endian unsigned short integer
-  *
-  * This function assumes low-endian for Arduino, and performs a universal operation
-  * for 'indeterminate' architectures.
-**/
 static unsigned short my_htons(unsigned short sVal)
 {
   union
@@ -263,8 +165,6 @@ static unsigned short my_htons(unsigned short sVal)
     unsigned char aVal[2];
     unsigned short sVal;
   } a, b;
-
-  // tweeked for size and speed.  enjoy.
 
   b.sVal = sVal;
 
@@ -282,17 +182,6 @@ static unsigned short my_htons(unsigned short sVal)
 
   return a.sVal;
 }
-
-/** \ingroup xmodem_internal
-  * \brief Calculate 16-bit CRC for XMODEM packet
-  *
-  * \param lpBuf A pointer to the XMODEM data buffer
-  * \param cbBuf The length of the XMODEM data buffer (typically 128)
-  * \return A high-endian 16-bit (unsigned short) value to be assigned to the 'CRC' element in the XMODEM packet
-  *
-  * This method uses the 'long way' which is SMALLER CODE for microcontrollers, but eats up a bit more CPU.
-  * Otherwise, you'd have to pre-build the 256 byte table and use "the table lookup" method.
-**/
 unsigned short CalcCRC(const char *lpBuf, short cbBuf)
 {
 unsigned short wCRC;
@@ -331,35 +220,11 @@ char cAL;
   return my_htons(wCRC);
 }
 
-//void WaitASecond()
-//{
-//#ifdef ARDUINO
-//  delay(1000);
-//#elif defined(WIN32)
-//  Sleep(1000);
-//#else //
-//  usleep(1000000);
-//#endif // ARDUINO
-//}
-
 #ifndef ARDUINO
 #ifdef WIN32
 #define MyMillis GetTickCount
 #else // WIN32
 
-/** \ingroup xmodem_internal
-  * \brief Return internal 'milliseconds' value for timing purposes
-  *
-  * \return A calculated 'milliseconds' value as an unsigned long integer
-  *
-  * This function returns the 'unsigned long' integer value for elapsed time based
-  * on the result of the 'gettimeofday()' API function.  On 32-bit and Windows systems
-  * the value might wrap around, so you should be careful with your time comparisons (see the
-  * code _I_ wrote for the right way to do it). On 64-bit POSIX systems, this value will
-  * always increase.\n
-  * NOTE:  Win32 defines this as a macro (see above) for the 'GetTickCount()' api, which
-  *        returns a 32-bit value.  POSIX x86 returns 32-bit, x64 returns 64-bit.  YMMV.
-**/
 unsigned long MyMillis(void)
 {
 struct timeval tv;
@@ -374,76 +239,23 @@ struct timeval tv;
 #endif // WIN32
 #endif // ARDUINO
 
-//Function GenerateSEQ (wSeq%) As String
-//
-//   GenerateSEQ = Chr$(wSeq%) + Chr$(Not (wSeq%) And &HFF)
-//
-//End Function
-
-/** \ingroup xmodem_internal
-  * \brief Generate a sequence number pair, place into XMODEM_BUF
-  *
-  * \param pBuf A pointer to an XMODEM_BUF structure
-  * \param bSeq An unsigned char, typically cast from an unsigned long 'block number'
-  *
-  * This function generates the sequence pair for the XMODEM packet.  The 'block number'
-  * is initially assigned a value of '1', and increases by 1 for each successful packet.
-  * That value is 'truncated' to a single byte and assigned as a sequence number for the
-  * packet itself.
-**/
 void GenerateSEQ(XMODEM_BUF *pBuf, unsigned char bSeq)
 {
   pBuf->aSEQ = bSeq;
   pBuf->aNotSEQ = ~bSeq;
 }
 
-/** \ingroup xmodem_internal
-  * \brief Generate a sequence number pair, place into XMODEMC_BUF (the CRC version)
-  *
-  * \param pBuf A pointer to an XMODEM_BUF structure
-  * \param bSeq An unsigned char, typically cast from an unsigned long 'block number'
-  *
-  * This function generates the sequence pair for the XMODEM packet.  The 'block number'
-  * is initially assigned a value of '1', and increases by 1 for each successful packet.
-  * That value is 'truncated' to a single byte and assigned as a sequence number for the
-  * packet itself.
-**/
 void GenerateSEQC(XMODEMC_BUF *pBuf, unsigned char bSeq)
 {
   pBuf->aSEQ = bSeq;
   pBuf->aNotSEQ = (255 - bSeq);//~bSeq; these should be the same but for now I do this...
 }
 
-/** \ingroup xmodem_internal
-  * \brief Get an XMODEM block from the serial device
-  *
-  * \param ser A 'SERIAL_TYPE' identifier for the serial connection
-  * \param pBuf A pointer to the buffer that receives the data
-  * \param cbSize The number of bytes/chars to read
-  * \return The number of bytes/chars read, 0 if timed out (no data), < 0 on error
-  *
-  * Call this function to read data from the serial port, specifying the number of
-  * bytes to read.  This function times out after no data transferred (silence) for
-  * a period of 'SILENCE_TIMEOUT' milliseconds.  This allows spurious data transfers
-  * to continue as long as there is LESS THAN 'SILENCE_TIMEOUT' between bytes, and
-  * also allows VERY SLOW BAUD RATES (as needed).  However, if the transfer takes longer
-  * than '10 times SILENCE_TIMEOUT', the function will return the total number of bytes
-  * that were received within that time.\n
-  * The default value of 5 seconds, extended to 50 seconds, allows a worst-case baud
-  * rate of about 20.  This should not pose a problem.  If it does, edit the code.
-**/
 short GetXmodemBlock(SERIAL_TYPE ser, char *pBuf, short cbSize)
 {
 unsigned long ulCur;
 short cb1;
 char *p1;
-
-// ** This function obtains a buffer of 'wSize%' bytes,      **
-// ** waiting a maximum of 5 seconds (of silence) to get it. **
-// ** It returns this block as a string of 'wSize%' bytes,   **
-// ** or a zero length string on error.                      **
-
-//   iDisableRXOVER% = 1; // bug workaround
 
 #ifdef ARDUINO
 short i1;
@@ -545,16 +357,6 @@ the_end:
   return cb1; // what I actually read
 }
 
-/** \ingroup xmodem_internal
-  * \brief Write a single character to the serial device
-  *
-  * \param ser A 'SERIAL_TYPE' identifier for the serial connection
-  * \param bVal The byte to send
-  * \return The number of bytes/chars written, or < 0 on error
-  *
-  * Call this function to write one byte of data to the serial port.  Typically
-  * this is used to send things like an ACK or NAK byte.
-**/
 int WriteXmodemChar(SERIAL_TYPE ser, unsigned char bVal)
 {
 int iRval;
@@ -597,17 +399,6 @@ char buf[2]; // use size of '2' to avoid warnings about array size of '1'
   return iRval;
 }
 
-/** \ingroup xmodem_internal
-  * \brief Send an XMODEM block via the serial device
-  *
-  * \param ser A 'SERIAL_TYPE' identifier for the serial connection
-  * \param pBuf A pointer to the buffer that receives the data
-  * \param cbSize The number of bytes/chars to write
-  * \return The number of bytes/chars written, < 0 on error
-  *
-  * Call this function to write data via the serial port, specifying the number of
-  * bytes to write.
-**/
 int WriteXmodemBlock(SERIAL_TYPE ser, const void *pBuf, int cbSize)
 {
 int iRval;
@@ -651,18 +442,6 @@ int iRval;
   return iRval;
 }
 
-/** \ingroup xmodem_internal
-  * \brief Read all input from the serial port until there is 1 second of 'silence'
-  *
-  * \param ser A 'SERIAL_TYPE' identifier for the serial connection
-  *
-  * Call this function to read ALL data from the serial port, until there is a period
-  * with no data (i.e. 'silence') for 1 second.  At that point the function will return.\n
-  * Some operations require that any bad data be flushed out of the input to prevent
-  * synchronization problems.  By using '1 second of silence' it forces re-synchronization
-  * to occur in one shot, with the possible exception of VERY noisy lines.  The down side
-  * is that it may slow down transfers with a high data rate.
-**/
 void XModemFlushInput(SERIAL_TYPE ser)
 {
 unsigned long ulStart;
@@ -711,14 +490,14 @@ unsigned char buf[2];
   ulStart = MyMillis();
 #ifdef DEBUG_CODE
   cbBuf = 0;
-#endif // DEBUG_CODE  
+#endif // DEBUG_CODE
   while((MyMillis() - ulStart) < 1000)
   {
 #ifdef DEBUG_CODE
     i1 = read(ser, &(buf[cbBuf]), 1);
-#else // DEBUG_CODE  
+#else // DEBUG_CODE
     i1 = read(ser, buf, 1);
-#endif // DEBUG_CODE  
+#endif // DEBUG_CODE
     if(i1 == 1)
     {
 #if defined(STAND_ALONE) && defined(DEBUG_CODE)
@@ -743,18 +522,9 @@ unsigned char buf[2];
     debug_dump_buffer(-1, buf, cbBuf);
   }
 #endif // STAND_ALONE, DEBUG_CODE
-  
 #endif // ARDUINO
 }
 
-/** \ingroup xmodem_internal
-  * \brief Terminate the XMODEM connection
-  *
-  * \param pX A pointer to the 'XMODEM' object identifying the transfer
-  *
-  * Call this function prior to ending the XMODEM transfer.  Currently the only
-  * thing it does is flush the input.
-**/
 void XmodemTerminate(XMODEM *pX)
 {
   XModemFlushInput(pX->ser);
@@ -762,52 +532,18 @@ void XmodemTerminate(XMODEM *pX)
   // TODO:  close files?
 }
 
-
-/** \ingroup xmodem_internal
-  * \brief Validate the sequence number of a received XMODEM block
-  *
-  * \param pX A pointer to an 'XMODEM_BUF'
-  * \param bSeq The expected sequence number (block & 255)
-  * \return A zero value on success, non-zero otherwise
-  *
-  * Call this function to validate a packet's sequence number against the block number
-**/
 short ValidateSEQ(XMODEM_BUF *pX, unsigned char bSeq)
 {
   return pX->aSEQ != 255 - pX->aNotSEQ || // ~(pX->aNotSEQ) ||
          pX->aSEQ != bSeq; // returns TRUE if not valid
 }
 
-/** \ingroup xmodem_internal
-  * \brief Validate the sequence number of a received XMODEM block (CRC version)
-  *
-  * \param pX A pointer to an 'XMODEMC_BUF'
-  * \param bSeq The expected sequence number (block & 255)
-  * \return A zero value on success, non-zero otherwise
-  *
-  * Call this function to validate a packet's sequence number against the block number
-**/
 short ValidateSEQC(XMODEMC_BUF *pX, unsigned char bSeq)
 {
   return pX->aSEQ != 255 - pX->aNotSEQ || // ~(pX->aNotSEQ) ||
          pX->aSEQ != bSeq; // returns TRUE if not valid
 }
 
-/** \ingroup xmodem_internal
-  * \brief Generic function to receive a file via XMODEM (CRC or Checksum)
-  *
-  * \param pX A pointer to an 'XMODEM_BUF' with valid bCRC, ser, and file members
-  * \return A zero value on success, negative on error, positive on cancel
-  *
-  * The calling function will need to poll for an SOH from the server using 'C' and 'NAK'
-  * characters (as appropriate) until an SOH is received.  That value must be assigned
-  * to the 'buf' union (as appropriate), and the bCRC member assigned to non-zero if
-  * the server responded to 'C', or zero if it responded to 'NAK'.  With the bCRC,
-  * ser, and file members correctly assigned, call THIS function to receive content
-  * via XMODEM and write it to 'file'.\n
-  * This function will return zero on success, a negative value on error, and a positive
-  * value if the transfer was canceled by the server.
-**/
 int ReceiveXmodem(XMODEM *pX)
 {
 int ecount, ec2;
@@ -875,9 +611,6 @@ short i1, i2, i3;
 
 #ifdef DEBUG_CODE
       sprintf(szERR,"B%ld,%d,%d,%d,%d,%d",block,i1,i2,i3,pX->buf.xcbuf.aSEQ, pX->buf.xcbuf.aNotSEQ);
-//#ifdef STAND_ALONE
-//      fprintf(stderr, "TEMPORARY (CRC):  seq=%x, ~seq=%x  i1=%d, i2=%d, i3=%d\n", pX->buf.xcbuf.aSEQ, pX->buf.xcbuf.aNotSEQ, i1, i2, i3);
-//#endif // STAND_ALONE
 #endif // DEBUG_CODE
 
       XModemFlushInput(pX->ser);  // necessary to avoid problems
@@ -922,7 +655,7 @@ short i1, i2, i3;
     while(ecount < TOTAL_ERROR_COUNT && ec2 < ACK_ERROR_COUNT) // ** loop to get SOH or EOT character **
     {
       WriteXmodemChar(pX->ser, cY); // ** output appropriate command char **
-     
+
       if(GetXmodemBlock(pX->ser, &(pX->buf.xbuf.cSOH), 1) == 1)
       {
         if(pX->buf.xbuf.cSOH == _CAN_) // ** CTRL-X 'CAN' - terminate
@@ -975,22 +708,6 @@ short i1, i2, i3;
 }
 
 
-/** \ingroup xmodem_internal
-  * \brief Generic function to send a file via XMODEM (CRC or Checksum)
-  *
-  * \param pX A pointer to an 'XMODEM_BUF' with valid ser, and file members, and the polled
-  * 'NAK' value assigned to the cSOH member (first byte) within the 'buf' union.
-  * \return A zero value on success, negative on error, positive on cancel
-  *
-  * The calling function will need to poll for a 'C' or NAK from the client (as appropriate)
-  * and assign that character to the cSOH member in the 'buf' union (either xbuf or xcbuf since
-  * the 'cSOH' will always be the first byte).  Then call this function to send content
-  * via XMODEM from 'file'.\n
-  * It is important to record the NAK character before calling this function since the 'C' or
-  * 'NAK' value will be used to determine whether to use CRC or CHECKSUM.\n
-  * This function will return zero on success, a negative value on error, and a positive
-  * value if the transfer was canceled by the receiver.
-**/
 int SendXmodem(XMODEM *pX)
 {
 int ecount, ec2;
@@ -1197,14 +914,6 @@ long etotal, filesize, filepos, block;
     }
 
   } while(ecount < TOTAL_ERROR_COUNT * 2); // twice error count allowed for sending
-    
-// TODO: progress indicator
-//   If filesize& <> 0 And filepos& <= filesize& Then
-//      Form2!Label1.FloodPercent = 100 * filepos& / filesize&
-//   Else
-//      Form2!Label1.FloodPercent = 100
-//   End If
-
 
    // ** at this point it is important to indicate the errors
    // ** and flush all buffers, and terminate process!
@@ -1216,19 +925,6 @@ long etotal, filesize, filepos, block;
   return -2; // exit on error
 }
 
-
-/** \ingroup xmodem_internal
-  * \brief Calling function for ReceiveXmodem
-  *
-  * \param pX A pointer to an 'XMODEM_BUF' with valid ser, and file members
-  * \return A zero value on success, negative on error, positive on cancel
-  *
-  * This is a generic 'calling function' for ReceiveXmodem that checks for
-  * a response to 'C' and 'NAK' characters, and sets up the XMODEM transfer
-  * for either CRC or CHECKSUM mode.\n
-  * This function will return zero on success, a negative value on error, and a positive
-  * value if the transfer was canceled by the receiver.
-**/
 int XReceiveSub(XMODEM *pX)
 {
 int i1;
@@ -1240,7 +936,7 @@ int i1;
   for(i1=0; i1 < 8; i1++)
   {
     WriteXmodemChar(pX->ser, 'C'); // start with NAK for XMODEM CRC
-     
+
     if(GetXmodemBlock(pX->ser, &(pX->buf.xbuf.cSOH), 1) == 1)
     {
       if(pX->buf.xbuf.cSOH == _SOH_) // SOH - packet is on its way
@@ -1256,7 +952,7 @@ int i1;
         return 1; // canceled
       }
     }
-  }    
+  }
 
   pX->bCRC = 0;
 
@@ -1264,7 +960,7 @@ int i1;
   for(i1=0; i1 < 8; i1++)
   {
     WriteXmodemChar(pX->ser, _NAK_); // switch to NAK for XMODEM Checksum
-     
+
     if(GetXmodemBlock(pX->ser, &(pX->buf.xbuf.cSOH), 1) == 1)
     {
       if(pX->buf.xbuf.cSOH == _SOH_) // SOH - packet is on its way
@@ -1280,27 +976,13 @@ int i1;
         return 1; // canceled
       }
     }
-  }    
-  
+  }
 
   XmodemTerminate(pX);
 
   return -3; // fail
 }
 
-
-/** \ingroup xmodem_internal
-  * \brief Calling function for SendXmodem
-  *
-  * \param pX A pointer to an 'XMODEM_BUF' with valid ser, and file members
-  * \return A zero value on success, negative on error, positive on cancel
-  *
-  * This is a generic 'calling function' for SendXmodem that checks for polls by the
-  * receiver, and places the 'NAK' or 'C' character into the 'buf' member of the XMODEM
-  * structure so that SendXmodem can use the correct method, either CRC or CHECKSUM mode.\n
-  * This function will return zero on success, a negative value on error, and a positive
-  * value if the transfer was canceled by the receiver.
-**/
 int XSendSub(XMODEM *pX)
 {
 unsigned long ulStart;
@@ -1348,21 +1030,6 @@ unsigned long ulStart;
 #endif // STAND_ALONE
   return -3; // fail
 }
-
-//typedef struct _XMODEM_
-//{
-//  SERIAL_TYPE ser;
-//  FILE_TYPE file;
-//
-//  union
-//  {
-//    XMODEM_BUF xbuf;
-//    XMODEMC_BUF xcbuf;
-//  } buf; // 133 bytes
-//
-//  unsigned char bCRC; // non-zero for CRC, zero for checksum
-//
-//}  __attribute__((__packed__)) XMODEM;
 
 #ifdef ARDUINO
 
@@ -1531,20 +1198,6 @@ static const char szSER[]="/dev/ttyU0";
 
 #include <termios.h>
 
-/** \ingroup xmodem_standalone
-  * \brief Terminal configuration (POSIX only)
-  *
-  * \param iFile The open file handle for the serial connection
-  * \param iBaud The baud rate for the connection
-  * \param iParity The parity, < 0 for even, > 0 for odd, 0 for none
-  * \param iBits The number of bits (5, 6, 7, 8)
-  * \param iStop The number of stop bits (1 or 2)
-  *
-  * This is a sample tty config function to CORRECTLY set up a serial connection
-  * to allow XMODEM transfer.  The important details here are the use of the
-  * 'termios' structure and utility functions to DISABLE all of the things that
-  * would otherwise cause trouble, like CRLF translation, CTRL+C handling, etc.
-**/
 void ttyconfig(int iFile, int iBaud, int iParity, int iBits, int iStop)
 {
 int i1;
@@ -1618,16 +1271,6 @@ struct termios sIOS;
   }
 }
 
-/** \ingroup xmodem_standalone
-  * \brief Arduino 'reset' function
-  *
-  * \param iFile The open file handle for the serial connection
-  *
-  * The Arduino serial port typically has the DTR/RTS lines configured so that
-  * a proper 'pulse' will cause a hardware reset of the device.  This function will
-  * send that pulse to the Arduino, and wait for a short time afterwards for the
-  * hardware reset to take place.
-**/
 void reset_arduino(int iFile)
 {
 unsigned int sFlags;
