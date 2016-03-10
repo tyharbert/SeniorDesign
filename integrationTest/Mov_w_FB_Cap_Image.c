@@ -6,12 +6,12 @@
 /* Servo 0 is the Pan servo and can tilt from 0-180 degrees, or .5 ms to 2.5 ms
 Servo 1 is the Tilt servo and can tilt from 0-150 degrees, or .5 ms to 2.08 ms
 */
-
+#include "xMessage.hpp"
 #include <unistd.h>
 #include <wiringPi.h>
 #include <stdio.h>
-#include <wiringSerial.h>
-#include "xmodem.c"
+//#include <wiringSerial.h>
+//#include "xmodem.c"
 #include <iostream>
 
 //./servod --min={50|Nus|2.5%} //2.5% as minimum PW
@@ -127,27 +127,42 @@ system("echo ./servod --p1pins=7, 11, 0, 0, 0, 0, 0, 0");
 wiringPiSetupGpio();
 pinMode(butPin, INPUT);
 pullUpDnControl(butPin, PUD_DOWN);
-
+/*
         int fd;
         if ((fd = serialOpen ("/dev/ttyUSB0", 9600)) < 0)
           {
             fprintf (stderr, "Unable to open serial device: %s\n", strerror$
             return 1 ;
           }
-
+*/
+	Serial xbee(device, 57600);
+	Message msg;
         int result;
-
+	char *device = (char *)"/dev/ttyUSB1";
+	int fd;
 
     while(1)
     {
         if (digitalRead(butPin)==1)
         {
+
          Pan_Gusset(150, 1660, 1675);  //actual value 1669 or 1.669V
          Tilt_Gusset(150, 1630, 1645); //actual value 1637 or 1.637V
          Cap_Image();
-         result = XSend(fd, "tylerUseThisImage.jpeg");
+	 msg.SendingImage();
+	 fd = xbee.Open();
+	 std::cout << "Sending Imgae Signal\n";
+	 sleep(2)
+	 std::cout << "Transmitting Image\n";
+         result = XSend(fd, "testImage.jpeg");
+         if(result == 0){
+	         std::cout << "Image transmitted successfully\n";
+         }
+         else{
+                 std::cout << "Error during image transmission\n";
+         }
 
-         std::cout << result << std::endl;
+
 
 /*
          Pan_Gusset(180, 1960, 1973); //actual value 1970 or 1.970V

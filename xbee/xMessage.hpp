@@ -16,9 +16,6 @@ class Message{
 	int sendConfigReport();
 	void receiveConfigReport();
 	int sendTimeSync();
-	void receiveLog();
-	string msgConcat(string);
-	void sendMessage(string);
 };
 
 string Message::msgConcat(string type){
@@ -53,7 +50,6 @@ void Message::receiveConfigReport(){
 
 int Message::sendTimeSync(){
 	sendMessage("TS");
-
 	return 0;
 }
 
@@ -61,3 +57,12 @@ void Message::receiveLog(){
 	sendMessage("RL");
 	//wait to receive logfile
 }
+
+void Message::sendingImage(){
+	sendMessage("SI");
+}
+
+void Message::receiveReady(){
+	sendMessage("RR");
+}
+

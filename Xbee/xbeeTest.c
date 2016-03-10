@@ -1,8 +1,8 @@
 #ifndef XSERIAL_HPP
 #define XSERIAL_HPP
-#include <wiringSerial.h>
+//#include <wiringSerial.h>
 #include "xSerial.hpp"
-
+//#include "xMessage.hpp"
 
 int main(){
 
@@ -24,6 +24,11 @@ int main(){
 //	xbee.Close();
 	serialPuts (fd, "this is a test");
 	printf("this is a test\n");
+	Message msg = new Message();
+	msg.sendingImage();
+//	serialPuts (fd, "1");
+	printf("output 1\n");
+
 	serialClose(fd);
 	return 0;
 

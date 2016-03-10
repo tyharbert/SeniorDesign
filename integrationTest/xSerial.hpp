@@ -1,3 +1,4 @@
+//#include "xMessage.hpp"
 #include <wiringSerial.h>
 #include <unistd.h>
 #include <iostream>
@@ -48,7 +49,7 @@ int   Serial::Open (){
 	  {
 		//std::cout << "Serial port opened\n";
 		this->fd = serialOpen(this->device, this->baud);
-		return 1;
+		return this->fd;
 	  }
 }
 
@@ -59,9 +60,9 @@ void Serial::Close(){
 
 void Serial::PutChar(unsigned char c){
 	if(Open()){
-	std::cout << "Wrote character: " << c << std::endl;
+//	std::cout << "Wrote character: " << c << std::endl;
 	serialPutchar(this->fd, c);
-	Close();
+//	Close();
 	}
 }
 
@@ -69,7 +70,7 @@ void  Serial::PutMsg (char *s){
 	if(Open()){
 	std::cout << "Wrote message: " << s << std::endl;
 	serialPuts(this->fd, s);
-	Close();
+//	Close();
 	}
 }
 
