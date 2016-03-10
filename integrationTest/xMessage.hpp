@@ -10,25 +10,32 @@ class Message{
 	char* device  = (char*)"/dev/ttyUSB1";
 
 //	string header = "0000";
-	string msgType;
+//	string msgType;
 //	string trailer ="0000";
+//	string msgConcat(string);
+	void sendMessage(char);
   public:
 	int sendConfigReport();
 	void receiveConfigReport();
 	int sendTimeSync();
 	void receiveLog();
-	string msgConcat(string);
-	void sendMessage(string);
 	void sendingImage();
 	void receiveReady();
 };
 
+//Message::Message(){
+//this->device = dev;
+//}
+
+
+/*
 string Message::msgConcat(string type){
 	//check different types and customize messages based on it
 	string msg = this->header + type + this->trailer;
 
 	return msg;
 }
+*/
 
 void Message::sendMessage(char type){
 //        string msg = msgConcat(type);
@@ -37,8 +44,9 @@ void Message::sendMessage(char type){
 //        char msgArr[10];
 //        strcpy(msgArr, msg.c_str());
 	//open serial port and send message
-        Serial xbee(this->device, 9600);
-        xbee.PutMsg(type);
+//	char* temp = &type;
+        Serial xbee(this->device, 57600);
+        xbee.PutChar(type);
 }
 
 int Message::sendConfigReport(){
@@ -55,7 +63,6 @@ void Message::receiveConfigReport(){
 
 int Message::sendTimeSync(){
 	sendMessage('6');
-
 	return 0;
 }
 
@@ -71,3 +78,4 @@ void Message::sendingImage(){
 void Message::receiveReady(){
 	sendMessage('2');
 }
+

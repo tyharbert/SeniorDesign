@@ -7,15 +7,15 @@
 //#include <stdio.h>
 
 int main(){
-/*
+
         char *device = (char *)"/dev/ttyUSB0";
 
         Serial xbee(device, 115200);
         xbee.Open();
-*/
+
 	char temp;
 	int fd;
-  if ((fd = serialOpen ("/dev/ttyUSB0", 57600)) < 0)
+  if ((fd = serialOpen (device, 57600)) < 0)
   {
     printf ("Unable to open serial device:\n");
     return 1 ;
@@ -27,11 +27,12 @@ int main(){
 
 for(;;)
 {
-//    	while (xbee.DataAvail() > 0)
-	while (serialDataAvail(fd) > 0)
+    	while (xbee.DataAvail() > 0)
+//	while (serialDataAvail(fd) > 0)
     	{
-	  temp = serialGetchar(fd);
-//	  temp = xbee.GetChar();
+//	  temp = serialGetchar(fd);
+	  temp = xbee.GetChar();
+
 	  std::cout << temp;
 //	  putchar ( xbee.GetChar());
 //    	  xbee.FlushData();
@@ -39,9 +40,9 @@ for(;;)
     	}
 }
 
-serialClose(fd);
+//serialClose(fd);
 
-//xbee.Close();
+xbee.Close();
 return 0;
 }
 
