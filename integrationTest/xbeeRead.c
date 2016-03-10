@@ -13,7 +13,7 @@ int main(){
 
         Serial xbee(device, 57600);
 //        xbee.Open();
-	Message msg;
+//	Message msg(device);
 	char temp;
 //	int fd;
 	int result;

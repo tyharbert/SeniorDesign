@@ -7,14 +7,15 @@ using namespace std;
 //class for xbee to send messages
 class Message{
   private:
-	char* device  = (char*)"/dev/ttyUSB0";
-
+//	char* device  = (char*)"/dev/ttyUSB0";
+	char* device;
 //	string header = "0000";
 //	string msgType;
 //	string trailer ="0000";
 //	string msgConcat(string);
 	void sendMessage(char);
   public:
+	Message(char*);
 	int sendConfigReport();
 	void receiveConfigReport();
 	int sendTimeSync();
@@ -23,9 +24,9 @@ class Message{
 	void receiveReady();
 };
 
-//Message::Message(){
-//this->device = dev;
-//}
+Message::Message(char* dev){
+this->device = dev;
+}
 
 
 /*

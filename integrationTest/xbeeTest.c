@@ -6,7 +6,7 @@
 //#include "xmodem.c"
 int main(){
 
-	char *device = (char *)"/dev/ttyUSB0";
+	char *device = (char *)"/dev/ttyUSB1";
 
   int fd;
 /*
@@ -17,7 +17,7 @@ int main(){
   }
 */
 	Serial xbee(device, 57600);
-	Message msg;
+	Message msg(device);
 
 //	int fd = serialOpen ("/dev/ttyUSB1", 115200);
 
@@ -31,8 +31,8 @@ int main(){
 
 //	Message msg;
 	int result;
-	msg.sendingImage();
 	fd = xbee.Open();
+	msg.sendingImage();
 	std::cout << "Send Image signal\n";
 	sleep(2);
 	std::cout << "Transmitting image\n";
