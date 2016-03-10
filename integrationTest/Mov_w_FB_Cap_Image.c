@@ -12,7 +12,7 @@ Servo 1 is the Tilt servo and can tilt from 0-150 degrees, or .5 ms to 2.08 ms
 #include <stdio.h>
 //#include <wiringSerial.h>
 //#include "xmodem.c"
-#include <iostream>
+//#include <iostream>
 
 //./servod --min={50|Nus|2.5%} //2.5% as minimum PW
 //./servod --max={200|Nus|75%} //75% to prevent servo1 (tilt) from hitting at max pulse
@@ -151,15 +151,19 @@ pullUpDnControl(butPin, PUD_DOWN);
          Cap_Image();
 	 msg.SendingImage();
 	 fd = xbee.Open();
-	 std::cout << "Sending Imgae Signal\n";
+//	 std::cout << "Sending Imgae Signal\n";
+	 printf("Sending Image Signal\n");
 	 sleep(2)
-	 std::cout << "Transmitting Image\n";
+	 printf("Transmitting Image\n");
+//	 std::cout << "Transmitting Image\n";
          result = XSend(fd, "testImage.jpeg");
          if(result == 0){
-	         std::cout << "Image transmitted successfully\n";
+		 printf("Image transmitted successfully\n");
+//	         std::cout << "Image transmitted successfully\n";
          }
          else{
-                 std::cout << "Error during image transmission\n";
+		 printf("Image transmitted successfully\n");
+//                 std::cout << "Error during image transmission\n";
          }
 
 
