@@ -1,5 +1,5 @@
 #include "xSerial.hpp"
-#include "xmodem.cpp"
+#include "xmodem.c"
 #include <string.h>
 
 using namespace std;
@@ -12,15 +12,10 @@ class Message{
 	string header = "0000";
 	string msgType;
 	string trailer ="0000";
-	string msgConcat(string);
-	void sendMessage(string);
   public:
 	int sendConfigReport();
 	void receiveConfigReport();
 	int sendTimeSync();
-	void receiveLog();
-	void sendingImage();
-	void receiveReady();
 };
 
 string Message::msgConcat(string type){

@@ -39,7 +39,7 @@ Serial::Serial(char* usbDevice, int baudRate){
 }
 
 int   Serial::Open (){
-        if ((this->fd = serialOpen ("/dev/ttyUSB0", 9600)) < 0)
+        if ((this->fd = serialOpen (this->device, this->baud)) < 0)
           {
 		std::cout << "Unable to open serial device\n";
           	return 0 ;
