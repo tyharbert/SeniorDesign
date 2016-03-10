@@ -1,7 +1,7 @@
 //#include "xMessage.hpp"
 #include <wiringSerial.h>
 #include <unistd.h>
-//#include <iostream>
+#include <iostream>
 #include <stdio.h>
 
 //class for xbee serial communication
