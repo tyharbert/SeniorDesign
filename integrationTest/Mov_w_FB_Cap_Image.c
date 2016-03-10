@@ -161,8 +161,8 @@ pullUpDnControl(butPin, PUD_DOWN);
          else{
                 printf("Error during transmission\n");
          }
-         Pan_Gusset(150, 1665, 1675);  //actual value 1669 or 1.669V
-         Tilt_Gusset(120, 1322, 1334); //actual value 1637 or 1.637V
+         Pan_Gusset(180, 1960, 1680);  //actual value 1669 or 1.669V
+         Tilt_Gusset(150, 1622, 1650); //actual value 1637 or 1.637V
          Cap_Image();
          printf("Sending image signal\n");
          msg.sendingImage();
@@ -176,7 +176,7 @@ pullUpDnControl(butPin, PUD_DOWN);
          else{
                 printf("Error during transmission\n");
          }
-         Pan_Gusset(150, 1665, 1675);  //actual value 1669 or 1.669V
+         Pan_Gusset(130, 1455, 1470);  //actual value 1669 or 1.669V
          Tilt_Gusset(120, 1322, 1334); //actual value 1637 or 1.637V
          Cap_Image();
          printf("Sending image signal\n");
