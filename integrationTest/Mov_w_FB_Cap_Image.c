@@ -154,14 +154,42 @@ pullUpDnControl(butPin, PUD_DOWN);
 	 fd = xbee.Open();
 	 sleep(2);
 	 printf("Transmitting Image\n");
-	 result = XSend(fd, "testImage.jpeg");
+	 result = XSend(fd, "testing0.jpeg");
          if(result == 0){
                 printf("Image transmitted successfully\n");
-//               std::cout << "Image transmitted successfully\n";
          }
          else{
                 printf("Error during transmission\n");
-//                 std::cout << "Error during image transmission\n";
+         }
+         Pan_Gusset(150, 1665, 1675);  //actual value 1669 or 1.669V
+         Tilt_Gusset(120, 1322, 1334); //actual value 1637 or 1.637V
+         Cap_Image();
+         printf("Sending image signal\n");
+         msg.sendingImage();
+         fd = xbee.Open();
+         sleep(2);
+         printf("Transmitting Image\n");
+         result = XSend(fd, "testing1.jpeg");
+         if(result == 0){
+                printf("Image transmitted successfully\n");
+         }
+         else{
+                printf("Error during transmission\n");
+         }
+         Pan_Gusset(150, 1665, 1675);  //actual value 1669 or 1.669V
+         Tilt_Gusset(120, 1322, 1334); //actual value 1637 or 1.637V
+         Cap_Image();
+         printf("Sending image signal\n");
+         msg.sendingImage();
+         fd = xbee.Open();
+         sleep(2);
+         printf("Transmitting Image\n");
+         result = XSend(fd, "testing2.jpeg");
+         if(result == 0){
+                printf("Image transmitted successfully\n");
+         }
+         else{
+                printf("Error during transmission\n");
          }
 
 
