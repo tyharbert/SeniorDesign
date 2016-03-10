@@ -9,13 +9,18 @@ class Message{
   private:
 	char* device  = (char*)"/dev/ttyUSB1";
 
-	string header = "0000";
+//	string header = "0000";
 	string msgType;
-	string trailer ="0000";
+//	string trailer ="0000";
   public:
 	int sendConfigReport();
 	void receiveConfigReport();
 	int sendTimeSync();
+	void receiveLog();
+	string msgConcat(string);
+	void sendMessage(string);
+	void sendingImage();
+	void receiveReady();
 };
 
 string Message::msgConcat(string type){
@@ -25,44 +30,44 @@ string Message::msgConcat(string type){
 	return msg;
 }
 
-void Message::sendMessage(string type){
-        string msg = msgConcat(type);
+void Message::sendMessage(char type){
+//        string msg = msgConcat(type);
 
         //create char array copy of string to send
-        char msgArr[10];
-        strcpy(msgArr, msg.c_str());
+//        char msgArr[10];
+//        strcpy(msgArr, msg.c_str());
 	//open serial port and send message
         Serial xbee(this->device, 9600);
-        xbee.PutMsg(msgArr);
+        xbee.PutMsg(type);
 }
 
 int Message::sendConfigReport(){
-	sendMessage("SC");
+	sendMessage('3');
 	//wait for confirmation and resend if needed
 
 	return 0;
 }
 
 void Message::receiveConfigReport(){
-	sendMessage("RC");
+	sendMessage('4');
 	//wait to receive config report and could timeout
 }
 
 int Message::sendTimeSync(){
-	sendMessage("TS");
+	sendMessage('6');
+
 	return 0;
 }
 
 void Message::receiveLog(){
-	sendMessage("RL");
+	sendMessage('5');
 	//wait to receive logfile
 }
 
 void Message::sendingImage(){
-	sendMessage("SI");
+	sendMessage('1');
 }
 
 void Message::receiveReady(){
-	sendMessage("RR");
+	sendMessage('2');
 }
-

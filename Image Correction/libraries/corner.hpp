@@ -16,6 +16,7 @@ struct Point {
 	Point(): _x(0), _y(0) { }
 	Point(int p[2]): _x(p[0]), _y(p[1]) { }
 	Point(int x, int y): _x(x), _y(y) { }
+	void print();
 };
 
 struct Corner: Point {

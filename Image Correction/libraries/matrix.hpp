@@ -45,7 +45,7 @@ public:
 // prints a matrix
 template<typename T>
 std::ostream& operator<<(std::ostream& os, const Matrix<T>& m) {
-    os << std::scientific << std::setprecision(4);
+    os << std::scientific << std::setprecision(2);
     for (int r=0; r < m._height; r++) {
         for (int c=0; c < m._width; c++) {
             os << m._values[r][c] << '\t';
