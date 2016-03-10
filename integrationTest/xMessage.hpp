@@ -7,7 +7,7 @@ using namespace std;
 //class for xbee to send messages
 class Message{
   private:
-	char* device  = (char*)"/dev/ttyUSB1";
+	char* device  = (char*)"/dev/ttyUSB0";
 
 //	string header = "0000";
 //	string msgType;

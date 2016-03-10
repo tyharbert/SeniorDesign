@@ -142,7 +142,6 @@ pullUpDnControl(butPin, PUD_DOWN);
         Message msg;
         int result;
         int fd;
-	fd = xbee.Open();
     while(1)
     {
         if (digitalRead(butPin)==1)
@@ -150,9 +149,11 @@ pullUpDnControl(butPin, PUD_DOWN);
          Pan_Gusset(150, 1665, 1675);  //actual value 1669 or 1.669V
          Tilt_Gusset(120, 1322, 1334); //actual value 1637 or 1.637V
          Cap_Image();
+	 printf("Sending image signal\n");
 	 msg.sendingImage();
-	 printf("Sending image signal");
+	 fd = xbee.Open();
 	 sleep(2);
+	 printf("Transmitting Image\n");
 	 result = XSend(fd, "testImage.jpeg");
          if(result == 0){
                 printf("Image transmitted successfully\n");
