@@ -2,12 +2,9 @@
 #define CORNER_HPP
 
 #include <iostream>
+#include <cassert>
 
 #include "utils.hpp"
-
-// these are based on the reference rectangle
-// ratio from height to width
-const double h2w_ratio = 17.0/21.0; 
 
 struct Point {
 	int _x;
@@ -35,6 +32,7 @@ struct Corners {
 	Corners(Corner sw, Corner nw, Corner ne, Corner se): _sw(sw), _nw(nw), _ne(ne), _se(se) { }
 	Corners(int c[4][2]): _sw(c[0]), _nw(c[1]), _ne(c[2]), _se(c[3]) { }
 	Corners findDest();
+	bool inBounds(Point) const;
 	int* xArray();
 	int* yArray();
 	void print();

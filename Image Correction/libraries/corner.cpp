@@ -11,7 +11,7 @@ Corners Corners::findDest() {
 	if (temp_height < height)
 		height = temp_height;
 
-	width = int_round(height * h2w_ratio);
+	width = int_round(height * (rr_width_cm/rr_height_cm));
 
 	Corner sw = Corner(0,0);
  	Corner nw = Corner(0, height);
@@ -19,6 +19,16 @@ Corners Corners::findDest() {
  	Corner se = Corner(width, 0);
 
 	return Corners(sw, nw, ne, se);
+}
+
+// returns true if the point passed in falls between the
+// bounds of the corners
+bool Corners::inBounds(Point p) const {
+	assert(_nw._x == _sw._x && _ne._x == _se._x && _nw._y == _ne._y && _sw._y == _se._y); // only check for rectangular corners
+	if (_nw._x <= p._x && p._x <= _ne._x)
+		if (_sw._y <= p._y && p._y <= _nw._y)
+			return true;
+	return false;
 }
 
 void Point::print() {

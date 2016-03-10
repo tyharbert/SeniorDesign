@@ -12,6 +12,8 @@ struct Word {
     unsigned char b1;
     unsigned char b2;
     
+    Word() { }
+    Word(uint16_t d): b1(d), b2(d >> 8) { }
     // little endian (the way microsoft documents)
     uint16_t le() const { return b1 << 8 | b2; }
     // big endian
@@ -23,6 +25,8 @@ struct DWord : Word {
     unsigned char b3;
     unsigned char b4;
     
+    DWord(): Word() { }
+    DWord(uint32_t d): Word(d), b3(d >> 16), b4(d >> 24) { }
     // little endian (the way microsoft documents)
     uint32_t le() const { return Word::le() << 16 | b3 << 8 | b4; }
     // big endian
@@ -107,6 +111,8 @@ private:
     int _rowPadding;
     Row* rows;
     bool is_corner(int,int);
+    template<typename T>
+    void transform(const BMP*, const Matrix<T>&, const Corners&, const Corners&);
     void fast(int,int,int,int,int*,bool(BMP::*)(int,int,int,int));
     bool fast_sw(int,int,int,int);
     bool fast_nw(int,int,int,int);
@@ -116,7 +122,7 @@ private:
 public:
     BMP(const char*);
     template<typename T>
-    BMP(BMP*, Matrix<T>&, Corners, Corners);
+    BMP(const BMP*, const Matrix<T>&, const Corners&, const Corners&);
     ~BMP();
     int32_t width() const { return _dibHead._width.be(); }
     int32_t height() const { return _dibHead._height.be(); }
@@ -126,31 +132,68 @@ public:
 
 // constructor for BMP created during transform
 template<typename T>
-inline BMP::BMP(BMP* bmp, Matrix<T>& H, Corners orig, Corners dest) {
-    // copy the headers before updating them
+inline BMP::BMP(const BMP* bmp, const Matrix<T>& H, const Corners& orig, const Corners& dest) {
+    // calculate destination height and width
+    int width = 1 + (dest._ne._x - dest._nw._x);
+    int height = 1 + (dest._nw._y - dest._sw._y);
+
+    // if a row is not divisible by 32 bits padding is added on
+    _rowPadding = 4 - width*3%4;
+    if (_rowPadding == 4) // padding can only be 0 to 3
+        _rowPadding = 0;
+
+    // calculating the size of the image in bytes
+    int pixels_size = height * (width * 3 + _rowPadding);
+    int total_size = 14 + bmp->_dibHead._size.be() + pixels_size;
+
+    // copy headers
     _bmpHead = bmp->_bmpHead;
     _dibHead = bmp->_dibHead;
 
-    int width = dest._nw._x - dest._ne._x;
-    int height = dest._nw._y - dest._sw._y;
-
-    // // if a row is not divisible by 32 bits padding is added on
-    // _rowPadding = 4 - width*3%4;
-    // if (_rowPadding == 4) // padding can only be 0 to 3
-    //     _rowPadding = 0;
+    // update headers
+    _bmpHead._size = total_size;
+    _dibHead._width = width;
+    _dibHead._height = height;
+    _dibHead._sizeOfBMP = pixels_size;
+    _dibHead._xPixelsPerMeter = int_round(width/(rr_width_cm/100));
+    _dibHead._yPixelsPerMeter = int_round(height/(rr_height_cm/100));
     
-    // // dynamically allocate rows
-    // rows = new Row[height];
-    // for(int i = 0; i < height; i++) {
-    //     // dynamically allocate pixels and read them in
-    //     rows[i].pixels = new Pixel[width];
-    //     //fread(rows[i].pixels, sizeof(Pixel), width, f);
-    //     // dynamically allocate row padding and read it in
-    //     if (_rowPadding > 0) {
-    //         rows[i].padding = new unsigned char[_rowPadding];
-    //         //fread(rows[i].padding, sizeof(unsigned char), _rowPadding, f);
-    //     }
-    // }
+    // dynamically allocate rows
+    rows = new Row[height];
+    for(int i = 0; i < height; i++) {
+        // dynamically allocate pixels
+        rows[i].pixels = new Pixel[width];
+        // dynamically allocate row padding
+        if (_rowPadding > 0) {
+            rows[i].padding = new unsigned char[_rowPadding];
+        }
+    }
+
+    transform(bmp, H, orig, dest);
+}
+
+// executes the image transform using the transformation matrix
+template<typename T>
+void BMP::transform(const BMP* bmp, const Matrix<T>& H, const Corners& orig, const Corners& dest) {
+    // get min and max positions in original image to search
+    int min_x = (orig._nw._x < orig._sw._x ? orig._nw._x : orig._sw._x);
+    int max_x = (orig._ne._x > orig._se._x ? orig._ne._x : orig._se._x);
+    int min_y = (orig._sw._y < orig._se._y ? orig._sw._y : orig._se._y);
+    int max_y = (orig._nw._y > orig._ne._y ? orig._nw._y : orig._ne._y);
+
+    Matrix<T>* p;
+    Point p_prime;
+
+    for (int y = min_y; y <= max_y; y++)
+        for (int x = min_x; x <= max_x; x++) {
+            p = new Matrix<T>((T)x, (T)y);
+            p_prime = (H*(*p)).get_3v_point();
+
+            if (dest.inBounds(p_prime))
+                this->rows[p_prime._y].pixels[p_prime._x] = bmp->rows[y].pixels[x];
+
+            delete p;
+        }
 }
 
 #endif

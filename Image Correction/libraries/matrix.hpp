@@ -24,6 +24,7 @@ private:
     void deallocate_values();
     
 public:
+    Matrix() { }
     Matrix(int, int);
     Matrix(const Matrix<T>& m);
     Matrix(int n): Matrix(n, n) { }
