@@ -1,7 +1,7 @@
 //#include "xMessage.hpp"
 #include <wiringSerial.h>
 #include <unistd.h>
-#include <iostream>
+//#include <iostream>
 #include <stdio.h>
 
 //class for xbee serial communication
@@ -42,7 +42,7 @@ Serial::Serial(char* usbDevice, int baudRate){
 int   Serial::Open (){
         if ((this->fd = serialOpen (this->device, this->baud)) < 0)
           {
-		std::cout << "Unable to open serial device\n";
+//		std::cout << "Unable to open serial device\n";
           	return 0 ;
           }
 	else
@@ -68,7 +68,7 @@ void Serial::PutChar(unsigned char c){
 
 void  Serial::PutMsg (char *s){
 	if(Open()){
-	std::cout << "Wrote message: " << s << std::endl;
+//	std::cout << "Wrote message: " << s << std::endl;
 	serialPuts(this->fd, s);
 //	Close();
 	}

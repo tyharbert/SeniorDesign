@@ -8,11 +8,18 @@ Servo 1 is the Tilt servo and can tilt from 0-150 degrees, or .5 ms to 2.08 ms
 */
 #include "xMessage.hpp"
 #include <unistd.h>
-#include <wiringPi.h>
 #include <stdio.h>
+
+extern "C" {
+#include <wiringPi.h>
+#include <wiringPiI2C.h>
+}
+
+
+
 //#include <wiringSerial.h>
 //#include "xmodem.c"
-#include <iostream>
+//#include <iostream>
 
 //./servod --min={50|Nus|2.5%} //2.5% as minimum PW
 //./servod --max={200|Nus|75%} //75% to prevent servo1 (tilt) from hitting at max pulse
@@ -135,10 +142,10 @@ pullUpDnControl(butPin, PUD_DOWN);
             return 1 ;
           }
 */
+	char *device = (char *)"/dev/ttyUSB0";
 	Serial xbee(device, 57600);
 	Message msg;
         int result;
-	char *device = (char *)"/dev/ttyUSB1";
 	int fd;
 
     while(1)
@@ -149,17 +156,19 @@ pullUpDnControl(butPin, PUD_DOWN);
          Pan_Gusset(150, 1660, 1675);  //actual value 1669 or 1.669V
          Tilt_Gusset(150, 1630, 1645); //actual value 1637 or 1.637V
          Cap_Image();
-	 msg.SendingImage();
+	 msg.sendingImage();
 	 fd = xbee.Open();
-	 std::cout << "Sending Imgae Signal\n";
-	 sleep(2)
-	 std::cout << "Transmitting Image\n";
+//	 std::cout << "Sending Imgae Signal\n";
+	 sleep(2);
+//	 std::cout << "Transmitting Image\n";
          result = XSend(fd, "testImage.jpeg");
          if(result == 0){
-	         std::cout << "Image transmitted successfully\n";
+		printf("Image transmitted successfully\n");
+//	         std::cout << "Image transmitted successfully\n";
          }
          else{
-                 std::cout << "Error during image transmission\n";
+		printf("Error during transmission\n");
+//                 std::cout << "Error during image transmission\n";
          }
 
 
