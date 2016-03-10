@@ -142,14 +142,16 @@ pullUpDnControl(butPin, PUD_DOWN);
         Message msg;
         int result;
         int fd;
-
+	fd = xbee.Open();
     while(1)
     {
         if (digitalRead(butPin)==1)
         {
-         Pan_Gusset(150, 1655, 1664);  //actual value 1669 or 1.669V
-         Tilt_Gusset(120, 1320, 1331); //actual value 1637 or 1.637V
+         Pan_Gusset(150, 1665, 1675);  //actual value 1669 or 1.669V
+         Tilt_Gusset(120, 1322, 1334); //actual value 1637 or 1.637V
          Cap_Image();
+	 msg.sendingImage();
+	 printf("Sending image signal");
 	 sleep(2);
 	 result = XSend(fd, "testImage.jpeg");
          if(result == 0){

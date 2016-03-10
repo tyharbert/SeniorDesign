@@ -6,7 +6,7 @@
 //#include "xmodem.c"
 int main(){
 
-	char *device = (char *)"/dev/ttyUSB1";
+	char *device = (char *)"/dev/ttyUSB0";
 
   int fd;
 /*
