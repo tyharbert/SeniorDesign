@@ -6,10 +6,20 @@
 /* Servo 0 is the Pan servo and can tilt from 0-180 degrees, or .5 ms to 2.5 ms
 Servo 1 is the Tilt servo and can tilt from 0-150 degrees, or .5 ms to 2.08 ms
 */
-
+#include "xMessage.hpp"
 #include <unistd.h>
-#include <wiringPi.h>
 #include <stdio.h>
+
+extern "C" {
+#include <wiringPi.h>
+#include <wiringPiI2C.h>
+}
+
+
+
+//#include <wiringSerial.h>
+//#include "xmodem.c"
+//#include <iostream>
 
 //./servod --min={50|Nus|2.5%} //2.5% as minimum PW
 //./servod --max={200|Nus|75%} //75% to prevent servo1 (tilt) from hitting at max pulse
@@ -39,7 +49,7 @@ unsigned short ADC_Rd(unsigned short address) //Read channel 0 or 1 adc, Pan Mot
 
     adc_hex = Rd_Rev(adc_hex); //Reverses the order of the hex value taken in
     printf("%d\n",adc_hex);
-    sleep(3);
+    sleep(5);
     return adc_hex;
     }
 
@@ -75,15 +85,13 @@ void Mov_Motor(int Motor_Num, int Motor_Loc) //Motor number (0 or 1), and Motor 
 {
     int n=35;
     int cx=0;
-    if(Motor_Num==1)
-	system("echo ./servod min={100}");
     char command[n];
     cx=snprintf(command, n, "echo %d=%d > /dev/servoblaster", Motor_Num, Motor_Loc); //assigns the echo call as the command, with the limit of n characters
     if(cx>n)
         printf("Command Length Too Long");
     else
         system(command);
-    sleep(2);
+    sleep(1);
 }
 
 void Tilt_Gusset(int Tilt_Loc, int Lower_Bound, int Upper_Bound)
@@ -111,7 +119,7 @@ void Cap_Image() //Motor number (0 or 1), and Motor Location (50-250)
     int cx=0;
     static int i=0;
     char command[n];
-    cx=snprintf(command, n, "fswebcam -r 1280x720 --jpeg 100 -D 30 -S 13 1 testing%d.jpeg", i); //assigns the echo call as the command, with the limit of n characters
+    cx=snprintf(command, n, "fswebcam -r 1280x720 --jpeg 100 -D 60 -S 13 1 testing%d.jpeg", i); //assigns the echo call as the command, with the limit of n characters
     if(cx>n)
         printf("Command Length Too Long");
     else
@@ -126,26 +134,70 @@ system("echo ./servod --p1pins=7, 11, 0, 0, 0, 0, 0, 0");
 wiringPiSetupGpio();
 pinMode(butPin, INPUT);
 pullUpDnControl(butPin, PUD_DOWN);
+/*
+        int fd;
+        if ((fd = serialOpen ("/dev/ttyUSB0", 9600)) < 0)
+          {
+            fprintf (stderr, "Unable to open serial device: %s\n", strerror$
+            return 1 ;
+          }
+*/
+	char *device = (char *)"/dev/ttyUSB0";
+	Serial xbee(device, 57600);
+	Message msg;
+        int result;
+	int fd;
 
     while(1)
     {
         if (digitalRead(butPin)==1)
         {
-         Pan_Gusset(150, 1655, 1664);  //actual value 1669 or 1.669V
-         Tilt_Gusset(120, 1320, 1331); //actual value 1637 or 1.637V
+
+         Pan_Gusset(150, 1660, 1675);  //actual value 1669 or 1.669V
+         Tilt_Gusset(150, 1630, 1645); //actual value 1637 or 1.637V
          Cap_Image();
-         Pan_Gusset(180, 1955, 1965); //actual value 1970 or 1.970V
-         Tilt_Gusset(150,1627,1635);  // actual value 1930, or 1.93V
+	 msg.sendingImage();
+	 fd = xbee.Open();
+//	 std::cout << "Sending Imgae Signal\n";
+<<<<<<< HEAD
+	 printf("Sending Image Signal\n");
+	 sleep(2)
+	 printf("Transmitting Image\n");
+//	 std::cout << "Transmitting Image\n";
+         result = XSend(fd, "testImage.jpeg");
+         if(result == 0){
+		 printf("Image transmitted successfully\n");
+//	         std::cout << "Image transmitted successfully\n";
+         }
+         else{
+		 printf("Image transmitted successfully\n");
+=======
+	 sleep(2);
+//	 std::cout << "Transmitting Image\n";
+         result = XSend(fd, "testImage.jpeg");
+         if(result == 0){
+		printf("Image transmitted successfully\n");
+//	         std::cout << "Image transmitted successfully\n";
+         }
+         else{
+		printf("Error during transmission\n");
+>>>>>>> a1bb0451ed9aec86d5922fb3065dd9b99bf7e052
+//                 std::cout << "Error during image transmission\n";
+         }
+
+
+
+/*
+         Pan_Gusset(180, 1960, 1973); //actual value 1970 or 1.970V
+         Tilt_Gusset(180,1920,1937);  // actual value 1930, or 1.93V
          Cap_Image();
-         Pan_Gusset(130,1450, 1460); //actual value 1142 or 1.142V
-         Tilt_Gusset(120, 1320, 1331); //actual value 1127 or 1.127V feedback
+         Pan_Gusset(100,1130, 1150); //actual value 1142 or 1.142V
+         Tilt_Gusset(100, 1120, 1140); //actual value 1127 or 1.127V feedback
          Cap_Image();
+*/
         }
     }
 
 return 0;
 }
-
-//Write up an equation to convert a feedback value to a corresponding pulse width. We will be taking in a feedback
-//value when setting up the gusset plate locations.
 
