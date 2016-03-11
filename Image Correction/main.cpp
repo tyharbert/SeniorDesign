@@ -1,11 +1,9 @@
 #include "libraries/bmp.hpp"
 #include "libraries/matrix.hpp"
 
-typedef Matrix<float> FMatrix;
-
 int main()
 {   
-   BMP* bmp = new BMP("../images/5.bmp");
+   BMP* bmp = new BMP("../images/1.bmp");
    Corners original = bmp->fast();
 
    Corners destination = original.findDest();
@@ -13,19 +11,20 @@ int main()
    original.print();
    destination.print();
 
-   FMatrix U(original, destination);
-   FMatrix L(U);
-   FMatrix B(destination);
+   Matrix<float> U(original, destination);
+   Matrix<float> L(U);
+   Matrix<float> B(destination);
 
-   FMatrix P = U.lu();
+   Matrix<float> P = U.lu();
    L.lu(false);
 
-   FMatrix Y = L.forward_sub(P*B);
-   FMatrix H = U.back_sub(Y);
+   Matrix<float> Y = L.forward_sub(P*B);
+   Matrix<float> H = U.back_sub(Y);
 
    H.reshape(3, 3);
 
    BMP* final = new BMP(bmp, H, original, destination);
+   final->write("../images/2.bmp");
 
     return 0;
 }

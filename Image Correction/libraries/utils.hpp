@@ -2,7 +2,11 @@
 #define UTILS_HPP
 
 #include <stdexcept>
-#include <cstring>
+
+// these are based on the reference rectangle
+// ratio from height to width
+const double rr_height_cm = 43.33875; // centimeters
+const double rr_width_cm = 53.49875; // centimeters
 
 // Opens the file passed in
 FILE* openFile(const char*, const char*);
@@ -21,9 +25,5 @@ inline int int_round(T val) {
 	else
 		return temp+1;
 }
-
-// void jpeg_to_bmp(const char*, const char *);
-
-// void bmp_to_jpeg(const char*, const char *);
 
 #endif
