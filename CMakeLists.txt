@@ -23,7 +23,7 @@ include_directories(
 project(main CXX)
 
 #main program
-add_executable(main main.cpp)
+add_executable(main integration/main.cpp)
 
 target_link_libraries(main LINK_PUBLIC img_lib)
 target_link_libraries(main LINK_PUBLIC xbee_lib pthread wiringPi)
