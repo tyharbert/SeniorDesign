@@ -13,7 +13,7 @@ int main(){
 	msg.sendingImage();
 
 	std::cout << "Transmitting Image\n";
-	int result = XSend(fd, "../images/testImage.jpeg");
+	int result = XSend(fd, "../../images/testImage.jpeg");
 
 	if(result == 0){
 		std::cout << "Image transmitted successfully\n";

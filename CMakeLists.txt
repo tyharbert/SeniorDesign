@@ -6,13 +6,17 @@ add_definitions(-std=c++11)
 # add subdirectories
 add_subdirectory(
 	ImageCorrection
-	Xbee
 )
+
+add_subdirectory(
+	xbee
+)
+
 
 # include directories to look for headers
 include_directories(
 	ImageCorrection/libraries
-	Xbee/libraries
+	xbee/libraries
 )
 
 #project declaration
@@ -22,3 +26,4 @@ project(main CXX)
 add_executable(main main.cpp)
 
 target_link_libraries(main LINK_PUBLIC img_lib)
+target_link_libraries(main LINK_PUBLIC xbee_lib pthread wiringPi)
