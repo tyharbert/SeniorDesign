@@ -1,5 +1,3 @@
-#ifndef XMESSAGE_HPP
-#define XMESSAGE_HPP
 #include "xMessage.hpp"
 
 int main(){
@@ -41,5 +39,3 @@ for(;;)
 xbee.Close();
 return 0;
 }
-
-#endif

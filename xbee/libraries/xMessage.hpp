@@ -1,3 +1,6 @@
+#ifndef XMESSAGE_HPP
+#define XMESSAGE_HPP
+
 #include "xSerial.hpp"
 
 //class for xbee to send messages
@@ -56,3 +59,4 @@ void Message::receiveReady(){
 	sendMessage('2');
 }
 
+#endif

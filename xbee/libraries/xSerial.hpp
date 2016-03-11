@@ -1,3 +1,6 @@
+#ifndef XSERIAL_HPP
+#define XSERIAL_HPP
+
 #include <sstream>
 #include <wiringSerial.h>
 #include <unistd.h>
@@ -109,3 +112,5 @@ size_t  Serial::Write(const void *buf, size_t count){
         		std::cout << "Serial port not open\n";
         	}
 	}
+
+#endif
