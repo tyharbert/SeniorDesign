@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 2.8)
 
 # some of the project requires c++ 11
 add_definitions(-std=c++11)
-SET(CMAKE_CXX_FLAGS)
 
 # project declarations
 project(img_lib CXX)
@@ -23,6 +22,6 @@ include_directories(
 )
 
 # main program
-add_executable(img_test main.cpp)
+add_executable(img_test tests/img_test.cpp)
 
 target_link_libraries(img_test LINK_PUBLIC img_lib)
