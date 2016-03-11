@@ -1,7 +1,4 @@
 #include "xSerial.hpp"
-//#include "xmodem.c"
-//#include <string.h>
-
 
 //class for xbee to send messages
 class Message{
