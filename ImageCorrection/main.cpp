@@ -1,4 +1,4 @@
-#include "libraries/imglib.hpp"
+#include "imglib.hpp"
 
 int main()
 {   
