@@ -1,3 +1,4 @@
+#include <sstream>
 #include <wiringSerial.h>
 #include <unistd.h>
 #include <iostream>

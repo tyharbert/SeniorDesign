@@ -1,60 +1,42 @@
-#ifndef XSERIAL_HPP
-#define XSERIAL_HPP
+#ifndef XMESSAGE_HPP
+#define XMESSAGE_HPP
 #include "xMessage.hpp"
 
 int main(){
 
         char *device = (char *)"/dev/ttyUSB0";
-
         Serial xbee(device, 57600);
-//        xbee.Open();
-//	Message msg(device);
-	char temp;
-//	int fd;
-	int result;
-/*  if ((fd = serialOpen (device, 57600)) < 0)
-  {
-    printf ("Unable to open serial device:\n");
-    return 1 ;
-  }
-*/
-
-//std::cout << "Xbee Open";
-//sleep(5);
         int fd = xbee.Open();
-
+	static int imageCounter = 1;
+	const char* fileName;
+	std::string tempFileName;
+        std::ostringstream oss;
 for(;;)
 {
     	while (xbee.DataAvail() > 0)
-//	while (serialDataAvail(fd) > 0)
     	{
-	  // temp = serialGetchar(fd);
-	  temp = xbee.GetChar();
-//	  std::cout << "Recedfdfd333ive Ready\n";
+	  char temp = xbee.GetChar();
 	  if(temp == '1')
 	  {
-//	    sleep(5);
-//	    xbee.Open();
-//	    msg.receiveReady();
-	    std::cout << "Receive Ready\n";
-//	    sleep(5);
-//	    xbee.Open();
-	    std::cout << "Receiving Image\n";
-//	    xbee.Open();
-	    result = XReceive(fd, "testReceive.jpeg", 0777);
+	    std::cout << "Attempting to receive\n";
+	    oss.str(std::string());
+	    oss << "Image" << imageCounter;
+	    tempFileName = oss.str();
+	    fileName = tempFileName.c_str();
+//	    snprintf(fileName, "Image%03d.jpeg", imageCounter);
+
+//	    fileName = ("image%d.jpeg", imageCounter);
+	    int result = XReceive(fd, fileName, 0777);
 	    if(result == 0)
 		std::cout << "Image receive success!\n";
 	    else
 		std::cout << "error during image receive\n";
-//     	    std::cout << temp;
-
+	    imageCounter++;
 	  }
 
-	  fflush(stdout);
+//	  fflush(stdout);
     	}
 }
-
-//serialClose(fd);
 
 xbee.Close();
 return 0;
