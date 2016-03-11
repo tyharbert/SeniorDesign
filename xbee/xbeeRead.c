@@ -19,8 +19,9 @@ int main(){
   }
 */
 
+//std::cout << "Xbee Open";
+//sleep(5);
         int fd = xbee.Open();
-
 
 for(;;)
 {
