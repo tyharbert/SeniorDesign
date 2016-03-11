@@ -5,19 +5,19 @@ add_definitions(-std=c++11)
 SET(CMAKE_CXX_FLAGS)
 
 #project declarations
-project(full_lib CXX)
-project(main CXX)
+project(img_lib CXX)
+project(img_test CXX)
 
 #add library .cpp files
-file(GLOB full_lib_src
+file(GLOB img_lib_src
     libraries/*.cpp
 )
 
-add_library(full_lib STATIC
-    ${full_lib_src}
+add_library(img_lib STATIC
+    ${img_lib_src}
 )
 
 #main program
-add_executable(main main.cpp)
+add_executable(img_test main.cpp)
 
-target_link_libraries(main LINK_PUBLIC full_lib)
+target_link_libraries(img_test LINK_PUBLIC img_lib)
