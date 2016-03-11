@@ -5,7 +5,7 @@ add_definitions(-std=c++11)
 
 # add subdirectories
 add_subdirectory(
-	ImageCorrection
+	imagecorrection
 )
 
 add_subdirectory(
@@ -15,7 +15,7 @@ add_subdirectory(
 
 # include directories to look for headers
 include_directories(
-	ImageCorrection/libraries
+	imagecorrection/libraries
 	xbee/libraries
 )
 
