@@ -21,4 +21,4 @@ include_directories(
 # main program
 add_executable(capture_test tests/capture.c)
 
-target_link_libraries(capture_test LINK_PUBLIC servo_lib)
+target_link_libraries(capture_test LINK_PUBLIC servo_lib pthread wiringPi)
