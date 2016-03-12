@@ -1,5 +1,6 @@
 #include "imglib.hpp"
 #include "xMessage.hpp"
+#include "servo.h"
 
 int main()
 {   

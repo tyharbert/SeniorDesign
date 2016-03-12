@@ -12,11 +12,15 @@ add_subdirectory(
 	xbee
 )
 
+add_subdirectory(
+	motorcontrols
+)
 
 # include directories to look for headers
 include_directories(
 	imagecorrection/libraries
 	xbee/libraries
+	motorcontrols/libraries
 )
 
 #project declaration
@@ -25,5 +29,7 @@ project(main CXX)
 #main program
 add_executable(main integration/main.cpp)
 
+target_link_libraries(main LINK_PUBLIC pthread wiringPi)
 target_link_libraries(main LINK_PUBLIC img_lib)
-target_link_libraries(main LINK_PUBLIC xbee_lib pthread wiringPi)
+target_link_libraries(main LINK_PUBLIC xbee_lib)
+target_link_libraries(main LINK_PUBLIC servo_lib)
