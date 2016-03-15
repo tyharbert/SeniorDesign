@@ -7,6 +7,12 @@
 #include "corner.hpp"
 #include "matrix.hpp"
 
+// default color for empty pixel
+const uint32_t DEFAULT_COLOR = 0xFF69B4;
+const char DEFAULT_RED = (DEFAULT_COLOR) & 0xFF;
+const char DEFAULT_GREEN = (DEFAULT_COLOR >> 8) & 0xFF;
+const char DEFAULT_BLUE = (DEFAULT_COLOR >> 16) & 0xFF;
+
 // 2-Bytes
 struct Word {
     unsigned char b1;
@@ -91,7 +97,8 @@ struct Pixel {
     unsigned char _green;
     unsigned char _blue;
     
-    Pixel() { }
+    Pixel(): _red(DEFAULT_RED), _green(DEFAULT_GREEN), _blue(DEFAULT_BLUE) { }
+    Pixel(char r, char g, char b): _red(r), _green(g), _blue(b) { }
     Pixel(uint32_t);
     uint32_t to_uint32() { return 0 << 24 | _blue << 16 | _green << 8 | _red; }
     float luminance() { return 0.299f*(float)_red + 0.587f*(float)_green + 0.114f*(float)_blue; }
@@ -113,6 +120,7 @@ private:
     bool is_corner(int,int);
     template<typename T>
     void transform(const BMP*, const Matrix<T>&, const Corners&, const Corners&);
+    void average_surrounding(int, int);
     void fast(int,int,int,int,int*,bool(BMP::*)(int,int,int,int));
     bool fast_sw(int,int,int,int);
     bool fast_nw(int,int,int,int);
@@ -193,6 +201,12 @@ void BMP::transform(const BMP* bmp, const Matrix<T>& H, const Corners& orig, con
                 this->rows[p_prime._y].pixels[p_prime._x] = bmp->rows[y].pixels[x];
 
             delete p;
+        }
+
+    for (int x = 0; x < width(); x++)
+        for (int y = 0; y < height(); y++) {
+            if (this->rows[y].pixels[x].to_uint32() == DEFAULT_COLOR)
+                average_surrounding(x, y);
         }
 }
 

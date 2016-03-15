@@ -70,6 +70,44 @@ void BMP::write(const char* path) {
     fclose(f);
 }
 
+// averages the surrounding pixels that are not the default color
+void BMP::average_surrounding(int x, int y) {
+    uint32_t count = 0;
+    uint32_t red_sum = 0;
+    uint32_t green_sum = 0;
+    uint32_t blue_sum = 0;
+
+    y++; // start with pixel above current
+
+    for (int i=0; i < 8; i++) {
+        // must be within image
+        if (x >= 0 && x < width() && y >= 0 && y < height()) {
+            // if it is not the default color add it to the average
+            if (this->rows[y].pixels[x].to_uint32() != DEFAULT_COLOR) {
+                count++;
+                red_sum += this->rows[y].pixels[x]._red;
+                green_sum += this->rows[y].pixels[x]._green;
+                blue_sum += this->rows[y].pixels[x]._blue;
+            }
+        }
+
+        // these rules follow a pattern to make a cirlce
+        // of 8 pixels around the selected pixel
+        if (i < 1 || i > 6)
+            x++;
+        if (i > 2 && i < 5)
+            x--;
+        if (i > 0 && i < 3)
+            y--;
+        if (i > 4 && i < 7)
+            y++;
+    }
+
+    y--; // set back to current pixel
+    
+    this->rows[y].pixels[x] = Pixel(int_round(((float)red_sum)/count), int_round(((float)green_sum)/count), int_round(((float)blue_sum)/count));
+}
+
 // FAST corner detection algorithm
 Corners BMP::fast() {
     int corners[4][2] = {{0}}; // intialized to 0
