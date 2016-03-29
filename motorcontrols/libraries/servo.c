@@ -108,7 +108,52 @@ void Pan_Gusset(int desired_Pan_Loc, int Lower_Bound, int Upper_Bound)
     }
 
     }
+void Tilt_Gusset(int desired_tilt_loc, int Lower_Bound, int Upper_Bound)
+{
+    printf("Tilt Gusset....\n");
+    int current_echo_value=FB_to_PW_Conv(1);
+    int change_in_echo=desired_tilt_loc-current_echo_value; //gives the difference between desired echo and current echo value
+    if (change_in_echo<0)
+        {
+        change_in_echo=-change_in_echo;
+        int change= change_in_echo/1; //gives number of +/- 10 echo steps
+        int change_remainder=change_in_echo%1; //gives the size of the +/- remainder
+        int i;
+	for (i=0; i<change-1; i++)
+            {
+            system("echo 0=-1 > /dev/servoblaster");
+            delayMicroseconds(10);
+            }
+        system("echo 1=-%d > /dev/servoblaster", change_remainder);
+        }
+    else
+        {
+        int change = change_in_echo/1; //gives number of +/- 10 echo steps
+        int change_remainder=change_in_echo%1; //gives the size of the +/- remainder
+        int i;
+	for (i=0; i<change-1; i++)
+            {
+            system("echo 1=+1 > /dev/servoblaster");
+            delayMicroseconds(10);
+            }
+        system("echo 1=+%d > /dev/servoblaster", change_remainder);
+        }
 
+    static int i=0;
+    int Read=-1;
+
+    while (Read < Lower_Bound || Read > Upper_Bound)
+        {
+        Mov_Motor(1, desired_tilt_loc);
+        Read=ADC_Rd(0x83D5);
+        i++;
+            if(i>=5)
+            {
+            printf("Issue with Tilt Motor for location %d", desired_tilt_loc);
+            break;
+            }
+        }
+    }
 void Mov_Motor(int Motor_Num, int Motor_Loc) //Motor number (0 or 1), and Motor Location (50-250)
 {
     int n=35;
@@ -124,25 +169,7 @@ void Mov_Motor(int Motor_Num, int Motor_Loc) //Motor number (0 or 1), and Motor 
     sleep(2);
 }
 
-void Tilt_Gusset(int Tilt_Loc, int Lower_Bound, int Upper_Bound)
-{
-    printf("Tilt Gusset....\n");
-    static int i=0;
-    int Read=-1;
 
-    while (Read < Lower_Bound || Read > Upper_Bound) //Upper and Lower Bounds for each Location
-    {
-        Mov_Motor(1, Tilt_Loc);
-        Read=ADC_Rd(0x83D5);
-        i++;
-
-        if(i>=5)
-        {
-            printf("Issue with Tilt Motor for location %d", Tilt_Loc);
-            break;
-        }
-    }
-}
 void Cap_Image() //Motor number (0 or 1), and Motor Location (50-250)
 {
     int n=65;
