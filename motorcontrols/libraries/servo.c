@@ -29,30 +29,30 @@ unsigned short Rd_Rev(unsigned short a)
      return ((a << 4) | (a >> 12)) & 0x0FFF;
     }
 
-void FB_to_PW_Conv(int Servo)
+int FB_to_PW_Conv(int Servo)
 {
   if (Servo==0)
     {
-  Read=ADC_Rd(0x83C5); //read from servo 0
-  float min_fb=584 //echo 0=50
+  int Read=ADC_Rd(0x83C5); //read from servo 0
+  float min_fb=584; //echo 0=50
   float max_fb=2170; //echo 0=200
   float fb_range=max_fb-min_fb;
   int echo_range=150;
-  float Perc_PW= (Read-min_fb)/fb_range; //subtracts mininum voltage read value, divides by total range of voltages
-  float current_echo_value = (Perc_Pw*echo_range)+47; //Multiplies the Percent by Range of Echo PW, and adds 50 to obtain accurate echo value
+  float perc_pw= (Read-min_fb)/fb_range; //subtracts mininum voltage read value, divides by total range of voltages
+  float current_echo_value = (perc_pw*echo_range)+47; //Multiplies the Percent by Range of Echo PW, and adds 50 to obtain accurate echo value
   printf("%f \n", current_echo_value);
 
   return current_echo_value;
     }
   else if(Servo==1)
     {
-  Read=ADC_Rd(0x83D5); //read from servo 0
-  float min_fb=584 //echo 0=50
+  int Read=ADC_Rd(0x83D5); //read from servo 0
+  float min_fb=584; //echo 0=50
   float max_fb=2170; //echo 0=200
   float fb_range=max_fb-min_fb;
   int echo_range=150;
-  float Perc_PW= (Read-min_fb)/fb_range; //subtracts mininum voltage read value, divides by total range of voltages
-  float current_echo_value = (Perc_Pw*echo_range)+47; //Multiplies the Percent by Range of Echo PW, and adds 50 to obtain accurate echo value
+  float perc_pw= (Read-min_fb)/fb_range; //subtracts mininum voltage read value, divides by total range of voltages
+  float current_echo_value = (perc_pw*echo_range)+47; //Multiplies the Percent by Range of Echo PW, and adds 50 to obtain accurate echo value
   printf("%f \n", current_echo_value);
 
   return current_echo_value;
@@ -67,23 +67,27 @@ void Pan_Gusset(int desired_Pan_Loc, int Lower_Bound, int Upper_Bound)
     if (change_in_echo<0)
         {
         change_in_echo=-change_in_echo;
-        int change= change_in_echo/10; //gives number of +/- 10 echo steps
-        int change_remainder=change_in_echo%10; //gives the size of the +/- remainder
-        for (i=0; i<change-1; i++)
+        int change= change_in_echo/1; //gives number of +/- 10 echo steps
+        int change_remainder=change_in_echo%1; //gives the size of the +/- remainder
+        int i;
+	for (i=0; i<change-1; i++)
             {
-            system("echo 0=-10 /dev/servoblaster");
+            system("echo 0=-1 > /dev/servoblaster");
+	    delayMicroseconds(10);
             }
-        system("echo 0=-%d", change_remainder);
+        system("echo 0=-%d > /dev/servoblaster", change_remainder);
         }
     else
         {
-        int change = change_in_echo/10; //gives number of +/- 10 echo steps
-        int change_remainder=change_in_echo%10; //gives the size of the +/- remainder
-        for (i=0; i<change-1; i++)
+        int change = change_in_echo/1; //gives number of +/- 10 echo steps
+        int change_remainder=change_in_echo%1; //gives the size of the +/- remainder
+        int i;
+	for (i=0; i<change-1; i++)
             {
-            system("echo 0=+10 /dev/servoblaster");
+            system("echo 0=+1 > /dev/servoblaster");
+	    delayMicroseconds(10);
             }
-        system("echo 0=+%d", change_remainder);
+        system("echo 0=+%d > /dev/servoblaster", change_remainder);
         }
 
 
@@ -98,7 +102,7 @@ void Pan_Gusset(int desired_Pan_Loc, int Lower_Bound, int Upper_Bound)
 
         if(i>=5)
         {
-            printf("Issue with Pan Motor for location %d", Pan_Loc);
+            printf("Issue with Pan Motor for location %d", desired_Pan_Loc);
             break;
         }
     }
