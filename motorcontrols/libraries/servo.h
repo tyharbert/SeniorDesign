@@ -10,6 +10,7 @@ unsigned short Rd_Rev(unsigned short);
 void Pan_Gusset(int Pan_Loc, int Lower_Bound, int Upper_Bound);
 void Mov_Motor(int Motor_Num, int Motor_Loc);
 void Tilt_Gusset(int Tilt_Loc, int Lower_Bound, int Upper_Bound);
+void FB_to_PW_Conv(int Servo)
 
 static const unsigned char butPin = 18; // Active something
 
