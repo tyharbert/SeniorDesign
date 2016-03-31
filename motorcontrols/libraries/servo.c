@@ -18,8 +18,8 @@ unsigned short ADC_Rd(unsigned short address) //Read channel 0 or 1 adc, Pan Mot
     adc_hex = wiringPiI2CReadReg16(result,0x00); //device address, assigning device to read only
 
     adc_hex = Rd_Rev(adc_hex); //Reverses the order of the hex value taken in
-    printf("%d\n",adc_hex);
-    sleep(3);
+    // printf("%d \n",adc_hex);
+    // sleep(3);
     return adc_hex;
     }
 
@@ -49,7 +49,7 @@ void CaptureSavedLocations() {
                 Tilt_Gusset(positions[i]);
                 i++;
             
-                //Cap_Image();
+                Cap_Image();
             }
             break;
         }
@@ -67,22 +67,22 @@ int FB_to_PW_Conv(int Servo)
     {
 
         int Read=ADC_Rd(0x83C5); //read from servo 0
-        float current_echo_value = FB_to_PW(Read, 583, 1974); //Multiplies the Percent by Range of Echo PW, and adds 50 to obtain accurate echo value
-        printf("%f \n", current_echo_value);
+        int current_echo_value = FB_to_PW(Read, 583, 1974); //Multiplies the Percent by Range of Echo PW, and adds 50 to obtain accurate echo value
+        printf("%d --current servo position echo value\n", current_echo_value);
 
         return current_echo_value;
     }
     else if(Servo==1)
     {
         int Read=ADC_Rd(0x83D5); //read from servo 0
-        float current_echo_value = FB_to_PW(Read, 580, 2133); //Multiplies the Percent by Range of Echo PW, and adds 50 to obtain accurate echo value
-        printf("%f \n", current_echo_value);
+        int current_echo_value = FB_to_PW(Read, 580, 2133); //Multiplies the Percent by Range of Echo PW, and adds 50 to obtain accurate echo value
+        printf("%d  --current servo position echo value\n", current_echo_value);
 
         return current_echo_value;
     }
 }
 
-float FB_to_PW(int feedback, float min_fb, float max_fb) {
+int FB_to_PW(int feedback, float min_fb, float max_fb) {
   float fb_range=max_fb-min_fb;
   int echo_range=150;
   float perc_pw= (feedback-min_fb)/fb_range; //subtracts mininum voltage read value, divides by total range of voltages
@@ -95,13 +95,13 @@ void Pan_Gusset(int feedbackTarget)
     printf("Pan Gusset....\n");
     int current_echo_value=FB_to_PW_Conv(0);
     int change_in_echo= FB_to_PW(feedbackTarget, 583, 1974) - current_echo_value; //gives the difference between desired echo and current echo value
+    printf("%d --feedback target echo value \n", FB_to_PW(feedbackTarget,583,1974));
+    printf("%d --change in echo necessary \n", change_in_echo);
     if (change_in_echo<0)
         {
-        change_in_echo=-change_in_echo;
-        int change= change_in_echo/1; //gives number of +/- 10 echo steps
-        int change_remainder=change_in_echo%1; //gives the size of the +/- remainder
+        change_in_echo = -change_in_echo;
         int i;
-	for (i=0; i<change-1; i++)
+	for (i=0; i<change_in_echo-1; i++)
             {
             system("echo 0=-1 > /dev/servoblaster");
 	    delayMicroseconds(100);
@@ -109,17 +109,14 @@ void Pan_Gusset(int feedbackTarget)
         }
     else
         {
-        int change = change_in_echo/1; //gives number of +/- 10 echo steps
-        int change_remainder=change_in_echo%1; //gives the size of the +/- remainder
         int i;
-	for (i=0; i<change-1; i++)
+	for (i=0; i<change_in_echo-1; i++)
             {
             system("echo 0=+1 > /dev/servoblaster");
 	    delayMicroseconds(100);
             }
         }
 
-    sleep(1);
     static int i=0;
     int Read=-1;
 
@@ -142,15 +139,15 @@ void Pan_Gusset(int feedbackTarget)
 void Tilt_Gusset(int feedbackTarget)
 {
     printf("Tilt Gusset....\n");
-    int current_echo_value=FB_to_PW_Conv(1);
-    int change_in_echo= FB_to_PW(feedbackTarget, 580, 2133) - current_echo_value; //gives the difference between desired echo and current echo value
+    int current_echo_value = FB_to_PW_Conv(1);
+    int change_in_echo = FB_to_PW(feedbackTarget, 580, 2133) - current_echo_value; //gives the difference between desired echo and current echo value
+    printf("%d --feedback target echo value \n", FB_to_PW(feedbackTarget, 580, 2133));
+    printf("%d --change in echo necessary \n", change_in_echo);
     if (change_in_echo<0)
         {
         change_in_echo=-change_in_echo;
-        int change= change_in_echo/1; //gives number of +/- 10 echo steps
-        int change_remainder=change_in_echo%1; //gives the size of the +/- remainder
         int i;
-	for (i=0; i<change-1; i++)
+	for (i=0; i < change_in_echo-1; i++)
             {
             system("echo 1=-1 > /dev/servoblaster");
             delayMicroseconds(100);
@@ -158,17 +155,14 @@ void Tilt_Gusset(int feedbackTarget)
         }
     else
         {
-        int change = change_in_echo/1; //gives number of +/- 10 echo steps
-        int change_remainder=change_in_echo%1; //gives the size of the +/- remainder
         int i;
-	for (i=0; i<change-1; i++)
+	for (i=0; i < change_in_echo-1; i++)
             {
             system("echo 1=+1 > /dev/servoblaster");
             delayMicroseconds(100);
             }
         }
 
-    sleep(1);
     static int i=0;
     int Read=-1;
 

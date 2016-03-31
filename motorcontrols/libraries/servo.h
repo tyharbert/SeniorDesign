@@ -20,7 +20,7 @@ void Mov_Motor(int Motor_Num, int Motor_Loc);
 void Tilt_Gusset(int feedbackTarget);
 void CaptureSavedLocations();
 int FB_to_PW_Conv(int Servo);
-float FB_to_PW(int feedback, float min_fb, float max_fb);
+int FB_to_PW(int feedback, float min_fb, float max_fb);
 int* getPositions(int* length);
 int numPositions(char buffer[buffSize]);
 int nextPosition(char buffer[buffSize]);
