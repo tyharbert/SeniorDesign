@@ -118,6 +118,11 @@ void printLocations() {
 }
 
 void captureLocation() {
+    if (locations.size() > 4) {
+        printf("You can only save up to 4 locations.\n\n");
+        return;
+    }
+
     locations.push_back(std::vector<int>());
     locations[locations.size()-1].push_back(ADC_Rd(0x83C5));
     locations[locations.size()-1].push_back(ADC_Rd(0x83D5));

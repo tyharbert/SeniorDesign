@@ -188,3 +188,65 @@ void Cap_Image() //Motor number (0 or 1), and Motor Location (50-250)
         i++;
 
 }
+
+// gets the locations from the save file
+int* getPositions(int* length) {
+    FILE* f;
+    char buffer[1024];
+    
+    f = fopen("../locations/locations.txt", "r");
+    
+    if (!f)
+        return NULL;
+    
+    if (fgets(buffer, sizeof(buffer), f) == NULL) {
+        printf("problem with reading the locations file.\n");
+        return NULL;
+    }
+    
+    *length = numPositions(buffer);
+    
+    static int positions[maxPositions];
+    
+    for (int i=0; i < *length; i++) {
+        positions[i] = nextPosition(buffer);
+    }
+    
+    return positions;
+}
+
+// determine number of positions
+int numPositions(char buffer[buffSize]) {
+    int i = 0, commas = 0;
+    
+    while (buffer[i] != '\0') {
+        if (buffer[i] == ',')
+            commas++;
+        
+        i++;
+    }
+    
+    return ++commas;
+}
+
+// get next position number
+int nextPosition(char buffer[buffSize]) {
+    static int end = 0, begin = 0;
+    char tempBuff[10];
+    
+    // make sure tempBuff has nothing in it
+    for (int i = 0; i < 10; i++)
+        tempBuff[i] = 0;
+    
+    while (buffer[end] != '\0') {
+        if (buffer[end] == ',') {
+            begin = ++end;
+            break;
+        }
+        
+        tempBuff[end-begin] = buffer[end];
+        end++;
+    }
+    
+    return atoi(tempBuff);
+}
