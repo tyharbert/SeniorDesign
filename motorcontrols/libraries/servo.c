@@ -96,7 +96,7 @@ void Pan_Gusset(int desired_Pan_Loc, int Lower_Bound, int Upper_Bound)
 
     while (Read < Lower_Bound || Read > Upper_Bound)
     {
-        Mov_Motor(0, desired_Pan_Loc);
+//        Mov_Motor(0, desired_Pan_Loc);
         Read=ADC_Rd(0x83C5);
         i++;
 
@@ -121,8 +121,9 @@ void Tilt_Gusset(int desired_tilt_loc, int Lower_Bound, int Upper_Bound)
         int i;
 	for (i=0; i<change-1; i++)
             {
-            system("echo 0=-1 > /dev/servoblaster");
-            delayMicroseconds(10);
+            system("echo 1=-1 > /dev/servoblaster");
+//            delayMicroseconds(100);
+	    sleep(1);
             }
         system("echo 1=-%d > /dev/servoblaster", change_remainder);
         }
@@ -134,7 +135,8 @@ void Tilt_Gusset(int desired_tilt_loc, int Lower_Bound, int Upper_Bound)
 	for (i=0; i<change-1; i++)
             {
             system("echo 1=+1 > /dev/servoblaster");
-            delayMicroseconds(10);
+//            delayMicroseconds(100);
+	    sleep(1);
             }
         system("echo 1=+%d > /dev/servoblaster", change_remainder);
         }

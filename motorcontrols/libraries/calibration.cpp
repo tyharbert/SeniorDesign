@@ -1,4 +1,4 @@
-#include "calibration.h"
+#include "calibration.hpp"
 
 void calibrateLocations() {
     short complete = 0;
@@ -64,13 +64,13 @@ void loadLocations() {
                 if (cnt%2 == 0)
                     locations.push_back(std::vector<int>());
                 
-                locations[cnt/2].push_back(stoi(num));
+                locations[cnt/2].push_back(std::stoi(num));
                     
                 num = "";
                 cnt++;
             }
         }
-        locations[cnt/2].push_back(stoi(num));
+        locations[cnt/2].push_back(std::stoi(num));
     }
     loc_file.close();
 }

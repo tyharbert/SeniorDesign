@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
 
+# some of this project requires c++ 11
+add_definitions(-std=c++11)
+
 # project declarations
 project(servo_lib C)
 project(calib_lib CXX)

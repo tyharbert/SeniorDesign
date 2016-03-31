@@ -19,15 +19,18 @@ pullUpDnControl(butPin, PUD_DOWN);
         {
          Pan_Gusset(150, 1600, 1700);  //actual value 1669 or 1.669V
          sleep(5);
-//         Tilt_Gusset(120, 1317, 1340); //actual value 1637 or 1.637V
+         Tilt_Gusset(120, 1290, 1350); //actual value 1637 or 1.637V
+	 sleep(5);
 //         Cap_Image();
          Pan_Gusset(180, 1900, 2100); //actual value 1970 or 1.970V
          sleep(5);
-//         Tilt_Gusset(150,1627,1648);  // actual value 1930, or 1.93V
+         Tilt_Gusset(150,1600,1675);  // actual value 1930, or 1.93V
+	 sleep(5);
 //         Cap_Image();
          Pan_Gusset(130,1400, 1500); //actual value 1142 or 1.142V
          sleep(5);
-//         Tilt_Gusset(120, 1317, 1340); //actual value 1127 or 1.127V feedback
+         Tilt_Gusset(120, 1290, 1375); //actual value 1127 or 1.127V feedback
+	 sleep(5);
 //         Cap_Image();
         }
     }

@@ -21,8 +21,8 @@ void removeLocation();
 void printLocations();
 void captureLocation();
 
-std::vector<std::vector<int> > locations;
+static std::vector<std::vector<int> > locations;
 
-const char* location_file_path = "../locations/locations.txt";
+static const char* location_file_path = "../locations/locations.txt";
 
 #endif
