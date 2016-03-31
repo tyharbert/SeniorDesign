@@ -106,7 +106,6 @@ void Pan_Gusset(int feedbackTarget)
             system("echo 0=-1 > /dev/servoblaster");
 	    delayMicroseconds(100);
             }
-        system("echo 0=-%d > /dev/servoblaster", change_remainder);
         }
     else
         {
@@ -118,7 +117,6 @@ void Pan_Gusset(int feedbackTarget)
             system("echo 0=+1 > /dev/servoblaster");
 	    delayMicroseconds(100);
             }
-        system("echo 0=+%d > /dev/servoblaster", change_remainder);
         }
 
     sleep(1);
@@ -133,7 +131,7 @@ void Pan_Gusset(int feedbackTarget)
 
         if(i>=5)
         {
-            printf("Issue with Pan Motor for location %d \n", desired_Pan_Loc);
+            printf("Issue with Pan Motor for location %d \n", feedbackTarget);
             break;
         }
     }
@@ -156,9 +154,7 @@ void Tilt_Gusset(int feedbackTarget)
             {
             system("echo 1=-1 > /dev/servoblaster");
             delayMicroseconds(100);
-//	    sleep(1);
             }
-        system("echo 1=-%d > /dev/servoblaster", change_remainder);
         }
     else
         {
@@ -169,9 +165,7 @@ void Tilt_Gusset(int feedbackTarget)
             {
             system("echo 1=+1 > /dev/servoblaster");
             delayMicroseconds(100);
-//	    sleep(1);
             }
-        system("echo 1=+%d > /dev/servoblaster", change_remainder);
         }
 
     sleep(1);
@@ -185,7 +179,7 @@ void Tilt_Gusset(int feedbackTarget)
         i++;
             if(i>=5)
             {
-            printf("Issue with Tilt Motor for location %d \n", desired_tilt_loc);
+            printf("Issue with Tilt Motor for location %d \n", feedbackTarget);
             break;
             }
         }
