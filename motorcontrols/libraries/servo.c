@@ -49,7 +49,7 @@ void CaptureSavedLocations() {
                 Tilt_Gusset(position[i]);
                 i++;
             
-                Cap_Image();
+                //Cap_Image();
             }
             break;
         }
@@ -228,7 +228,7 @@ int* getPositions(int* length) {
     FILE* f;
     char buffer[1024];
     
-    f = fopen("../locations/locations.txt", "r");
+    f = fopen("../motorcontrols/locations/locations.txt", "r");
     
     if (!f)
         return NULL;
