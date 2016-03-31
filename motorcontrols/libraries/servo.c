@@ -228,7 +228,7 @@ int* getPositions(int* length) {
     FILE* f;
     char buffer[1024];
     
-    f = fopen("../motorcontrols/locations/locations.txt", "r");
+    f = fopen("../locations/locations.txt", "r");
     
     if (!f)
         return NULL;
