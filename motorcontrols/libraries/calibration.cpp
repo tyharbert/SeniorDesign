@@ -122,22 +122,3 @@ void captureLocation() {
     locations[locations.size()-1].push_back(ADC_Rd(0x83C5));
     locations[locations.size()-1].push_back(ADC_Rd(0x83D5));
 }
-
-// from servo.h (moved because it is the only thing needed for this program)
-unsigned short ADC_Rd(unsigned short address) { //Read channel 0 or 1 adc, Pan Motor
-    unsigned short adc_hex = 0;
-    int result;
-
-    result=wiringPiI2CSetup(0x48); //device address
-
-    wiringPiI2CWriteReg16(result, 0x01, address); //Address for the register, and configuring the read channel 0
-    adc_hex= wiringPiI2CReadReg16(result, 0x00);
-
-    wiringPiI2CWriteReg16(result, 0x01, address);
-    adc_hex = wiringPiI2CReadReg16(result,0x00); //device address, assigning device to read only
-
-    adc_hex = Rd_Rev(adc_hex); //Reverses the order of the hex value taken in
-    printf("%d\n",adc_hex);
-    sleep(3);
-    return adc_hex;
-}
