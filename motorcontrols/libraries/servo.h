@@ -6,6 +6,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+static const int buffSize = 1024;
+// this is twice the size because it includes both servo positions
+// this is hard coded into captureLocation() of calibration.cpp
+static const int maxPositions = 8;
+
 static const unsigned char butPin = 18; // Active something
 
 unsigned short ADC_Rd(unsigned short address);
