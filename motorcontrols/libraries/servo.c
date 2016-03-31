@@ -44,9 +44,9 @@ void CaptureSavedLocations() {
                 return;
 
             while (i < length) {
-                Pan_Gusset(position[i]);
+                Pan_Gusset(positions[i]);
                 i++;
-                Tilt_Gusset(position[i]);
+                Tilt_Gusset(positions[i]);
                 i++;
             
                 //Cap_Image();

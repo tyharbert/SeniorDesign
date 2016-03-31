@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <wiringPi.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 static const int buffSize = 1024;
 // this is twice the size because it includes both servo positions
