@@ -1,7 +1,9 @@
 #ifndef CALIBRATION_HPP
 #define CALIBRATION_HPP
 
+extern "C" {
 #include "servo.h"
+}
 
 #include <stdio.h>
 #include <ctype.h>
