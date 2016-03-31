@@ -23,6 +23,38 @@ unsigned short ADC_Rd(unsigned short address) //Read channel 0 or 1 adc, Pan Mot
     return adc_hex;
     }
 
+void CaptureSavedLocations() {
+    system("echo ./servod --p1pins=7, 11, 0, 0, 0, 0, 0, 0");
+    system("echo ./servod --step-size=1us");
+
+    wiringPiSetupGpio();
+    pinMode(butPin, INPUT);
+    pullUpDnControl(butPin, PUD_DOWN);
+
+    while(1)
+    {
+        if (digitalRead(butPin)==1)
+        {
+            int i = 0;
+            int length;
+            int* positions;
+            positions = getPositions(&length);
+
+            if (positions == NULL)
+                return;
+
+            while (i < length) {
+                Pan_Gusset(position[i]);
+                i++;
+                Tilt_Gusset(position[i]);
+                i++;
+            
+                Cap_Image();
+            }
+            break;
+        }
+    }
+}
 
 unsigned short Rd_Rev(unsigned short a)
     {
@@ -34,37 +66,35 @@ int FB_to_PW_Conv(int Servo)
   if (Servo==0)
     {
 
-  int Read=ADC_Rd(0x83C5); //read from servo 0
-  float min_fb=584; //echo 0=50
-  float max_fb=2170; //echo 0=200
-  float fb_range=max_fb-min_fb;
-  int echo_range=150;
-  float perc_pw= (Read-min_fb)/fb_range; //subtracts mininum voltage read value, divides by total range of voltages
-  float current_echo_value = (perc_pw*echo_range)+47; //Multiplies the Percent by Range of Echo PW, and adds 50 to obtain accurate echo value
-  printf("%f \n", current_echo_value);
+        int Read=ADC_Rd(0x83C5); //read from servo 0
+        float current_echo_value = FB_to_PW(Read, 583, 1974); //Multiplies the Percent by Range of Echo PW, and adds 50 to obtain accurate echo value
+        printf("%f \n", current_echo_value);
 
-  return current_echo_value;
+        return current_echo_value;
     }
-  else if(Servo==1)
+    else if(Servo==1)
     {
-  int Read=ADC_Rd(0x83D5); //read from servo 0
-  float min_fb=584; //echo 0=50
-  float max_fb=2170; //echo 0=200
-  float fb_range=max_fb-min_fb;
-  int echo_range=150;
-  float perc_pw= (Read-min_fb)/fb_range; //subtracts mininum voltage read value, divides by total range of voltages
-  float current_echo_value = (perc_pw*echo_range)+47; //Multiplies the Percent by Range of Echo PW, and adds 50 to obtain accurate echo value
-  printf("%f \n", current_echo_value);
+        int Read=ADC_Rd(0x83D5); //read from servo 0
+        float current_echo_value = FB_to_PW(Read, 580, 2133); //Multiplies the Percent by Range of Echo PW, and adds 50 to obtain accurate echo value
+        printf("%f \n", current_echo_value);
 
-  return current_echo_value;
+        return current_echo_value;
     }
 }
 
-void Pan_Gusset(int desired_Pan_Loc, int Lower_Bound, int Upper_Bound)
+float FB_to_PW(int feedback, float min_fb, float max_fb) {
+  float fb_range=max_fb-min_fb;
+  int echo_range=150;
+  float perc_pw= (Read-min_fb)/fb_range; //subtracts mininum voltage read value, divides by total range of voltages
+
+  return (perc_pw*echo_range)+47; //Multiplies the Percent by Range of Echo PW, and adds 50 to obtain accurate echo value
+}
+
+void Pan_Gusset(int feedbackTarget)
 {
     printf("Pan Gusset....\n");
     int current_echo_value=FB_to_PW_Conv(0);
-    int change_in_echo=desired_Pan_Loc-current_echo_value; //gives the difference between desired echo and current echo value
+    int change_in_echo= FB_to_PW(feedbackTarget, 583, 1974) - current_echo_value; //gives the difference between desired echo and current echo value
     if (change_in_echo<0)
         {
         change_in_echo=-change_in_echo;
@@ -95,7 +125,7 @@ void Pan_Gusset(int desired_Pan_Loc, int Lower_Bound, int Upper_Bound)
     static int i=0;
     int Read=-1;
 
-    while (Read < Lower_Bound || Read > Upper_Bound)
+    while (Read < (feedbackTarget - 20) || Read > (feedbackTarget + 20))
     {
 //        Mov_Motor(0, desired_Pan_Loc);
         Read=ADC_Rd(0x83C5);
@@ -108,12 +138,14 @@ void Pan_Gusset(int desired_Pan_Loc, int Lower_Bound, int Upper_Bound)
         }
     }
 
+    sleep(4);
+
     }
-void Tilt_Gusset(int desired_tilt_loc, int Lower_Bound, int Upper_Bound)
+void Tilt_Gusset(int feedbackTarget)
 {
     printf("Tilt Gusset....\n");
     int current_echo_value=FB_to_PW_Conv(1);
-    int change_in_echo=desired_tilt_loc-current_echo_value; //gives the difference between desired echo and current echo value
+    int change_in_echo= FB_to_PW(feedbackTarget, 580, 2133) - current_echo_value; //gives the difference between desired echo and current echo value
     if (change_in_echo<0)
         {
         change_in_echo=-change_in_echo;
@@ -146,7 +178,7 @@ void Tilt_Gusset(int desired_tilt_loc, int Lower_Bound, int Upper_Bound)
     static int i=0;
     int Read=-1;
 
-    while (Read < Lower_Bound || Read > Upper_Bound)
+    while (Read < (feedbackTarget - 20) || Read > (feedbackTarget + 20))
         {
 //        Mov_Motor(1, desired_tilt_loc);
         Read=ADC_Rd(0x83D5);
@@ -157,6 +189,8 @@ void Tilt_Gusset(int desired_tilt_loc, int Lower_Bound, int Upper_Bound)
             break;
             }
         }
+
+        sleep(4);
     }
 void Mov_Motor(int Motor_Num, int Motor_Loc) //Motor number (0 or 1), and Motor Location (50-250)
 {
@@ -174,7 +208,7 @@ void Mov_Motor(int Motor_Num, int Motor_Loc) //Motor number (0 or 1), and Motor 
 }
 
 
-void Cap_Image() //Motor number (0 or 1), and Motor Location (50-250)
+void Cap_Image()
 {
     int n=65;
     int cx=0;

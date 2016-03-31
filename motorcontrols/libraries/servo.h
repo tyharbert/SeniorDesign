@@ -14,10 +14,12 @@ static const unsigned char butPin = 18; // Active something
 
 unsigned short ADC_Rd(unsigned short address);
 unsigned short Rd_Rev(unsigned short);
-void Pan_Gusset(int Pan_Loc, int Lower_Bound, int Upper_Bound);
+void Pan_Gusset(int feedbackTarget);
 void Mov_Motor(int Motor_Num, int Motor_Loc);
-void Tilt_Gusset(int Tilt_Loc, int Lower_Bound, int Upper_Bound);
+void Tilt_Gusset(int feedbackTarget);
+void CaptureSavedLocations();
 int FB_to_PW_Conv(int Servo);
+float FB_to_PW(int feedback, float min_fb, float max_fb);
 int* getPositions(int* length);
 int numPositions(char buffer[buffSize]);
 int nextPosition(char buffer[buffSize]);
