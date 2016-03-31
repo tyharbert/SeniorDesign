@@ -33,6 +33,7 @@ int FB_to_PW_Conv(int Servo)
 {
   if (Servo==0)
     {
+
   int Read=ADC_Rd(0x83C5); //read from servo 0
   float min_fb=584; //echo 0=50
   float max_fb=2170; //echo 0=200
@@ -73,7 +74,7 @@ void Pan_Gusset(int desired_Pan_Loc, int Lower_Bound, int Upper_Bound)
 	for (i=0; i<change-1; i++)
             {
             system("echo 0=-1 > /dev/servoblaster");
-	    delayMicroseconds(10);
+	    delayMicroseconds(100);
             }
         system("echo 0=-%d > /dev/servoblaster", change_remainder);
         }
@@ -85,12 +86,12 @@ void Pan_Gusset(int desired_Pan_Loc, int Lower_Bound, int Upper_Bound)
 	for (i=0; i<change-1; i++)
             {
             system("echo 0=+1 > /dev/servoblaster");
-	    delayMicroseconds(10);
+	    delayMicroseconds(100);
             }
         system("echo 0=+%d > /dev/servoblaster", change_remainder);
         }
 
-
+    sleep(1);
     static int i=0;
     int Read=-1;
 
@@ -102,7 +103,7 @@ void Pan_Gusset(int desired_Pan_Loc, int Lower_Bound, int Upper_Bound)
 
         if(i>=5)
         {
-            printf("Issue with Pan Motor for location %d", desired_Pan_Loc);
+            printf("Issue with Pan Motor for location %d \n", desired_Pan_Loc);
             break;
         }
     }
@@ -122,8 +123,8 @@ void Tilt_Gusset(int desired_tilt_loc, int Lower_Bound, int Upper_Bound)
 	for (i=0; i<change-1; i++)
             {
             system("echo 1=-1 > /dev/servoblaster");
-//            delayMicroseconds(100);
-	    sleep(1);
+            delayMicroseconds(100);
+//	    sleep(1);
             }
         system("echo 1=-%d > /dev/servoblaster", change_remainder);
         }
@@ -135,23 +136,24 @@ void Tilt_Gusset(int desired_tilt_loc, int Lower_Bound, int Upper_Bound)
 	for (i=0; i<change-1; i++)
             {
             system("echo 1=+1 > /dev/servoblaster");
-//            delayMicroseconds(100);
-	    sleep(1);
+            delayMicroseconds(100);
+//	    sleep(1);
             }
         system("echo 1=+%d > /dev/servoblaster", change_remainder);
         }
 
+    sleep(1);
     static int i=0;
     int Read=-1;
 
     while (Read < Lower_Bound || Read > Upper_Bound)
         {
-        Mov_Motor(1, desired_tilt_loc);
+//        Mov_Motor(1, desired_tilt_loc);
         Read=ADC_Rd(0x83D5);
         i++;
             if(i>=5)
             {
-            printf("Issue with Tilt Motor for location %d", desired_tilt_loc);
+            printf("Issue with Tilt Motor for location %d \n", desired_tilt_loc);
             break;
             }
         }
@@ -178,7 +180,7 @@ void Cap_Image() //Motor number (0 or 1), and Motor Location (50-250)
     int cx=0;
     static int i=0;
     char command[n];
-    cx=snprintf(command, n, "fswebcam -r 1280x720 --jpeg 100 -D 30 -S 13 1 testing%d.jpeg", i); //assigns the echo call as the command, with the limit of n characters
+    cx=snprintf(command, n, "fswebcam -r 2592x1944 --jpeg 100 -D 30 -S 13 1 testing%d.jpeg", i); //assigns the echo call as the command, with the limit of n characters
     if(cx>n)
         printf("Command Length Too Long");
     else
