@@ -85,7 +85,7 @@ int FB_to_PW_Conv(int Servo)
 float FB_to_PW(int feedback, float min_fb, float max_fb) {
   float fb_range=max_fb-min_fb;
   int echo_range=150;
-  float perc_pw= (Read-min_fb)/fb_range; //subtracts mininum voltage read value, divides by total range of voltages
+  float perc_pw= (feedback-min_fb)/fb_range; //subtracts mininum voltage read value, divides by total range of voltages
 
   return (perc_pw*echo_range)+47; //Multiplies the Percent by Range of Echo PW, and adds 50 to obtain accurate echo value
 }
