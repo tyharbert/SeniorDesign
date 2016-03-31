@@ -234,7 +234,9 @@ int* getPositions(int* length) {
     
     *length = numPositions(buffer);
     
-    static int positions[maxPositions];
+    // this is twice the size because it includes both servo positions
+    // this is hard coded into captureLocation() of calibration.cpp
+    static int positions[8];
     
     for (int i=0; i < *length; i++) {
         positions[i] = nextPosition(buffer);
