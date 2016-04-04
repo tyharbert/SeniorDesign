@@ -48,7 +48,7 @@ void CaptureSavedLocations() {
                 i++;
                 Tilt_Gusset(positions[i]);
                 i++;
-            
+
                 Cap_Image();
             }
             break;
@@ -116,13 +116,18 @@ void Pan_Gusset(int feedbackTarget)
 	    delayMicroseconds(100);
             }
         }
+    check_Target_Position(feedbackTarget, 0);
+    sleep(4);
 
+    }
+void check_Target_Position(int feedbackTarget, int motor)
+{
     static int i=0;
     int Read=-1;
-
-    while (Read < (feedbackTarget - 20) || Read > (feedbackTarget + 20))
+    if (motor==0)
     {
-//        Mov_Motor(0, desired_Pan_Loc);
+        while (Read < (feedbackTarget - 20) || Read > (feedbackTarget + 20))
+        {
         Read=ADC_Rd(0x83C5);
         i++;
 
@@ -131,11 +136,27 @@ void Pan_Gusset(int feedbackTarget)
             printf("Issue with Pan Motor for location %d \n", feedbackTarget);
             break;
         }
+        Pan_Gusset(feedbackTarget);
+        }
+    }
+    else
+    {
+    static int i=0;
+    int Read=-1;
+
+    while (Read < (feedbackTarget - 20) || Read > (feedbackTarget + 20))
+        {
+        Read=ADC_Rd(0x83D5);
+        i++;
+            if(i>=5)
+            {
+            printf("Issue with Tilt Motor for location %d \n", feedbackTarget);
+            break;
+            }
+        }
     }
 
-    sleep(4);
-
-    }
+}
 void Tilt_Gusset(int feedbackTarget)
 {
     printf("Tilt Gusset....\n");
@@ -162,24 +183,11 @@ void Tilt_Gusset(int feedbackTarget)
             delayMicroseconds(100);
             }
         }
-
-    static int i=0;
-    int Read=-1;
-
-    while (Read < (feedbackTarget - 20) || Read > (feedbackTarget + 20))
-        {
-//        Mov_Motor(1, desired_tilt_loc);
-        Read=ADC_Rd(0x83D5);
-        i++;
-            if(i>=5)
-            {
-            printf("Issue with Tilt Motor for location %d \n", feedbackTarget);
-            break;
-            }
-        }
+    check_Target_Position(feedbackTarget, 1);
 
         sleep(4);
     }
+
 void Mov_Motor(int Motor_Num, int Motor_Loc) //Motor number (0 or 1), and Motor Location (50-250)
 {
     int n=35;
@@ -194,7 +202,6 @@ void Mov_Motor(int Motor_Num, int Motor_Loc) //Motor number (0 or 1), and Motor 
         system(command);
     sleep(2);
 }
-
 
 void Cap_Image()
 {
@@ -215,41 +222,41 @@ void Cap_Image()
 int* getPositions(int* length) {
     FILE* f;
     char buffer[1024];
-    
+
     f = fopen("../locations/locations.txt", "r");
-    
+
     if (!f)
         return NULL;
-    
+
     if (fgets(buffer, sizeof(buffer), f) == NULL) {
         printf("problem with reading the locations file.\n");
         return NULL;
     }
-    
+
     *length = numPositions(buffer);
-    
+
     // this is twice the size because it includes both servo positions
     // this is hard coded into captureLocation() of calibration.cpp
     static int positions[8];
-    
+
     for (int i=0; i < *length; i++) {
         positions[i] = nextPosition(buffer);
     }
-    
+
     return positions;
 }
 
 // determine number of positions
 int numPositions(char buffer[buffSize]) {
     int i = 0, commas = 0;
-    
+
     while (buffer[i] != '\0') {
         if (buffer[i] == ',')
             commas++;
-        
+
         i++;
     }
-    
+
     return ++commas;
 }
 
@@ -257,20 +264,20 @@ int numPositions(char buffer[buffSize]) {
 int nextPosition(char buffer[buffSize]) {
     static int end = 0, begin = 0;
     char tempBuff[10];
-    
+
     // make sure tempBuff has nothing in it
     for (int i = 0; i < 10; i++)
         tempBuff[i] = 0;
-    
+
     while (buffer[end] != '\0') {
         if (buffer[end] == ',') {
             begin = ++end;
             break;
         }
-        
+
         tempBuff[end-begin] = buffer[end];
         end++;
     }
-    
+
     return atoi(tempBuff);
 }

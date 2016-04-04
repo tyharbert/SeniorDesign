@@ -18,6 +18,7 @@ unsigned short Rd_Rev(unsigned short);
 void Pan_Gusset(int feedbackTarget);
 void Mov_Motor(int Motor_Num, int Motor_Loc);
 void Tilt_Gusset(int feedbackTarget);
+void check_Target_Position(int feedbackTarget, int motor);
 void CaptureSavedLocations();
 int FB_to_PW_Conv(int Servo);
 int FB_to_PW(int feedback, float min_fb, float max_fb);
