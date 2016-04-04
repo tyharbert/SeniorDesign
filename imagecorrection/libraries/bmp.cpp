@@ -117,10 +117,10 @@ Corners BMP::fast() {
     int min_y = 3;
     int max_y = this->height()-3;
         
-    this->fast(min_x, max_x/2, min_y, max_y/2, corners[0], &BMP::fast_sw);
+    this->fast(min_x, max_x/2, min_y + BTM_PX_IGNORE, max_y/2, corners[0], &BMP::fast_sw);
     this->fast(min_x, max_x/2, max_y/2, max_y, corners[1], &BMP::fast_nw);
     this->fast(max_x/2, max_x, max_y/2, max_y, corners[2], &BMP::fast_ne);
-    this->fast(max_x/2, max_x, min_y, max_y/2, corners[3], &BMP::fast_se);
+    this->fast(max_x/2, max_x, min_y + BTM_PX_IGNORE, max_y/2, corners[3], &BMP::fast_se);
     
     // return the Corners object
     return Corners(corners);
@@ -165,9 +165,9 @@ bool BMP::fast_se(int x, int y, int xCorner, int yCorner) {
 bool BMP::is_corner(int x, int y) {
     // these values have been adjusted using trial and error
     // threshold of luminance value
-    const static float threshold = 60; 
+    const static float threshold = 45; 
     // number of contiguous pixels required
-    const static int n = 10;
+    const static int n = 8;
     
     // luminances limits for selected pixels
     float lum = this->rows[y].pixels[x].luminance();
