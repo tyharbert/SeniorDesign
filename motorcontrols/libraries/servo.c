@@ -44,12 +44,12 @@ void CaptureSavedLocations() {
                 return;
 
             while (i < length) {
-                Pan_Gusset(positions[i]);
+                move_and_check_Position(positions[i], 0); //Pan Motor
                 i++;
-                Tilt_Gusset(positions[i]);
+                move_and_check_Position(positions[i], 1); //Tilt Motor
                 i++;
 
-                Cap_Image();
+//                Cap_Image();
             }
             break;
         }
@@ -68,7 +68,7 @@ int FB_to_PW_Conv(int Servo)
 
         int Read=ADC_Rd(0x83C5); //read from servo 0
         int current_echo_value = FB_to_PW(Read, 583, 1974); //Multiplies the Percent by Range of Echo PW, and adds 50 to obtain accurate echo value
-        printf("%d --current servo position echo value\n", current_echo_value);
+        printf("%d --current pan servo position echo value\n", current_echo_value);
 
         return current_echo_value;
     }
@@ -76,7 +76,7 @@ int FB_to_PW_Conv(int Servo)
     {
         int Read=ADC_Rd(0x83D5); //read from servo 0
         int current_echo_value = FB_to_PW(Read, 580, 2133); //Multiplies the Percent by Range of Echo PW, and adds 50 to obtain accurate echo value
-        printf("%d  --current servo position echo value\n", current_echo_value);
+        printf("%d  --current tilt servo position echo value\n", current_echo_value);
 
         return current_echo_value;
     }
@@ -97,6 +97,7 @@ void Pan_Gusset(int feedbackTarget)
     int change_in_echo= FB_to_PW(feedbackTarget, 583, 1974) - current_echo_value; //gives the difference between desired echo and current echo value
     printf("%d --feedback target echo value \n", FB_to_PW(feedbackTarget,583,1974));
     printf("%d --change in echo necessary \n", change_in_echo);
+
     if (change_in_echo<0)
         {
         change_in_echo = -change_in_echo;
@@ -104,7 +105,7 @@ void Pan_Gusset(int feedbackTarget)
 	for (i=0; i<change_in_echo-1; i++)
             {
             system("echo 0=-1 > /dev/servoblaster");
-	    delayMicroseconds(100);
+	    delayMicroseconds(10000);
             }
         }
     else
@@ -112,40 +113,41 @@ void Pan_Gusset(int feedbackTarget)
         int i;
 	for (i=0; i<change_in_echo-1; i++)
             {
+	    printf("YOYOYO");
             system("echo 0=+1 > /dev/servoblaster");
-	    delayMicroseconds(100);
+	    delayMicroseconds(10000);
             }
         }
-    check_Target_Position(feedbackTarget, 0);
-    sleep(4);
+    sleep(3);
 
     }
-void check_Target_Position(int feedbackTarget, int motor)
+
+void move_and_check_Position(int feedbackTarget, int motor)
 {
-    static int i=0;
+    int i=0;
     int Read=-1;
     if (motor==0)
     {
         while (Read < (feedbackTarget - 20) || Read > (feedbackTarget + 20))
         {
+	Pan_Gusset(feedbackTarget);
         Read=ADC_Rd(0x83C5);
         i++;
 
-        if(i>=5)
-        {
+            if(i>=5)
+            {
             printf("Issue with Pan Motor for location %d \n", feedbackTarget);
             break;
+            }
         }
-        Pan_Gusset(feedbackTarget);
-        }
+	i=0;
     }
     else
     {
-    static int i=0;
-    int Read=-1;
 
     while (Read < (feedbackTarget - 20) || Read > (feedbackTarget + 20))
         {
+	Tilt_Gusset(feedbackTarget);
         Read=ADC_Rd(0x83D5);
         i++;
             if(i>=5)
@@ -154,9 +156,11 @@ void check_Target_Position(int feedbackTarget, int motor)
             break;
             }
         }
+	i=0;
     }
-
+	sleep(3);
 }
+
 void Tilt_Gusset(int feedbackTarget)
 {
     printf("Tilt Gusset....\n");
@@ -171,7 +175,9 @@ void Tilt_Gusset(int feedbackTarget)
 	for (i=0; i < change_in_echo-1; i++)
             {
             system("echo 1=-1 > /dev/servoblaster");
-            delayMicroseconds(100);
+            delayMicroseconds(30000);
+		if(i>=30)
+		sleep(3);
             }
         }
     else
@@ -180,12 +186,12 @@ void Tilt_Gusset(int feedbackTarget)
 	for (i=0; i < change_in_echo-1; i++)
             {
             system("echo 1=+1 > /dev/servoblaster");
-            delayMicroseconds(100);
+            delayMicroseconds(30000);
+		if(i>=30)
+		sleep(3);
             }
         }
-    check_Target_Position(feedbackTarget, 1);
-
-        sleep(4);
+        sleep(3);
     }
 
 void Mov_Motor(int Motor_Num, int Motor_Loc) //Motor number (0 or 1), and Motor Location (50-250)
@@ -215,7 +221,6 @@ void Cap_Image()
     else
         system(command);
         i++;
-
 }
 
 // gets the locations from the save file
