@@ -45,17 +45,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=source/powerSystem.c
+SOURCEFILES_QUOTED_IF_SPACED=source/powerSystem.c source/ADC.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/source/powerSystem.p1
-POSSIBLE_DEPFILES=${OBJECTDIR}/source/powerSystem.p1.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/source/powerSystem.p1 ${OBJECTDIR}/source/ADC.p1
+POSSIBLE_DEPFILES=${OBJECTDIR}/source/powerSystem.p1.d ${OBJECTDIR}/source/ADC.p1.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/source/powerSystem.p1
+OBJECTFILES=${OBJECTDIR}/source/powerSystem.p1 ${OBJECTDIR}/source/ADC.p1
 
 # Source Files
-SOURCEFILES=source/powerSystem.c
+SOURCEFILES=source/powerSystem.c source/ADC.c
 
 
 CFLAGS=
@@ -89,6 +89,14 @@ ${OBJECTDIR}/source/powerSystem.p1: source/powerSystem.c  nbproject/Makefile-${C
 	@-${MV} ${OBJECTDIR}/source/powerSystem.d ${OBJECTDIR}/source/powerSystem.p1.d 
 	@${FIXDEPS} ${OBJECTDIR}/source/powerSystem.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
 	
+${OBJECTDIR}/source/ADC.p1: source/ADC.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/source" 
+	@${RM} ${OBJECTDIR}/source/ADC.p1.d 
+	@${RM} ${OBJECTDIR}/source/ADC.p1 
+	${MP_CC} --pass1 $(MP_EXTRA_CC_PRE) --chip=$(MP_PROCESSOR_OPTION) -Q -G  -D__DEBUG=1 --debugger=pickit3  --double=24 --float=24 --opt=default,+asm,+asmfile,-speed,+space,-debug --addrqual=ignore --mode=free -P -N255 -I"source" -I"header" --warn=-3 --asmlist --summary=default,-psect,-class,+mem,-hex,-file --output=default,-inhx032 --runtime=default,+clear,+init,-keep,-no_startup,-osccal,-resetbits,-download,-stackcall,+clib --output=-mcof,+elf:multilocs --stack=compiled:auto:auto "--errformat=%f:%l: error: (%n) %s" "--warnformat=%f:%l: warning: (%n) %s" "--msgformat=%f:%l: advisory: (%n) %s"    -o${OBJECTDIR}/source/ADC.p1  source/ADC.c 
+	@-${MV} ${OBJECTDIR}/source/ADC.d ${OBJECTDIR}/source/ADC.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/source/ADC.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
 else
 ${OBJECTDIR}/source/powerSystem.p1: source/powerSystem.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}/source" 
@@ -97,6 +105,14 @@ ${OBJECTDIR}/source/powerSystem.p1: source/powerSystem.c  nbproject/Makefile-${C
 	${MP_CC} --pass1 $(MP_EXTRA_CC_PRE) --chip=$(MP_PROCESSOR_OPTION) -Q -G  --double=24 --float=24 --opt=default,+asm,+asmfile,-speed,+space,-debug --addrqual=ignore --mode=free -P -N255 -I"source" -I"header" --warn=-3 --asmlist --summary=default,-psect,-class,+mem,-hex,-file --output=default,-inhx032 --runtime=default,+clear,+init,-keep,-no_startup,-osccal,-resetbits,-download,-stackcall,+clib --output=-mcof,+elf:multilocs --stack=compiled:auto:auto "--errformat=%f:%l: error: (%n) %s" "--warnformat=%f:%l: warning: (%n) %s" "--msgformat=%f:%l: advisory: (%n) %s"    -o${OBJECTDIR}/source/powerSystem.p1  source/powerSystem.c 
 	@-${MV} ${OBJECTDIR}/source/powerSystem.d ${OBJECTDIR}/source/powerSystem.p1.d 
 	@${FIXDEPS} ${OBJECTDIR}/source/powerSystem.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
+${OBJECTDIR}/source/ADC.p1: source/ADC.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/source" 
+	@${RM} ${OBJECTDIR}/source/ADC.p1.d 
+	@${RM} ${OBJECTDIR}/source/ADC.p1 
+	${MP_CC} --pass1 $(MP_EXTRA_CC_PRE) --chip=$(MP_PROCESSOR_OPTION) -Q -G  --double=24 --float=24 --opt=default,+asm,+asmfile,-speed,+space,-debug --addrqual=ignore --mode=free -P -N255 -I"source" -I"header" --warn=-3 --asmlist --summary=default,-psect,-class,+mem,-hex,-file --output=default,-inhx032 --runtime=default,+clear,+init,-keep,-no_startup,-osccal,-resetbits,-download,-stackcall,+clib --output=-mcof,+elf:multilocs --stack=compiled:auto:auto "--errformat=%f:%l: error: (%n) %s" "--warnformat=%f:%l: warning: (%n) %s" "--msgformat=%f:%l: advisory: (%n) %s"    -o${OBJECTDIR}/source/ADC.p1  source/ADC.c 
+	@-${MV} ${OBJECTDIR}/source/ADC.d ${OBJECTDIR}/source/ADC.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/source/ADC.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
 	
 endif
 

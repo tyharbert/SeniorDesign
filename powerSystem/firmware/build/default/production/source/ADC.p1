@@ -1,37 +1,30 @@
 Version 3.2 HI-TECH Software Intermediate Code
-[p mainexit ]
-"42 header\powerSystem.h
-[v _ports_initialize `(v ~T0 @X0 0 ef ]
-"14 source/ADC.h
-[v _ADC_initialize `(v ~T0 @X0 0 ef ]
-"1660 C:\Program Files (x86)\Microchip\xc8\v1.36\include\pic16f18324.h
-[v _WDTCON `Vuc ~T0 @X0 0 e@151 ]
-"17 source/ADC.h
-[v _ADC_read `(ui ~T0 @X0 0 ef1`uc ]
-"424 C:\Program Files (x86)\Microchip\xc8\v1.36\include\pic16f18324.h
-[s S31 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
-[n S31 . RC0 RC1 RC2 RC3 RC4 RC5 ]
-"423
-[u S30 `S31 1 ]
-[n S30 . . ]
-"433
-[v _PORTCbits `VS30 ~T0 @X0 0 e@14 ]
+"1847 C:\Program Files (x86)\Microchip\xc8\v1.36\include\pic16f18324.h
+[v _ADCON1 `Vuc ~T0 @X0 0 e@158 ]
+"1762
+[v _ADCON0 `Vuc ~T0 @X0 0 e@157 ]
 [v F6963 `(v ~T0 @X0 1 tf1`ul ]
 "152 C:\Program Files (x86)\Microchip\xc8\v1.36\include\pic.h
 [v __delay `JF6963 ~T0 @X0 0 e ]
 [p i __delay ]
-"369 C:\Program Files (x86)\Microchip\xc8\v1.36\include\pic16f18324.h
-[v _PORTA `Vuc ~T0 @X0 0 e@12 ]
-"418
-[v _PORTC `Vuc ~T0 @X0 0 e@14 ]
-"1302
-[v _TRISA `Vuc ~T0 @X0 0 e@140 ]
-"1346
-[v _TRISC `Vuc ~T0 @X0 0 e@142 ]
-"2546
-[v _ANSELA `Vuc ~T0 @X0 0 e@396 ]
-"2590
-[v _ANSELC `Vuc ~T0 @X0 0 e@398 ]
+"1768 C:\Program Files (x86)\Microchip\xc8\v1.36\include\pic16f18324.h
+[s S93 :1 `uc 1 :1 `uc 1 :6 `uc 1 ]
+[n S93 . ADON GO_nDONE CHS ]
+"1773
+[s S94 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
+[n S94 . . ADGO CHS0 CHS1 CHS2 CHS3 CHS4 CHS5 ]
+"1783
+[s S95 :1 `uc 1 :1 `uc 1 ]
+[n S95 . . GO ]
+"1767
+[u S92 `S93 1 `S94 1 `S95 1 ]
+[n S92 . . . . ]
+"1788
+[v _ADCON0bits `VS92 ~T0 @X0 0 e@157 ]
+"1743
+[v _ADRESH `Vuc ~T0 @X0 0 e@156 ]
+"1724
+[v _ADRESL `Vuc ~T0 @X0 0 e@155 ]
 [; ;htc.h: 26: extern const char __xc8_OPTIM_SPEED;
 [; ;htc.h: 28: extern double __fpnormalize(double);
 [; ;xc8debug.h: 14: extern void __builtin_software_breakpoint(void);
@@ -6647,6 +6640,8 @@ Version 3.2 HI-TECH Software Intermediate Code
 [; ;pic.h: 186: extern unsigned char __resetbits;
 [; ;pic.h: 187: extern __bit __powerdown;
 [; ;pic.h: 188: extern __bit __timeout;
+[; ;ADC.h: 14: void ADC_initialize(void);
+[; ;ADC.h: 17: unsigned int ADC_read(unsigned char channel);
 "13 header\powerSystem.h
 [p x FEXTOSC=OFF ]
 "14
@@ -6685,143 +6680,56 @@ Version 3.2 HI-TECH Software Intermediate Code
 [p x CPD=OFF ]
 [; ;powerSystem.h: 42: void ports_initialize(void);
 [; ;powerSystem.h: 45: void I2C_initialize(void);
-[; ;ADC.h: 14: void ADC_initialize(void);
-[; ;ADC.h: 17: unsigned int ADC_read(unsigned char channel);
-"14 source/powerSystem.c
-[v _triggered `Vuc ~T0 @X0 1 e ]
-[i _triggered
--> -> 0 `i `uc
-]
-[; ;powerSystem.c: 14: volatile unsigned char triggered = 0;
-"17
-[v _main `(v ~T0 @X0 1 ef ]
-"18
+"15 source/ADC.c
+[v _ADC_initialize `(v ~T0 @X0 1 ef ]
+"16
 {
-[; ;powerSystem.c: 17: void main(void)
-[; ;powerSystem.c: 18: {
-[e :U _main ]
+[; ;ADC.c: 15: void ADC_initialize(void)
+[; ;ADC.c: 16: {
+[e :U _ADC_initialize ]
 [f ]
-"19
-[v _time `ui ~T0 @X0 1 a ]
-[; ;powerSystem.c: 19: unsigned int time = 0;
-[e = _time -> -> 0 `i `ui ]
-"22
-[v _battery_voltage `ui ~T0 @X0 1 a ]
-[; ;powerSystem.c: 22: unsigned int battery_voltage = 0;
-[e = _battery_voltage -> -> 0 `i `ui ]
-[; ;powerSystem.c: 24: ports_initialize();
+[; ;ADC.c: 24: ADCON1 = 0x80;
 "24
-[e ( _ports_initialize ..  ]
-[; ;powerSystem.c: 25: ADC_initialize();
+[e = _ADCON1 -> -> 128 `i `uc ]
+[; ;ADC.c: 25: }
 "25
-[e ( _ADC_initialize ..  ]
-[; ;powerSystem.c: 27: WDTCON = 0b00011000;
-"27
-[e = _WDTCON -> -> 24 `i `uc ]
-[; ;powerSystem.c: 29: asm("clrwdt");
-"29
-[; <" clrwdt ;# ">
-[; ;powerSystem.c: 31: while(1)
-"31
-[e :U 820 ]
-[; ;powerSystem.c: 32: {
-"32
-{
-[; ;powerSystem.c: 33: asm("sleep");
-"33
-[; <" sleep ;# ">
-[; ;powerSystem.c: 35: time++;
-"35
-[e ++ _time -> -> 1 `i `ui ]
-[; ;powerSystem.c: 37: battery_voltage = ADC_read(0x09);
-"37
-[e = _battery_voltage ( _ADC_read (1 -> -> 9 `i `uc ]
-[; ;powerSystem.c: 39: if( time == 3 && battery_voltage >= 690 )
-"39
-[e $ ! && == _time -> -> 3 `i `ui >= _battery_voltage -> -> 690 `i `ui 822  ]
-[; ;powerSystem.c: 40: {
-"40
-{
-[; ;powerSystem.c: 41: time = 0;
-"41
-[e = _time -> -> 0 `i `ui ]
-[; ;powerSystem.c: 43: PORTCbits.RC4 = 1;
-"43
-[e = . . _PORTCbits 0 4 -> -> 1 `i `uc ]
-[; ;powerSystem.c: 45: for(unsigned char i = 0; i < 1; i++)
-"45
-{
-[v _i `uc ~T0 @X0 1 a ]
-[e = _i -> -> 0 `i `uc ]
-[e $ < -> _i `i -> 1 `i 823  ]
-[e $U 824  ]
-"46
-[e :U 823 ]
-[; ;powerSystem.c: 46: {
-{
-[; ;powerSystem.c: 47: asm("clrwdt");
-"47
-[; <" clrwdt ;# ">
-[; ;powerSystem.c: 48: _delay((unsigned long)((4000)*(1000000/4000.0)));
-"48
-[e ( __delay (1 -> * -> -> 4000 `i `d / -> -> 1000000 `l `d .4000.0 `ul ]
-[; ;powerSystem.c: 49: time++;
-"49
-[e ++ _time -> -> 1 `i `ui ]
-"50
-}
-"45
-[e ++ _i -> -> 1 `i `uc ]
-[e $ < -> _i `i -> 1 `i 823  ]
-[e :U 824 ]
-"50
-}
-[; ;powerSystem.c: 50: }
-[; ;powerSystem.c: 52: PORTCbits.RC4 = 0;
-"52
-[e = . . _PORTCbits 0 4 -> -> 0 `i `uc ]
-"53
-}
-[e :U 822 ]
-"54
-}
-[e :U 819 ]
-"31
-[e $U 820  ]
-[e :U 821 ]
-[; ;powerSystem.c: 53: }
-[; ;powerSystem.c: 54: }
-[; ;powerSystem.c: 55: }
-"55
 [e :UE 818 ]
 }
-"58
-[v _ports_initialize `(v ~T0 @X0 1 ef ]
-"59
+"28
+[v _ADC_read `(ui ~T0 @X0 1 ef1`uc ]
+"29
 {
-[; ;powerSystem.c: 58: void ports_initialize(void)
-[; ;powerSystem.c: 59: {
-[e :U _ports_initialize ]
+[; ;ADC.c: 28: unsigned int ADC_read(unsigned char channel)
+[; ;ADC.c: 29: {
+[e :U _ADC_read ]
+"28
+[v _channel `uc ~T0 @X0 1 r1 ]
+"29
 [f ]
-[; ;powerSystem.c: 61: PORTA = 0x00;
-"61
-[e = _PORTA -> -> 0 `i `uc ]
-[; ;powerSystem.c: 62: PORTC = 0x00;
-"62
-[e = _PORTC -> -> 0 `i `uc ]
-[; ;powerSystem.c: 64: TRISA = 0x0C;
-"64
-[e = _TRISA -> -> 12 `i `uc ]
-[; ;powerSystem.c: 70: TRISC = 0x07;
-"70
-[e = _TRISC -> -> 7 `i `uc ]
-[; ;powerSystem.c: 76: ANSELA = 0x04;
-"76
-[e = _ANSELA -> -> 4 `i `uc ]
-[; ;powerSystem.c: 83: ANSELC = 0x04;
-"83
-[e = _ANSELC -> -> 4 `i `uc ]
-[; ;powerSystem.c: 87: }
-"87
-[e :UE 826 ]
+[; ;ADC.c: 30: ADCON0 = channel;
+"30
+[e = _ADCON0 _channel ]
+[; ;ADC.c: 31: _delay((unsigned long)((5)*(1000000/4000000.0)));
+"31
+[e ( __delay (1 -> * -> -> 5 `i `d / -> -> 1000000 `l `d .4000000.0 `ul ]
+[; ;ADC.c: 32: ADCON0bits.GO_nDONE = 1;
+"32
+[e = . . _ADCON0bits 0 1 -> -> 1 `i `uc ]
+[; ;ADC.c: 33: while(ADCON0bits.GO);
+"33
+[e $U 820  ]
+[e :U 821 ]
+[e :U 820 ]
+[e $ != -> . . _ADCON0bits 2 1 `i -> -> -> 0 `i `Vuc `i 821  ]
+[e :U 822 ]
+[; ;ADC.c: 34: ADCON0bits.ADON = 0;
+"34
+[e = . . _ADCON0bits 0 0 -> -> 0 `i `uc ]
+[; ;ADC.c: 36: return ((ADRESH << 8) | ADRESL);
+"36
+[e ) -> | << -> _ADRESH `i -> 8 `i -> _ADRESL `i `ui ]
+[e $UE 819  ]
+[; ;ADC.c: 37: }
+"37
+[e :UE 819 ]
 }
