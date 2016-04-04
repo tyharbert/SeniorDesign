@@ -1,5 +1,5 @@
 
-# 1 "source/powerSystem.c"
+# 1 "source/ADC.c"
 
 # 26 "C:\Program Files (x86)\Microchip\xc8\v1.36\include\htc.h"
 extern const char __xc8_OPTIM_SPEED;
@@ -8820,6 +8820,12 @@ extern unsigned char __resetbits;
 extern __bit __powerdown;
 extern __bit __timeout;
 
+# 14 "source/ADC.h"
+void ADC_initialize(void);
+
+
+unsigned int ADC_read(unsigned char channel);
+
 
 # 13 "header\powerSystem.h"
 #pragma config FEXTOSC = OFF
@@ -8853,74 +8859,22 @@ void ports_initialize(void);
 
 void I2C_initialize(void);
 
-# 14 "source/ADC.h"
-void ADC_initialize(void);
-
-
-unsigned int ADC_read(unsigned char channel);
-
-# 14 "source/powerSystem.c"
-volatile unsigned char triggered = 0;
-
-
-void main(void)
+# 15 "source/ADC.c"
+void ADC_initialize(void)
 {
-unsigned int time = 0;
 
-
-unsigned int battery_voltage = 0;
-
-ports_initialize();
-ADC_initialize();
-
-WDTCON = 0b00011000;
-
-asm("clrwdt");
-
-while(1)
-{
-asm("sleep");
-
-time++;
-
-battery_voltage = ADC_read(0x09);
-
-if( time == 3 && battery_voltage >= 690 )
-{
-time = 0;
-
-PORTCbits.RC4 = 1;
-
-for(unsigned char i = 0; i < 1; i++)
-{
-asm("clrwdt");
-_delay((unsigned long)((4000)*(1000000/4000.0)));
-time++;
-}
-
-PORTCbits.RC4 = 0;
-}
-}
+# 24
+ADCON1 = 0x80;
 }
 
 
-void ports_initialize(void)
+unsigned int ADC_read(unsigned char channel)
 {
+ADCON0 = channel;
+_delay((unsigned long)((5)*(1000000/4000000.0)));
+ADCON0bits.GO_nDONE = 1;
+while(ADCON0bits.GO);
+ADCON0bits.ADON = 0;
 
-PORTA = 0x00;
-PORTC = 0x00;
-
-TRISA = 0x0C;
-
-# 70
-TRISC = 0x07;
-
-# 76
-ANSELA = 0x04;
-
-# 83
-ANSELC = 0x04;
-
-
-
+return ((ADRESH << 8) | ADRESL);
 }
