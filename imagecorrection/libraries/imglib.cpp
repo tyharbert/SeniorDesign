@@ -28,3 +28,15 @@ void transformGusset(const char* source_file, const char* destination_file) {
     printf("Writing %s\n", destination_file);
     final->write(destination_file);
 }
+
+// this converts an image from JPEG to BMP
+void JPEG_to_BMP(std::string j_image_path, std::string b_image_path) {
+    std::string command = "djpeg -BMP " + j_image_path + " > " + b_image_path;
+    system(command.c_str());
+}
+
+// this converts an image from BMP to JPEG
+void BMP_to_JPEG(std::string b_image_path, std::string j_image_path) {
+    std::string command = "cjpeg " + b_image_path + " > " + j_image_path;
+    system(command.c_str());
+}
