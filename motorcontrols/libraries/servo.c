@@ -12,14 +12,13 @@ unsigned short ADC_Rd(unsigned short address) //Read channel 0 or 1 adc, Pan Mot
     result=wiringPiI2CSetup(0x48); //device address
 
     wiringPiI2CWriteReg16(result, 0x01, address); //Address for the register, and configuring the read channel 0
-    adc_hex= wiringPiI2CReadReg16(result, 0x00);
+    adc_hex= wiringPiI2CReadReg16(result,0x00);
 
     wiringPiI2CWriteReg16(result, 0x01, address);
     adc_hex = wiringPiI2CReadReg16(result,0x00); //device address, assigning device to read only
 
     adc_hex = Rd_Rev(adc_hex); //Reverses the order of the hex value taken in
     // printf("%d \n",adc_hex);
-    // sleep(3);
     return adc_hex;
     }
 
@@ -44,11 +43,12 @@ void CaptureSavedLocations(const char* location_file_path) {
                return;
 
            while (i < length) {
-               move_and_check_Position(positions[i], 0); //Pan Motor
-               i++;
-               move_and_check_Position(positions[i], 1); //Tilt Motor
-               i++;
-
+                move_and_check_Position(positions[i], 0); //Pan Motor
+                i++;
+                move_and_check_Position(positions[i], 1); //Tilt Motor
+                i++;
+		move_and_check_Position(positions[i-2], 0);//Double check Pan Motor
+		move_and_check_Position(positions[i-1], 1);//Double check Tilt Motor
                 Cap_Image();
             }
             break;
@@ -113,7 +113,6 @@ void Pan_Gusset(int feedbackTarget)
         int i;
 	for (i=0; i<change_in_echo-1; i++)
             {
-	    printf("YOYOYO");
             system("echo 0=+1 > /dev/servoblaster");
 	    delayMicroseconds(10000);
             }
@@ -187,7 +186,7 @@ void Tilt_Gusset(int feedbackTarget)
             {
             system("echo 1=+1 > /dev/servoblaster");
             delayMicroseconds(30000);
-		if(i>=30)
+		if(i==30)
 		sleep(3);
             }
         }
@@ -215,7 +214,7 @@ void Cap_Image()
     int cx=0;
     static int i=0;
     char command[n];
-    cx=snprintf(command, n, "fswebcam -r 2592x1944 --jpeg 100 -D 30 -S 13 1 testing%d.jpeg", i); //assigns the echo call as the command, with the limit of n characters
+    cx=snprintf(command, n, "fswebcam -r 2592x1944 --jpeg 100 -D 15 -S 13 1 testing%d.jpeg", i); //assigns the echo call as the command, with the limit of n characters
     if(cx>n)
         printf("Command Length Too Long");
     else
