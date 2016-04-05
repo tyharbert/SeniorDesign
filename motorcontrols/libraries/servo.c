@@ -38,18 +38,18 @@ void CaptureSavedLocations() {
             int i = 0;
             int length;
             int* positions;
-            positions = getPositions(&length);
+//            positions = getPositions(&length);
 
-            if (positions == NULL)
-                return;
+//            if (positions == NULL)
+//                return;
+while(1){
+//            while (i < length) {
+//                move_and_check_Position(positions[i], 0); //Pan Motor
+//                i++;
+//                move_and_check_Position(positions[i], 1); //Tilt Motor
+//                i++;
 
-            while (i < length) {
-                move_and_check_Position(positions[i], 0); //Pan Motor
-                i++;
-                move_and_check_Position(positions[i], 1); //Tilt Motor
-                i++;
-
-//                Cap_Image();
+                Cap_Image();
             }
             break;
         }
