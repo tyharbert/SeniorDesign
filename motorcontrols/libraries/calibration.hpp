@@ -14,17 +14,15 @@ extern "C" {
 
 // This will be used to capture the feedback positions of the servos
 // and save them to a file so they can be read back when needed
-void calibrateLocations();
+void calibrateLocations(const char*);
 void printMenu();
-short processInput(char);
-void loadLocations();
-void saveLocations();
+short processInput(char, const char*);
+void loadLocations(const char*);
+void saveLocations(const char*);
 void removeLocation();
 void printLocations();
 void captureLocation();
 
 static std::vector<std::vector<int> > locations;
-
-static const char* location_file_path = "../locations/locations.txt";
 
 #endif

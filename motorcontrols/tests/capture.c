@@ -5,7 +5,7 @@
 #include "servo.h"
 
 int main() {
-  CaptureSavedLocations();
+  CaptureSavedLocations("../locations/locations.txt");
 
   return 0;
 }

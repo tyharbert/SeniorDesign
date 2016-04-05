@@ -23,7 +23,7 @@ unsigned short ADC_Rd(unsigned short address) //Read channel 0 or 1 adc, Pan Mot
     return adc_hex;
     }
 
-void CaptureSavedLocations() {
+void CaptureSavedLocations(const char* location_file_path) {
     system("echo ./servod --p1pins=7, 11, 0, 0, 0, 0, 0, 0");
     system("echo ./servod --step-size=1us");
 
@@ -38,7 +38,7 @@ void CaptureSavedLocations() {
             int i = 0;
             int length;
             int* positions;
-           positions = getPositions(&length);
+            positions = getPositions(&length, location_file_path);
 
            if (positions == NULL)
                return;
@@ -224,11 +224,11 @@ void Cap_Image()
 }
 
 // gets the locations from the save file
-int* getPositions(int* length) {
+int* getPositions(int* length, const char* location_file_path) {
     FILE* f;
     char buffer[1024];
 
-    f = fopen("../locations/locations.txt", "r");
+    f = fopen(location_file_path, "r");
 
     if (!f)
         return NULL;

@@ -4,7 +4,7 @@
 
 int main() {
 
-    calibrateLocations();
+    calibrateLocations("../locations/locations.txt");
 
     return 0;
 }

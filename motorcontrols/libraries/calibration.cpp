@@ -1,11 +1,11 @@
 #include "calibration.hpp"
 
-void calibrateLocations() {
+void calibrateLocations(const char* location_file_path) {
     short complete = 0;
     char input;
     char trash[256];
     
-    loadLocations();
+    loadLocations(location_file_path);
     printMenu();
     
     while (!complete) {
@@ -14,7 +14,7 @@ void calibrateLocations() {
         input = tolower(input);
         fgets(trash, sizeof(trash), stdin);
         
-        complete = processInput(input);
+        complete = processInput(input, location_file_path);
     }
 }
 
@@ -22,7 +22,7 @@ void printMenu() {
     printf("--- MENU ---\n'c' capture current position\n'p' print locations\n's' save locations\n'r' remove a location\n'q' quit the program\n\n");
 }
 
-short processInput(char i) {
+short processInput(char i, const char* location_file_path) {
     switch (i) {
         case 'q':
             return 1;
@@ -36,7 +36,7 @@ short processInput(char i) {
             printLocations();
             break;
         case 's':
-            saveLocations();
+            saveLocations(location_file_path);
             break;
         case 'r':
             removeLocation();
@@ -48,7 +48,7 @@ short processInput(char i) {
     return 0; // by default return not complete
 }
 
-void loadLocations() {
+void loadLocations(const char* location_file_path) {
     char in;
     int cnt = 0;
     std::string num;
