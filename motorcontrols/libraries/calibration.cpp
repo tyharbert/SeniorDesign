@@ -75,7 +75,7 @@ void loadLocations(const char* location_file_path) {
     loc_file.close();
 }
 
-void saveLocations() {
+void saveLocations(const char* location_file_path) {
     std::ofstream loc_file;
     loc_file.open(location_file_path);
     
