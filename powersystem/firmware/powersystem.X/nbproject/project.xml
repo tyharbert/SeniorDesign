@@ -3,8 +3,8 @@
     <type>com.microchip.mplab.nbide.embedded.makeproject</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/make-project/1">
-            <name>powerSystem</name>
-            <creation-uuid>8fc629d0-45fb-4b5c-9786-cfb0dfab96fa</creation-uuid>
+            <name>powersystem</name>
+            <creation-uuid>78eb79aa-119c-4f87-a4dd-819aaebd09ca</creation-uuid>
             <make-project-type>0</make-project-type>
             <c-extensions>c</c-extensions>
             <cpp-extensions/>

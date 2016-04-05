@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=power_system.X
+PROJECTNAME=powersystem.X
 
 # Active Configuration
 DEFAULTCONF=default
