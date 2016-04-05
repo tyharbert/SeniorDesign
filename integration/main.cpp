@@ -15,15 +15,19 @@ int main()
 
 	//fucntions to convert .jpeg to .bmp
 	JPEG_to_BMP("../images/testing0.jpeg", "../images/test_in0.bmp");
+	sleep(5);
 	JPEG_to_BMP("../images/testing1.jpeg", "../images/test_in1.bmp");
+	sleep(5);
 
 	//transforms gussets
-	transformGusset("../images/test_in0.bmp", "../images/test_out0.bmp");
-	transformGusset("../images/test_in1.bmp", "../images/test_out1.bmp");
+//	transformGusset("../images/test_in0.bmp", "../images/test_out0.bmp");
+//	transformGusset("../images/test_in1.bmp", "../images/test_out1.bmp");
 
 	//function to convert .bmp to .jpeg
-	BMP_to_JPEG("../images/test_out0.bmp", "../images/test_out0.jpeg");
-	BMP_to_JPEG("../images/test_out1.bmp", "../images/test_out1.jpeg");
+//	BMP_to_JPEG("../images/test_out0.bmp", "../images/test_out0.jpeg");
+//	sleep(5);
+//	BMP_to_JPEG("../images/test_out1.bmp", "../images/test_out1.jpeg");
+//	sleep(5);
 
 	//transmits all images to base station
 	transmitImageToBase();
@@ -33,7 +37,7 @@ int main()
 
 void transmitImageToBase()
 {
-        char *device = (char *)"/dev/ttyUSB1";
+        char *device = (char *)"/dev/ttyUSB0";
 	int result;
         Serial xbee(device, 57600);
         Message msg(device);
