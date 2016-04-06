@@ -10,8 +10,7 @@
 #include <xc.h>
 #include "powerSystem.h"
 #include "ADC.h"
-
-volatile unsigned char triggered = 0;
+#include "SPI.h"
 
 // main function; program starts here
 void main(void) 
@@ -23,6 +22,7 @@ void main(void)
     
     ports_initialize(); //set up ports 
     ADC_initialize();    //configure ADC
+    SPI_initialize(); // set up SPI module
     
     WDTCON = 0b00011000; // 4 sec period
     
@@ -61,27 +61,18 @@ void ports_initialize(void)
     PORTA = 0x00;
     PORTC = 0x00;
 
-    TRISA = 0x0C;   // bits 7-6: unimplemented; read as 0
-                    // bits 5-4: unused; set as outputs (0)
+    TRISA = 0x2C;   // bits 5: temperature (RA5); set as input (1)
                     // bit 3: unimplemented; read as 1
-                    // bit 2: battery voltage (RA2); set as input (1)
-                    // bits 1-0: unused; set as output(0) 
+                    // bit 2: battery voltage (RA2); set as input (1) 
     
-    TRISC = 0x07;   // bits 7-5: unused; set as outputs (0)
-                    // bit 4: power relay (RC4); set as output (0)
-                    // bit 3: unused; set as output (0)
-                    // bit 2 : thermistor (RC2); set as input (1)
-                    // bit 1-0: I2C SDA and SCL; set as input (1)
+    TRISC = 0x0B;   // bit 4: power relay (RC4); set as output (0)
+                    // bit 3: SPI SS (RC3); set as input (1)
+                    // bit 2: SPI SDO (RC2); set as output (0)
+                    // bit 1: SPI SDI (RC1); set as input (1)
+                    // bit 0: SPI SCK (RC0); set as input (1)
     
-    ANSELA = 0x04;  // port A analog inputs
-                    // bits 7-6: unimplemented; read as 0
-                    // bits 5-4: not used; set as digital (0)
-                    // bit 3: unimplemented; read as 0
+    ANSELA = 0x24;  // bit 5: temperature (RA5); set as analog (1)
                     // bit 2: battery voltage (RA2); set as analog (1)
-                    // bits 1-0: not used; set as digital (0)
     
-    ANSELC = 0x04;  //port C analog inputs
-                    //bits 7-3: not used; set as digital (0)
-                    //bit 2: temperature (RC2); set as analog (1)
-                    //bits 1-0: not used; set as digital (0)
+    ANSELC = 0x00;  // all digital
 }
