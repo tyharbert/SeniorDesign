@@ -42,7 +42,7 @@ void JPEG_to_BMP(std::string j_image_path, std::string b_image_path) {
 
 // this converts an image from BMP to JPEG
 void BMP_to_JPEG(std::string b_image_path, std::string j_image_path) {
-    printf("Converting %s to %s.\n", j_image_path.c_str(), b_image_path.c_str());
+    printf("Converting %s to %s.\n", b_image_path.c_str(), j_image_path.c_str());
 
     std::string command = "cjpeg " + b_image_path + " > " + j_image_path;
     system(command.c_str());
