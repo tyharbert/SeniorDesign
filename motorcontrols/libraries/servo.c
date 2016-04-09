@@ -67,7 +67,7 @@ int FB_to_PW_Conv(int Servo)
     {
 
         int Read=ADC_Rd(0x83C5); //read from servo 0
-        int current_echo_value = FB_to_PW(Read, 583, 1974); //Multiplies the Percent by Range of Echo PW, and adds 50 to obtain accurate echo value
+        int current_echo_value = FB_to_PW(Read, 1462, 2069, 60, 130); //Multiplies the Percent by Range of Echo PW, and adds 50 to obtain accurate echo value
         printf("%d --current pan servo position echo value\n", current_echo_value);
 
         return current_echo_value;
@@ -75,27 +75,27 @@ int FB_to_PW_Conv(int Servo)
     else if(Servo==1)
     {
         int Read=ADC_Rd(0x83D5); //read from servo 0
-        int current_echo_value = FB_to_PW(Read, 580, 2133); //Multiplies the Percent by Range of Echo PW, and adds 50 to obtain accurate echo value
+        int current_echo_value = FB_to_PW(Read, 1355, 1640, 28, 122.55); //Multiplies the Percent by Range of Echo PW, and adds 50 to obtain accurate echo value
         printf("%d  --current tilt servo position echo value\n", current_echo_value);
 
         return current_echo_value;
     }
 }
 
-int FB_to_PW(int feedback, float min_fb, float max_fb) {
+int FB_to_PW(int feedback, float min_fb, float max_fb, int echo_range, float echo_min) 
+{
   float fb_range=max_fb-min_fb;
-  int echo_range=150;
   float perc_pw= (feedback-min_fb)/fb_range; //subtracts mininum voltage read value, divides by total range of voltages
 
-  return (perc_pw*echo_range)+47; //Multiplies the Percent by Range of Echo PW, and adds 50 to obtain accurate echo value
+  return (perc_pw*echo_range)+echo_min; //Multiplies the Percent by Range of Echo PW, and adds 50 to obtain accurate echo value
 }
 
 void Pan_Gusset(int feedbackTarget)
 {
     printf("Pan Gusset....\n");
     int current_echo_value=FB_to_PW_Conv(0);
-    int change_in_echo= FB_to_PW(feedbackTarget, 583, 1974) - current_echo_value; //gives the difference between desired echo and current echo value
-    printf("%d --feedback target echo value \n", FB_to_PW(feedbackTarget,583,1974));
+    int change_in_echo= FB_to_PW(feedbackTarget, 1462, 2069, 60, 130) - current_echo_value; //gives the difference between desired echo and current echo value
+    printf("%d --feedback target echo value \n", FB_to_PW(feedbackTarget,1462, 2069, 60, 130));
     printf("%d --change in echo necessary \n", change_in_echo);
 
     if (change_in_echo<0)
@@ -164,8 +164,8 @@ void Tilt_Gusset(int feedbackTarget)
 {
     printf("Tilt Gusset....\n");
     int current_echo_value = FB_to_PW_Conv(1);
-    int change_in_echo = FB_to_PW(feedbackTarget, 580, 2133) - current_echo_value; //gives the difference between desired echo and current echo value
-    printf("%d --feedback target echo value \n", FB_to_PW(feedbackTarget, 580, 2133));
+    int change_in_echo = FB_to_PW(feedbackTarget, 1355, 1640, 28, 122.55) - current_echo_value; //gives the difference between desired echo and current echo value
+    printf("%d --feedback target echo value \n", FB_to_PW(feedbackTarget, 1355, 1640, 28, 122.55));
     printf("%d --change in echo necessary \n", change_in_echo);
     if (change_in_echo<0)
         {
