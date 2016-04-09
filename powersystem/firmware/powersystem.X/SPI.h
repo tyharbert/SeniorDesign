@@ -6,5 +6,6 @@
 */
 
 void SPI_initialize(void);
+unsigned char SPI_transfer(unsigned char data);
 
 #endif 
