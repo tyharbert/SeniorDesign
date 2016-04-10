@@ -11,9 +11,6 @@
 #include "powerSystem.h"
 #include "ADC.h"
 #include "SPI.h"
-#include "memory.h"
-
-#define SLEEP_FLAG_ADDR 0x7000
 
 // main function; program starts here
 void main(void) 
@@ -21,49 +18,48 @@ void main(void)
     unsigned int time = 0;  // number of times WDT is cleared
                             // 21600 == 24 hours
     unsigned char data =0;
-    unsigned char sleep_flag = 1;
     unsigned int battery_voltage = 0; // ADC reading of battery voltage
     
     ports_initialize(); //set up ports 
     ADC_initialize();    //configure ADC
     SPI_initialize(); // set up SPI module
     
-    sleep_flag = DATAEE_ReadByte(SLEEP_FLAG_ADDR);
+    WDTCON = 0b00011101; // 16 sec period
+    CLRWDT(); // clear WDT
     
-    WDTCON = 0b00011100;
-    
-    while (sleep_flag)
+    while(1)
     {
-        WDTCONbits.SWDTEN = 1;
-        SLEEP();
-        time++;
-        if(time == 1)
-        {
-            DATAEE_WriteByte(SLEEP_FLAG_ADDR, 0);
-            RESET();
-        }
-    }
-
-    DATAEE_WriteByte(SLEEP_FLAG_ADDR, 255);
-    
-    //battery_voltage = ADC_read(0x09); // read battery voltage
-    battery_voltage = 700;
-    if( battery_voltage >= 690 ) // 3*4s = 12 s 
-    {                                          // 690 -> 11 V
-        LATCbits.LATC4 = 1;  //turn relay on
-
-        while(data != 0xDA)      
-        {
-           while(!SSP1STATbits.BF); 
-           data = SSP1BUF;
-        }
+        SLEEP(); // sleep PIC until WDT expires
         
-        __delay_ms(4000);
+        time++; // increment time (+16s)
         
-        RESET();
-    }     
+        battery_voltage = ADC_read(0x09); // read battery voltage
+        
+        if ( time >= 1 ) // 1*16s=16s
+        {        
+            time = 0; // reset time
+            if(battery_voltage >= 690) //690 = 11v
+            {
+                LATCbits.LATC4 = 1; // turn relay on
+            
+                while( data != 0xDA ) // wait for shutdown command to be received
+                {
+                    while(!SSP1STATbits.BF) // wait till data is in the buffer
+                    {
+                        CLRWDT();
+                    }
+                    data = SSP1BUF; // read data outside
+                }
+            
+                data = 0x00;
+            
+                __delay_ms(10000); // wait for R Pi to shutdown
+            
+                LATCbits.LATC4 = 0; // turn relay off
+            }  
+        }
+    }    
 }
-
 
 // function to setup the microcontroller ports at boot
 void ports_initialize(void)
@@ -72,7 +68,8 @@ void ports_initialize(void)
     PORTA = 0x00;
     PORTC = 0x00;
 
-    TRISA = 0x2C;   // bits 5: temperature (RA5); set as input (1)
+    TRISA = 0x3C;   // bits 5: temperature (RA5); set as input (1)
+                    // bit 4: button (RA4); set as input (1)
                     // bit 3: unimplemented; read as 1
                     // bit 2: battery voltage (RA2); set as input (1) 
     
