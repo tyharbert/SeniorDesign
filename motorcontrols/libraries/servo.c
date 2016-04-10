@@ -1,5 +1,4 @@
 #include "servo.h"
-#include "math.h"
 
 /* Servo 0 is the Pan servo and can tilt from 0-180 degrees, or .5 ms to 2.5 ms
 Servo 1 is the Tilt servo and can tilt from 0-150 degrees, or .5 ms to 2.08 ms
@@ -91,8 +90,8 @@ int FB_to_PW(int feedback, int motor){
 	if (motor==1){
 		new_echo=-.00000018924*fb*fb*fb+.00084797*fb*fb-1.1654*fb+615.19;
 	}
-	
-	return round(new_echo);	
+
+	return roundf(new_echo);
 }
 
 void Pan_Gusset(int feedbackTarget)
@@ -107,7 +106,7 @@ void Pan_Gusset(int feedbackTarget)
         {
         change_in_echo = -change_in_echo;
         int i;
-	for (i=0; i<change_in_echo-1; i++)
+	for (i=0; i<change_in_echo; i++)
             {
             system("echo 0=-1 > /dev/servoblaster");
 	    delayMicroseconds(30000);
@@ -116,7 +115,7 @@ void Pan_Gusset(int feedbackTarget)
     else
         {
         int i;
-	for (i=0; i<change_in_echo-1; i++)
+	for (i=0; i<change_in_echo; i++)
             {
             system("echo 0=+1 > /dev/servoblaster");
 	    delayMicroseconds(30000);
@@ -176,7 +175,7 @@ void Tilt_Gusset(int feedbackTarget)
         {
         change_in_echo=-change_in_echo;
         int i;
-	for (i=0; i < change_in_echo-1; i++)
+	for (i=0; i < change_in_echo; i++)
             {
             system("echo 1=-1 > /dev/servoblaster");
             delayMicroseconds(30000);
@@ -187,7 +186,7 @@ void Tilt_Gusset(int feedbackTarget)
     else
         {
         int i;
-	for (i=0; i < change_in_echo-1; i++)
+	for (i=0; i < change_in_echo; i++)
             {
             system("echo 1=+1 > /dev/servoblaster");
             delayMicroseconds(30000);
