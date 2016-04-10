@@ -3,7 +3,7 @@
 #include "xMessage.hpp"
 int main(){
 
-	char *device = (char *)"/dev/ttyUSB1";
+	char *device = (char *)"/dev/ttyUSB0";
 
 	Serial xbee(device, 57600);
 	Message msg(device);
@@ -14,7 +14,7 @@ int main(){
 	msg.sendingImage();
 
 	std::cout << "Transmitting Image\n";
-	int result = XSend(fd, "testImage.jpeg");
+	int result = XSend(fd, "testing1.jpeg");
 
 	if(result == 0){
 		std::cout << "Image transmitted successfully\n";

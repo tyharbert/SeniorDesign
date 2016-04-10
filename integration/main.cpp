@@ -12,7 +12,7 @@ int main()
 {
 	//Captures all the images from the locations in locations.txt
 	//saves images in image folder called testing0.jpeg, testing1.jpeg, etc.
-//	CaptureSavedLocations("../motorcontrols/locations/locations.txt");
+	CaptureSavedLocations("../motorcontrols/locations/locations.txt");
 
 	//fucntions to convert .jpeg to .bmp
 //	JPEG_to_BMP("../images/testing0.jpeg", "../images/test_in0.bmp");
@@ -49,7 +49,7 @@ void transmitImageToBase()
         msg.sendingImage();
 
         std::cout << "Transmitting Image\n";
-        result = XSend(fd, "../images/test_out0.jpeg");
+        result = XSend(fd, "../images/testing0.jpeg");
 
         if(result == 0){
                 std::cout << "Image transmitted successfully\n";
@@ -62,7 +62,7 @@ void transmitImageToBase()
         msg.sendingImage();
 
         std::cout << "Transmitting Image\n";
-        result = XSend(fd, "../images/test_out1.jpeg");
+        result = XSend(fd, "../images/testing1.jpeg");
 
         if(result == 0){
                 std::cout << "Image transmitted successfully\n";

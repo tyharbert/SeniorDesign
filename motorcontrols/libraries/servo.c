@@ -25,7 +25,8 @@ unsigned short ADC_Rd(unsigned short address) //Read channel 0 or 1 adc, Pan Mot
 void CaptureSavedLocations(const char* location_file_path) {
     system("echo ./servod --p1pins=7, 11, 0, 0, 0, 0, 0, 0");
     system("echo ./servod --step-size=1us");
-
+    system("sudo echo 0=150 > /dev/servoblaster");
+    system("sudo echo 1=135 > /dev/servoblaster");
     wiringPiSetupGpio();
     pinMode(butPin, INPUT);
     pullUpDnControl(butPin, PUD_DOWN);
@@ -49,7 +50,7 @@ void CaptureSavedLocations(const char* location_file_path) {
                 i++;
 		move_and_check_Position(positions[i-2], 0);//Double check Pan Motor
 		move_and_check_Position(positions[i-1], 1);//Double check Tilt Motor
-//                Cap_Image();
+                Cap_Image();
             }
             break;
         }
@@ -108,7 +109,7 @@ void Pan_Gusset(int feedbackTarget)
         int i;
 	for (i=0; i<change_in_echo; i++)
             {
-            system("echo 0=-1 > /dev/servoblaster");
+            system("sudo echo 0=-1 > /dev/servoblaster");
 	    delayMicroseconds(30000);
             }
         }
@@ -117,7 +118,7 @@ void Pan_Gusset(int feedbackTarget)
         int i;
 	for (i=0; i<change_in_echo; i++)
             {
-            system("echo 0=+1 > /dev/servoblaster");
+            system("sudo echo 0=+1 > /dev/servoblaster");
 	    delayMicroseconds(30000);
             }
         }
@@ -177,7 +178,7 @@ void Tilt_Gusset(int feedbackTarget)
         int i;
 	for (i=0; i < change_in_echo; i++)
             {
-            system("echo 1=-1 > /dev/servoblaster");
+            system("sudo echo 1=-1 > /dev/servoblaster");
             delayMicroseconds(30000);
 		if(i>=30)
 		sleep(3);
@@ -188,7 +189,7 @@ void Tilt_Gusset(int feedbackTarget)
         int i;
 	for (i=0; i < change_in_echo; i++)
             {
-            system("echo 1=+1 > /dev/servoblaster");
+            system("sudo echo 1=+1 > /dev/servoblaster");
             delayMicroseconds(30000);
 		if(i==30)
 		sleep(3);
@@ -216,7 +217,7 @@ void Cap_Image()
 {
     int n=75;
     int cx=0;
-    static int i=0;
+    static int i=6;
     char command[n];
     cx=snprintf(command, n, "fswebcam -r 2592x1944 --jpeg 100 -D 15 -S 13 1 ../images/testing%d.jpeg", i); //assigns the echo call as the command, with the limit of n characters
     if(cx>n)
