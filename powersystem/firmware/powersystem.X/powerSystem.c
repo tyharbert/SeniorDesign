@@ -11,48 +11,59 @@
 #include "powerSystem.h"
 #include "ADC.h"
 #include "SPI.h"
+#include "memory.h"
+
+#define SLEEP_FLAG_ADDR 0x7000
 
 // main function; program starts here
 void main(void) 
 {
     unsigned int time = 0;  // number of times WDT is cleared
                             // 21600 == 24 hours
-    
+    unsigned char data =0;
+    unsigned char sleep_flag = 1;
     unsigned int battery_voltage = 0; // ADC reading of battery voltage
     
     ports_initialize(); //set up ports 
     ADC_initialize();    //configure ADC
     SPI_initialize(); // set up SPI module
     
-    WDTCON = 0b00011000; // 4 sec period
+    sleep_flag = DATAEE_ReadByte(SLEEP_FLAG_ADDR);
     
-    CLRWDT(); // clear WDT
+    WDTCON = 0b00011100;
     
-    while(1)
+    while (sleep_flag)
     {
+        WDTCONbits.SWDTEN = 1;
         SLEEP();
-        
-        time++; // increment time (+4s)
-
-        battery_voltage = ADC_read(0x09); // read battery voltage
-         
-        if( time == 3 && battery_voltage >= 690 ) // 3*4s = 12 s 
-        {                                          // 690 -> 11 V
-            time = 0;  // reset time
-            
-            PORTCbits.RC4 = 1;  //turn relay on
-            
-            for(unsigned char i = 0; i < 1;  i++) // 1*4s = 4 s
-            {
-                CLRWDT(); // clear WDT
-                __delay_ms(4000);
-                time++;
-            }
-            
-            PORTCbits.RC4 = 0;  //turn relay off
-        }     
+        time++;
+        if(time == 1)
+        {
+            DATAEE_WriteByte(SLEEP_FLAG_ADDR, 0);
+            RESET();
+        }
     }
+
+    DATAEE_WriteByte(SLEEP_FLAG_ADDR, 255);
+    
+    //battery_voltage = ADC_read(0x09); // read battery voltage
+    battery_voltage = 700;
+    if( battery_voltage >= 690 ) // 3*4s = 12 s 
+    {                                          // 690 -> 11 V
+        LATCbits.LATC4 = 1;  //turn relay on
+
+        while(data != 0xDA)      
+        {
+           while(!SSP1STATbits.BF); 
+           data = SSP1BUF;
+        }
+        
+        __delay_ms(4000);
+        
+        RESET();
+    }     
 }
+
 
 // function to setup the microcontroller ports at boot
 void ports_initialize(void)

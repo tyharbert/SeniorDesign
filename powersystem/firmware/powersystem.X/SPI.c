@@ -28,3 +28,10 @@ void SPI_initialize(void)
 
     SSP1CON3 = 0x00;  // BOEN: buffer overflow disabled
 }
+
+unsigned char SPI_transfer(unsigned char data)
+{
+    SSP1BUF = data; // load SPI data into buffer to transfer
+    while(!SSP1STATbits.BF); // wait till buffer is filled with received data
+    return SSP1BUF; // return received data
+}
