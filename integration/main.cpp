@@ -29,6 +29,9 @@ int main()
 	//transmits all images to base station
 	transmitImageToBase();
 
+	sleep(5); // for testing
+ 	// send PIC micro command to cut power after R Pi shutdown
+//	SPI_shutdown();
 	// send PIC micro command to cut power after R Pi shutdown
 //	SPI_shutdown();
 
