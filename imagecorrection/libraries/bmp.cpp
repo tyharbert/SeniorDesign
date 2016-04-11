@@ -146,7 +146,7 @@ bool BMP::fast_sw(int x, int y, int xCorner, int yCorner) {
 
 // NW quadrant condition to compare current corner
 bool BMP::fast_nw(int x, int y, int xCorner, int yCorner) {
-    return (x <= xCorner) || (y >= yCorner);
+    return (y-x) > (yCorner-xCorner);
 }
 
 // NE quadrant condition to compare current corner
@@ -156,23 +156,17 @@ bool BMP::fast_ne(int x, int y, int xCorner, int yCorner) {
 
 // SE quadrant condition to compare current corner
 bool BMP::fast_se(int x, int y, int xCorner, int yCorner) {
-    return (x >= xCorner) || (y <= yCorner);
+    return (x-y) > (xCorner-yCorner);
 }
 
 // if the luminance of n contiguous of the 16 surrounding pixels
 // are above or below the threshold luminance then a
 // corner is detected.
 bool BMP::is_corner(int x, int y) {
-    // these values have been adjusted using trial and error
-    // threshold of luminance value
-    const static float threshold = 20; // 60
-    // number of contiguous pixels required
-    const static int n = 8; // 10
-    
     // luminances limits for selected pixels
     float lum = this->rows[y].pixels[x].luminance();
-    float max_lum = lum + threshold;
-    float min_lum = lum - threshold;
+    float max_lum = lum + FAST_THRESHOLD;
+    float min_lum = lum - FAST_THRESHOLD;
     float temp_lum = 0;
     
     // count of pixels below or above
@@ -199,7 +193,7 @@ bool BMP::is_corner(int x, int y) {
         }
         
         // corner detected
-        if (cnt >= n)
+        if (cnt >= FAST_CONTIG)
             return true;
         
         // these rules follow a pattern to make a cirlce
@@ -216,7 +210,7 @@ bool BMP::is_corner(int x, int y) {
     
     // if no corner at this point, see if there
     // are enough contiguous from end and begining
-    if ((begin_cnt + cnt) >= n)
+    if ((begin_cnt + cnt) >= FAST_CONTIG)
         return true;
     
     return false;
