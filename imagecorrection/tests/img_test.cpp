@@ -2,7 +2,7 @@
 
 int main()
 {   
-    transformGusset("../../images/test_in.bmp", "../../images/test_out.bmp");
+    transformGusset("../../images/testing9.bmp", "../../images/testing99.bmp");
 
     return 0;
 }

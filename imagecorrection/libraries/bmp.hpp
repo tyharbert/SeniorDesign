@@ -20,8 +20,8 @@ const int BTM_PX_IGNORE = 22;
 // values for the fast algorithm
 // these values have been adjusted using trial and error
 // threshold of luminance value
-const float FAST_THRESHOLD = 60;
-const int FAST_CONTIG = 10;
+const float FAST_THRESHOLD = 20;
+const int FAST_CONTIG = 8;
 
 // 2-Bytes
 struct Word {

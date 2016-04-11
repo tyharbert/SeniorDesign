@@ -70,36 +70,23 @@ Matrix<T>::Matrix(Corners dest): Matrix<T>(8, 1) {
 template<typename T>
 Matrix<T>::Matrix(int* piv, int n): Matrix<T>(n+1) {
     int col;
+    int temp[n+1];
 
-    for (int row = 0; row < n; row++) {
-        col = piv[row];
-        // if the column was previously set
-        // change col to the last row it was
-        // set on
-        for (int i = row-1; i >= 0; i--) {
-            if (_values[i][col] == 1) {
-                col = i;
-                break;
-            }
-        }
-        _values[row][col] = 1;
-    }
+    // set the value to its current index
+    for (int i=0; i < n+1; i++)
+        temp[i] = i;
 
-    // find the coulmn without a 1 in the last row
-    bool found1 = false;
-    for (int c = 0; c < _width; c++) {
-        found1 = false;
-        for (int r = 0; r < n; r++) {
-            if (_values[r][c] == 1) {
-                found1 = true;
-                break;
-            }
-        }
-        if (!found1) {
-            _values[n][c] = 1;
-            break;
-        }
-    }
+    // go throug pivot array to set the temp array,
+    // the index into temp (which represents a row in
+    // the matrix) will contain the index of the column
+    // that should be a 1
+    for (int i=0; i < n; i++)
+        if (piv[i] != i)
+            std::swap(temp[piv[i]], temp[i]);
+
+    // set columns to 1
+    for (int i=0; i < n+1; i++)
+        _values[i][temp[i]] = 1;
 }
 
 // creates a vector-3 representing a point
