@@ -1,5 +1,4 @@
 #include "xMessage.hpp"
-
 int main(){
 
 	char *device = (char *)"/dev/ttyUSB0";
@@ -13,8 +12,8 @@ int main(){
 	msg.sendingImage();
 
 	std::cout << "Transmitting Image\n";
-	int result = XSend(fd, "example.txt");
-	std::cout << "After XSEND\n";
+	int result = XSend(fd, "testing9.jpeg");
+
 	if(result == 0){
 		std::cout << "Image transmitted successfully\n";
 	}
@@ -25,3 +24,4 @@ int main(){
 	xbee.Close();
 	return 0;
 }
+

@@ -12,7 +12,7 @@ BMP::BMP(const char* path) {
     FILE* f = openFile(path, "r");
     
     fread(&_bmpHead, sizeof(BMPHead), 1, f);
-    fread(&_dibHead, sizeof(DIBHead), 1, f);
+    fread(&_dibHead, sizeof(char), fpeek(f), f); // dib header size can vary
     
     if (_dibHead._bitsPerPixel.be() != 24) {
         std::runtime_error("need 24 bits per pixel");
@@ -25,7 +25,7 @@ BMP::BMP(const char* path) {
     _rowPadding = 4 - width*3%4;
     if (_rowPadding == 4) // padding can only be 0 to 3
         _rowPadding = 0;
-    
+
     // dynamically allocate rows
     rows = new Row[height];
     for(int i = 0; i < height; i++) {
@@ -56,7 +56,7 @@ void BMP::write(const char* path) {
     FILE* f = openFile(path, "w");
     
     fwrite(&_bmpHead, sizeof(BMPHead), 1, f);
-    fwrite(&_dibHead, sizeof(DIBHead), 1, f);
+    fwrite(&_dibHead, sizeof(char), _dibHead._size.be(), f); // dib header size can vary
     
     int height = _dibHead._height.be();
     int width = _dibHead._width.be();
@@ -112,16 +112,16 @@ void BMP::average_surrounding(int x, int y) {
 Corners BMP::fast() {
     int corners[4][2] = {{0}}; // intialized to 0
     
-    int min_x = 3;
-    int max_x = this->width()-3;
-    int min_y = 3;
-    int max_y = this->height()-3;
+    int min_x = 13;
+    int max_x = this->width() - 13;
+    int min_y = BTM_PX_IGNORE + 3;
+    int max_y = this->height() - 13;
         
-    this->fast(min_x, max_x/2, min_y + BTM_PX_IGNORE, max_y/2, corners[0], &BMP::fast_sw);
+    this->fast(min_x, max_x/2, min_y, max_y/2, corners[0], &BMP::fast_sw);
     this->fast(min_x, max_x/2, max_y/2, max_y, corners[1], &BMP::fast_nw);
     this->fast(max_x/2, max_x, max_y/2, max_y, corners[2], &BMP::fast_ne);
-    this->fast(max_x/2, max_x, min_y + BTM_PX_IGNORE, max_y/2, corners[3], &BMP::fast_se);
-    
+    this->fast(max_x/2, max_x, min_y, max_y/2, corners[3], &BMP::fast_se);
+
     // return the Corners object
     return Corners(corners);
 }
@@ -146,7 +146,7 @@ bool BMP::fast_sw(int x, int y, int xCorner, int yCorner) {
 
 // NW quadrant condition to compare current corner
 bool BMP::fast_nw(int x, int y, int xCorner, int yCorner) {
-    return (x <= xCorner) || (y >= yCorner);
+    return (y-x) > (yCorner-xCorner);
 }
 
 // NE quadrant condition to compare current corner
@@ -156,23 +156,17 @@ bool BMP::fast_ne(int x, int y, int xCorner, int yCorner) {
 
 // SE quadrant condition to compare current corner
 bool BMP::fast_se(int x, int y, int xCorner, int yCorner) {
-    return (x >= xCorner) || (y <= yCorner);
+    return (x-y) > (xCorner-yCorner);
 }
 
 // if the luminance of n contiguous of the 16 surrounding pixels
 // are above or below the threshold luminance then a
 // corner is detected.
 bool BMP::is_corner(int x, int y) {
-    // these values have been adjusted using trial and error
-    // threshold of luminance value
-    const static float threshold = 45; 
-    // number of contiguous pixels required
-    const static int n = 8;
-    
     // luminances limits for selected pixels
     float lum = this->rows[y].pixels[x].luminance();
-    float max_lum = lum + threshold;
-    float min_lum = lum - threshold;
+    float max_lum = lum + FAST_THRESHOLD;
+    float min_lum = lum - FAST_THRESHOLD;
     float temp_lum = 0;
     
     // count of pixels below or above
@@ -185,7 +179,7 @@ bool BMP::is_corner(int x, int y) {
     
     y -= 3; // start with bottom center pixel
     for (int i=0; i<16; i++){
-        
+
         // if it is outside of bounds count it, otherwise reset count
         temp_lum = this->rows[y].pixels[x].luminance();
         if (temp_lum < min_lum || temp_lum > max_lum) {
@@ -199,7 +193,7 @@ bool BMP::is_corner(int x, int y) {
         }
         
         // corner detected
-        if (cnt >= n)
+        if (cnt >= FAST_CONTIG)
             return true;
         
         // these rules follow a pattern to make a cirlce
@@ -216,7 +210,7 @@ bool BMP::is_corner(int x, int y) {
     
     // if no corner at this point, see if there
     // are enough contiguous from end and begining
-    if ((begin_cnt + cnt) >= n)
+    if ((begin_cnt + cnt) >= FAST_CONTIG)
         return true;
     
     return false;

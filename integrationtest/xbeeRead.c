@@ -4,7 +4,7 @@
 
 int main(){
 
-        char *device = (char *)"/dev/ttyUSB0";
+        char *device = (char *)"/dev/ttyUSB1";
 
         Serial xbee(device, 57600);
 //        xbee.Open();
