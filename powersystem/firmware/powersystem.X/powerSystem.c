@@ -11,24 +11,21 @@
 #include "powerSystem.h"
 #include "ADC.h"
 #include "SPI.h"
+#include "ISR.h"
+
+ volatile unsigned int time = 0;  // number of times WDT is cleared
 
 // main function; program starts here
 void main(void) 
 {
-    unsigned int time = 0;  // number of times WDT is cleared
-                            // 21600 == 24 hours
-    unsigned char data =0;
+    unsigned char data = 0;
     unsigned int battery_voltage = 0; // ADC reading of battery voltage
     
-    ports_initialize(); //set up ports 
-    ADC_initialize();    //configure ADC
-    SPI_initialize(); // set up SPI module
-    
-    VREGCON = 0x03; // lowest power mode
-    CPUDOZEbits.IDLEN = 0; // full sleep mode
-    
-    WDTCON = 0b00011101; // 16 sec period
-    CLRWDT(); // clear WDT
+    ports_initialize();    // set up ports 
+    ADC_initialize();      // configure ADC
+    SPI_initialize();      // set up SPI module
+    sleep_initialize();    // set up sleep mode
+    ISR_initialize();      // set up ISR
     
     while(1)
     {
@@ -40,13 +37,12 @@ void main(void)
         
         if ( time >= 1 ) // 1*16s=16s
         {        
-
-            SPI_enable(); // turn on SPI module
-            
             time = 0; // reset time
             if(battery_voltage >= 690) //690 = 11v
             {
                 LATCbits.LATC4 = 1; // turn relay on
+                
+                SPI_enable(); // turn on SPI module
             
                 while( data != 0xDA ) // wait for shutdown command to be received
                 {
@@ -92,3 +88,14 @@ void ports_initialize(void)
     
     ANSELC = 0x00;  // all digital
 }
+
+void sleep_initialize(void)
+{
+    VREGCON = 0x03; // lowest power mode
+    CPUDOZEbits.IDLEN = 0; // full sleep mode
+    
+    WDTCON = 0b00011101; // 16 sec period
+    CLRWDT(); // clear WDT
+}
+
+

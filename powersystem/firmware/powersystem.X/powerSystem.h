@@ -40,8 +40,10 @@
 
 //function to setup the microcontroller ports at boot
 void ports_initialize(void); 
-//function to set up the ADC
-//set up I2C
-void I2C_initialize(void);
+// setup sleep mode
+void sleep_initialize(void);
+// setup ISR
+void ISR_initialize(void);
+
 
 #endif
