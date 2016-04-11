@@ -11,6 +11,11 @@ const double rr_width_cm = 53.49875; // centimeters
 // Opens the file passed in
 FILE* openFile(const char*, const char*);
 
+// gets a character and pushes it
+// back into the stream so it is available for
+// the next read
+char fpeek(FILE*);
+
 // This asures that the first element is
 // less than or equal to the second
 void assert_le(int& first, int& second);
