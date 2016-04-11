@@ -28,6 +28,7 @@ void ADC_initialize(void)
 unsigned int ADC_read(unsigned char channel)
 {
     ADCON0 = channel;
+    ADCON0bits.ADON = 1;
     __delay_us(5);  
     ADCON0bits.GO_nDONE = 1;
     while(ADCON0bits.GO);
@@ -35,3 +36,4 @@ unsigned int ADC_read(unsigned char channel)
     
     return ((ADRESH << 8) | ADRESL);
 }
+
