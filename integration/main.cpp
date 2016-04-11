@@ -12,7 +12,7 @@ int main()
 {
 	//Captures all the images from the locations in locations.txt
 	//saves images in image folder called testing0.jpeg, testing1.jpeg, etc.
-	CaptureSavedLocations("../motorcontrols/locations/locations.txt");
+//	CaptureSavedLocations("../motorcontrols/locations/locations.txt");
 
 	//fucntions to convert .jpeg to .bmp
 //	JPEG_to_BMP("../images/testing0.jpeg", "../images/test_in0.bmp");
@@ -29,7 +29,8 @@ int main()
 	//transmits all images to base station
 //	transmitImageToBase();
 
-	// send PIC micro command to cut power after R Pi shutdown
+	sleep(5); // for testing
+ 	// send PIC micro command to cut power after R Pi shutdown
 	SPI_shutdown();
 
 	return 0;
