@@ -14,7 +14,7 @@ int main(){
 	msg.sendingImage();
 
 	std::cout << "Transmitting Image\n";
-	int result = XSend(fd, "testing1.jpeg");
+	int result = XSend(fd, "testing9.jpeg");
 
 	if(result == 0){
 		std::cout << "Image transmitted successfully\n";
