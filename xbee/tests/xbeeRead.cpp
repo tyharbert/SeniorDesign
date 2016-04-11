@@ -2,7 +2,7 @@
 
 int main(){
 
-        char *device = (char *)"/dev/ttyUSB1";
+        char *device = (char *)"/dev/ttyUSB0";
         Serial xbee(device, 57600);
         int fd = xbee.Open();
 	static int imageCounter = 1;

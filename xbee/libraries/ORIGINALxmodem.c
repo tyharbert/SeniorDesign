@@ -646,7 +646,9 @@ short i1, i2, i3;
       ecount = 0; // zero out error count for next packet
     }
 
+#ifdef STAND_ALONE
     fprintf(stderr, "block %ld  %ld bytes  %d errors\r\n", block, filesize, ecount);
+#endif // STAND_ALONE
 
     ec2 = 0;   //  ** error count #2 **
 
@@ -732,7 +734,9 @@ long etotal, filesize, filepos, block;
   filesize = (long)lseek(pX->file, 0, SEEK_END);
   if(filesize < 0) // not allowed
   {
+#ifdef STAND_ALONE
     fputs("SendXmodem fail (file size)\n", stderr);
+#endif // STAND_ALONE
     return -1;
   }
 
@@ -767,18 +771,18 @@ long etotal, filesize, filepos, block;
 
       XmodemTerminate(pX);
 
+#ifdef STAND_ALONE
       fprintf(stderr, "SendXmodem return %d\n", i1 >= 8 ? 1 : 0);
+#endif // STAND_ALONE
       return i1 >= 8 ? 1 : 0; // return 1 if receiver choked on the 'EOT' marker, else 0 for 'success'
     }
 
 //  TODO:  progress indicator [can be LCD for arduino, blinky lights, ???  and of course stderr for everyone else]
 //  If filesize& <> 0 Then Form2!Label1.FloodPercent = 100 * filepos& / filesize&
 
-    if(ecount > 25)
-    {
-	return 99;
-    }
+#ifdef STAND_ALONE
     fprintf(stderr, "block %ld  %ld of %ld bytes  %d errors\r\n", block, filepos, filesize, ecount);
+#endif // STAND_ALONE
 
     if(pX->buf.xbuf.cSOH != 'C' // XMODEM CRC
        && pX->buf.xbuf.cSOH != (char)_NAK_) // NAK
@@ -915,7 +919,9 @@ long etotal, filesize, filepos, block;
    // ** and flush all buffers, and terminate process!
 
   XmodemTerminate(pX);
+#ifdef STAND_ALONE
   fputs("SendXmodem fail (total error count)\n", stderr);
+#endif // STAND_ALONE
   return -2; // exit on error
 }
 
@@ -997,16 +1003,16 @@ unsigned long ulStart;
       if(pX->buf.xbuf.cSOH == 'C' || // XMODEM CRC
          pX->buf.xbuf.cSOH == _NAK_) // NAK - XMODEM CHECKSUM
       {
-//#ifdef STAND_ALONE
+#ifdef STAND_ALONE
         fprintf(stderr, "Got %d, continuing\n", pX->buf.xbuf.cSOH);
-//#endif // STAND_ALONE
+#endif // STAND_ALONE
         return SendXmodem(pX);
       }
       else if(pX->buf.xbuf.cSOH == _CAN_) // cancel
       {
-//#ifdef STAND_ALONE
+#ifdef STAND_ALONE
         fputs("XSendSub fail (cancel)\n", stderr);
-//endif // STAND_ALONE
+#endif // STAND_ALONE
         return 1; // canceled
       }
     }
@@ -1019,9 +1025,9 @@ unsigned long ulStart;
 
   XmodemTerminate(pX);
 
-//#ifdef STAND_ALONE
+#ifdef STAND_ALONE
   fputs("XSendSub fail (timeout)\n", stderr);
-//#endif // STAND_ALONE
+#endif // STAND_ALONE
   return -3; // fail
 }
 
@@ -1105,9 +1111,9 @@ int iFlags;
 
   if(!xx.file)
   {
-//#ifdef STAND_ALONE
+#ifdef STAND_ALONE
     fprintf(stderr, "XReceive fail \"%s\"  errno=%d\n", szFilename, errno);
-//#endif // STAND_ALONE
+#endif // STAND_ALONE
     return -9; // can't create file
   }
 
@@ -1131,7 +1137,9 @@ int iFlags;
     unlink(szFilename); // delete file on error
   }
 
+#ifdef STAND_ALONE
   fprintf(stderr, "XReceive returns %d\n", iRval);
+#endif // STAND_ALONE
   return iRval;
 }
 
@@ -1154,7 +1162,9 @@ int iFlags;
 
   if(!xx.file)
   {
+#ifdef STAND_ALONE
     fprintf(stderr, "XSend fail \"%s\"  errno=%d\n", szFilename, errno);
+#endif // STAND_ALONE
     return -9; // can't open file
   }
 
@@ -1171,7 +1181,9 @@ int iFlags;
 
   close(xx.file);
 
+#ifdef STAND_ALONE
   fprintf(stderr, "XSend returning %d\n", iRval);
+#endif // STAND_ALONE
 //  fprintf(stderr, "Test output");
   return iRval;
 }
