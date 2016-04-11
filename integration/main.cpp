@@ -12,7 +12,7 @@ int main()
 {
 	//Captures all the images from the locations in locations.txt
 	//saves images in image folder called testing0.jpeg, testing1.jpeg, etc.
-	CaptureSavedLocations("../motorcontrols/locations/locations.txt");
+//	CaptureSavedLocations("../motorcontrols/locations/locations.txt");
 
 	//fucntions to convert .jpeg to .bmp
 //	JPEG_to_BMP("../images/testing0.jpeg", "../images/test_in0.bmp");
@@ -27,10 +27,10 @@ int main()
 //	BMP_to_JPEG("../images/test_out1.bmp", "../images/test_out1.jpeg");
 
 	//transmits all images to base station
-//	transmitImageToBase();
+	transmitImageToBase();
 
 	// send PIC micro command to cut power after R Pi shutdown
-	SPI_shutdown();
+//	SPI_shutdown();
 
 	return 0;
 }
@@ -48,27 +48,27 @@ void transmitImageToBase()
         std::cout << "Send Image signal\n";
         msg.sendingImage();
 
-        std::cout << "Transmitting Image\n";
-        result = XSend(fd, "../images/testing0.jpeg");
+        std::cout << "Attempting to Transmit Image\n";
+        result = XSend(fd, "../images/testing9.jpeg");
 
         if(result == 0){
                 std::cout << "Image transmitted successfully\n";
         }
         else{
-                std::cout << "Error during image transmission\n";
+                std::cout << "Error during image transmission\nError code: " << result << "\n";
         }
 //TRANSMIT IMAGE 2
         std::cout << "Send Image signal\n";
         msg.sendingImage();
 
-        std::cout << "Transmitting Image\n";
-        result = XSend(fd, "../images/testing1.jpeg");
+        std::cout << "Attempting to Transmit Image\n";
+        result = XSend(fd, "../images/testing8.jpeg");
 
         if(result == 0){
                 std::cout << "Image transmitted successfully\n";
         }
         else{
-                std::cout << "Error during image transmission\n";
+                std::cout << "Error during image transmission\nError code: " << result << "\n";
         }
 
         xbee.Close();
