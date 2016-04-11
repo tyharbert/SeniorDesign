@@ -7,5 +7,7 @@
 
 void SPI_initialize(void);
 unsigned char SPI_transfer(unsigned char data);
+void SPI_enable();
+void SPI_disable();
 
 #endif 

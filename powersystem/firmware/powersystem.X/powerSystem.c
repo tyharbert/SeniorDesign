@@ -24,6 +24,9 @@ void main(void)
     ADC_initialize();    //configure ADC
     SPI_initialize(); // set up SPI module
     
+    VREGCON = 0x03; // lowest power mode
+    CPUDOZEbits.IDLEN = 0; // full sleep mode
+    
     WDTCON = 0b00011101; // 16 sec period
     CLRWDT(); // clear WDT
     
@@ -37,6 +40,9 @@ void main(void)
         
         if ( time >= 1 ) // 1*16s=16s
         {        
+
+            SPI_enable(); // turn on SPI module
+            
             time = 0; // reset time
             if(battery_voltage >= 690) //690 = 11v
             {
@@ -53,6 +59,8 @@ void main(void)
             
                 data = 0x00;
             
+                SPI_disable(); // turn off SPI module
+                
                 __delay_ms(10000); // wait for R Pi to shutdown
             
                 LATCbits.LATC4 = 0; // turn relay off

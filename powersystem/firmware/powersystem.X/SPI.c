@@ -20,9 +20,9 @@ void SPI_initialize(void)
                      // CKE Active to Idle
                      // SSPBUF empty
 
-    SSP1CON1 = 0x24; // WCOL: no collision
+    SSP1CON1 = 0x04; // WCOL: no collision
                      // SSPOV: no overflow
-                     // SSPEN: serial port enabled 
+                     // SSPEN: serial port disabled 
                      // CKP: Idle:Low, Active:High
                      // SSPM: SPI slave mode with slave select enabled
 
@@ -34,4 +34,14 @@ unsigned char SPI_transfer(unsigned char data)
     SSP1BUF = data; // load SPI data into buffer to transfer
     while(!SSP1STATbits.BF); // wait till buffer is filled with received data
     return SSP1BUF; // return received data
+}
+
+void SPI_disable()
+{
+    SSP1CON1bits.SSPEN = 0;
+}
+
+void SPI_enable()
+{
+    SSP1CON1bits.SSPEN = 1;
 }
