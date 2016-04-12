@@ -6,10 +6,15 @@ extern "C"
 #include "SPI_shutdown.h"
 }
 
+#define JUMPER 18
+
 void transmitImageToBase();
+void calibrationNeeded();
 
 int main()
 {
+	calibrationNeeded(); // checks if jumper is set to calibrate system
+
 	//Captures all the images from the locations in locations.txt
 	//saves images in image folder called testing0.jpeg, testing1.jpeg, etc.
 	CaptureSavedLocations("../motorcontrols/locations/locations.txt");
@@ -74,4 +79,16 @@ void transmitImageToBase()
         }
 
         xbee.Close();
+}
+
+void calibrationNeeded()
+{
+	wiringPiSetup(); // run wiringPi initalizations
+	pinMode (JUMPER, INPUT); // set jumper pin as input
+	pullUpDnControl(JUMPER, PUD_UP); // set jumper pin to use interal pull up (~50K) to 3.3V
+
+	if( !digitalRead(JUMPER) ) // jumper pulling pin low?
+	{
+		calibrateLocations("..\motorcontrols\locations\locations"); // run calibration program
+	}
 }
