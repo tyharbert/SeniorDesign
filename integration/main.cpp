@@ -83,12 +83,12 @@ void transmitImageToBase()
 
 void calibrationNeeded()
 {
-	wiringPiSetup(); // run wiringPi initalizations
+	wiringPiSetupGpio(); // run wiringPi initalizations
 	pinMode (JUMPER, INPUT); // set jumper pin as input
 	pullUpDnControl(JUMPER, PUD_UP); // set jumper pin to use interal pull up (~50K) to 3.3V
 
 	if( !digitalRead(JUMPER) ) // jumper pulling pin low?
 	{
-		calibrateLocations("..\motorcontrols\locations\locations"); // run calibration program
+		calibrateLocations("../motorcontrols/locations/locations.txt"); // run calibration program
 	}
 }
