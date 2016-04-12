@@ -50,3 +50,30 @@ int* Corners::xArray() {
 int* Corners::yArray() {
 	return new int[4] {_sw._y, _nw._y, _ne._y, _se._y};
 }
+
+Corners getCornerInput() {
+	int corners[4][2];
+	int value;
+
+	for (int i = 0; i < 8; i++) {
+		std::cout << "Enter ";
+		if (i/2 == 0)
+			std::cout << "SW ";
+		else if (i/2 == 1)
+			std::cout << "NW ";
+		else if (i/2 == 2)
+			std::cout << "NE ";
+		else if (i/2 == 3)
+			std::cout << "SE ";
+
+		if (i%2 == 0)
+			std::cout << "X:" << std::endl;
+		else if (i%2 == 1)
+			std::cout << "Y:" << std::endl;
+
+		std::cin >> value;
+		corners[i/2][i%2] = value;
+	}
+
+	return Corners(corners);
+}

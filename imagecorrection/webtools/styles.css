@@ -1,0 +1,30 @@
+#image {
+    height: 1944px;
+    width: 2592px;
+}
+
+#coordinates {
+    position:fixed;
+    top: 38%;
+    left: 38%;
+    width:30em;
+    height:18em;
+    border: 1px solid #ccc;
+    background-color: #f3f3f3;
+    text-align: center;
+    border-radius: 20px;
+    opacity: 0.75;
+}
+
+#image-name {
+    margin-top: 20%;
+    margin-bottom: 5%;
+}
+
+#coordvals {
+    vertical-align: middle;
+}
+
+.bold {
+    font-weight: bold;
+}
