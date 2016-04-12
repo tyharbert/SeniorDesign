@@ -24,3 +24,7 @@
 #coordvals {
     vertical-align: middle;
 }
+
+.bold {
+    font-weight: bold;
+}
