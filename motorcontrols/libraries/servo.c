@@ -33,7 +33,8 @@ void CaptureSavedLocations(const char* location_file_path) {
 
     while(1)
     {
-        if (digitalRead(butPin)==1)
+	if(1)
+        //if (digitalRead(butPin)==1)
         {
             int i = 0;
             int length;
@@ -41,8 +42,10 @@ void CaptureSavedLocations(const char* location_file_path) {
             positions = getPositions(&length, location_file_path);
 
            if (positions == NULL)
-               return;
-
+	   {
+		printf("Null locations returning");
+                return;
+	   }
            while (i < length) {
                 move_and_check_Position(positions[i], 0); //Pan Motor
                 i++;
@@ -163,6 +166,7 @@ void move_and_check_Position(int feedbackTarget, int motor)
 	i=0;
     }
 	sleep(1);
+	printf("Exiting move and pan/tilt\n");
 }
 
 void Tilt_Gusset(int feedbackTarget)
@@ -219,7 +223,7 @@ void Cap_Image()
     int cx=0;
     static int i=0;
     char command[n];
-    cx=snprintf(command, n, "fswebcam -r 2592x1944 --jpeg 100 -D 15 -S 13 1 --frames 5 --no-banner ../images/testing%d.jpeg", i); //assigns the echo call as the command, with the limit of n characters
+    cx=snprintf(command, n, "fswebcam -r 2592x1944 --jpeg 100 -D 17 -S 13 1 ../images/testing%d.jpeg", i); //assigns the echo call as the command, with the limit of n characters
     if(cx>n)
         printf("Command Length Too Long");
     else
