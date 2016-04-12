@@ -30,12 +30,16 @@ include_directories(
 
 #project declaration
 project(main CXX)
+project(calibrate CXX)
 
 #main program
 add_executable(main integration/main.cpp)
+add_executable(calibrate integration/calibrate.cpp)
 
 target_link_libraries(main LINK_PUBLIC pthread wiringPi m)
 target_link_libraries(main LINK_PUBLIC img_lib)
 target_link_libraries(main LINK_PUBLIC xbee_lib)
-target_link_libraries(main LINK_PUBLIC servo_lib)
+target_link_libraries(main LINK_PUBLIC calib_lib)
 target_link_libraries(main LINK_PUBLIC spi_lib)
+
+target_link_libraries(calibrate LINK_PUBLIC calib_lib pthread wiringPi)

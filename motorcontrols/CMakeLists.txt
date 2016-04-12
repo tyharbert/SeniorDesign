@@ -8,7 +8,6 @@ add_definitions(-std=c99)
 project(servo_lib C)
 project(calib_lib CXX)
 project(capture_test C)
-project(calibrate CXX)
 
 # add library .c files
 file(GLOB servo_lib_src
@@ -36,7 +35,5 @@ include_directories(
 
 # main program
 add_executable(capture_test tests/capture.c)
-add_executable(calibrate tests/calib_test.cpp)
 
 target_link_libraries(capture_test LINK_PUBLIC servo_lib pthread wiringPi m)
-target_link_libraries(calibrate LINK_PUBLIC calib_lib pthread wiringPi)
