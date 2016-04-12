@@ -1,12 +1,17 @@
 #include "imglib.hpp"
 
 // this runs the complete image transformation process
-void transformGusset(const char* source_file, const char* destination_file) {
+void transformGusset(const char* source_file, const char* destination_file, bool assisted) {
     printf("\nReading %s\n", source_file);
     BMP* bmp = new BMP(source_file);
     
     printf("Finding Corners\n");
-    Corners original = bmp->fast();
+    Corners original;
+    if (assisted)
+        original = getCornerInput();
+    else
+        original = bmp->fast();
+
     Corners destination = original.findDest();
 
     printf("Finding Transformation Matrix\n");

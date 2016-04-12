@@ -38,4 +38,6 @@ struct Corners {
 	void print();
 };
 
+Corners getCornerInput();
+
 #endif
