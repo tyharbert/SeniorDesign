@@ -10,16 +10,25 @@ unsigned short ADC_Rd(unsigned short address) //Read channel 0 or 1 adc, Pan Mot
     int result;
 
     result=wiringPiI2CSetup(0x48); //device address
-
-    wiringPiI2CWriteReg16(result, 0x01, address); //Address for the register, and configuring the read channel 0
+	
+	//Address for the register, and configuring the read channel 0
+    wiringPiI2CWriteReg16(result, 0x01, address); 
     adc_hex= wiringPiI2CReadReg16(result,0x00);
 
     wiringPiI2CWriteReg16(result, 0x01, address);
-    adc_hex = wiringPiI2CReadReg16(result,0x00); //device address, assigning device to read only
+	//device address, assigning device to read only
+    adc_hex = wiringPiI2CReadReg16(result,0x00); 
 
     adc_hex = Rd_Rev(adc_hex); //Reverses the order of the hex value taken in
     // printf("%d \n",adc_hex);
     return adc_hex;
+    }
+
+//Reverses the order of Hex Feedback Value 
+//to enable the conversion from to decimal value
+unsigned short Rd_Rev(unsigned short a) 
+    {
+     return ((a << 4) | (a >> 12)) & 0x0FFF;
     }
 
 void CaptureSavedLocations(const char* location_file_path) {
@@ -60,59 +69,60 @@ void CaptureSavedLocations(const char* location_file_path) {
     }
 }
 
-unsigned short Rd_Rev(unsigned short a)
-    {
-     return ((a << 4) | (a >> 12)) & 0x0FFF;
-    }
-
 int FB_to_PW_Conv(int Servo)
 {
-  if (Servo==0)
+  if (Servo==0) //Pan Motor
     {
 
-        int Read=ADC_Rd(0x83C5); //read from servo 0
-        int current_echo_value = FB_to_PW(Read, 0); //Multiplies the Percent by Range of Echo PW, and adds 50 to obtain accurate echo value
+        int Read=ADC_Rd(0x83C5); //read from ADC A0
+        int current_echo_value = FB_to_PW(Read, 0);
         printf("%d --current pan servo position echo value\n", current_echo_value);
 
         return current_echo_value;
     }
-    else if(Servo==1)
+    else if(Servo==1) //Tilt Motor
     {
-        int Read=ADC_Rd(0x83D5); //read from servo 0
-        int current_echo_value = FB_to_PW(Read, 1); //Multiplies the Percent by Range of Echo PW, and adds 50 to obtain accurate echo value
+        int Read=ADC_Rd(0x83D5); //read from ADC A1
+        int current_echo_value = FB_to_PW(Read, 1); 
         printf("%d  --current tilt servo position echo value\n", current_echo_value);
 
         return current_echo_value;
     }
 }
+
 int FB_to_PW(int feedback, int motor){
 	float fb= (float)feedback;
 	float new_echo;
 	if (motor==0){
-		new_echo=4.3529*.000001*fb*fb+.0835*fb-1.5046;
+		//Second order Algorithm For Tilt Motor Pulse Width Value
+		new_echo=4.3529*.000001*fb*fb+.0835*fb-1.5046; 	
 	}
 	if (motor==1){
-		new_echo=-.00000018924*fb*fb*fb+.00084797*fb*fb-1.1654*fb+615.19;
+		//Third order Algorithm For Tilt Motor Pulse Width Value
+		new_echo=-.00000018924*fb*fb*fb+.00084797*fb*fb-1.1654*fb+615.19; 
 	}
 
-	return roundf(new_echo);
+	return roundf(new_echo); //Returns the current Pulse Width Value Equivalent
 }
 
 void Pan_Gusset(int feedbackTarget)
 {
     printf("Pan Gusset....\n");
     int current_echo_value=FB_to_PW_Conv(0);
-    int change_in_echo= FB_to_PW(feedbackTarget, 0) - current_echo_value; //gives the difference between desired echo and current echo value
+    int change_in_echo= FB_to_PW(feedbackTarget, 0) - current_echo_value;
+	//Gives the difference between desired echo and current echo value
+	
     printf("%d --feedback target echo value \n", FB_to_PW(feedbackTarget, 0));
     printf("%d --change in echo necessary \n", change_in_echo);
-
+	//1 echo value is a 10 microsecond pulse width
     if (change_in_echo<0)
         {
-        change_in_echo = -change_in_echo;
+        change_in_echo = -change_in_echo; //changes a negative desired echo to positive
         int i;
 	for (i=0; i<change_in_echo; i++)
             {
-            system("sudo echo 0=-1 > /dev/servoblaster");
+			//Move the Servo a 10 microsecond PW
+            system("sudo echo 0=-1 > /dev/servoblaster"); 
 	    delayMicroseconds(30000);
             }
         }
@@ -121,13 +131,44 @@ void Pan_Gusset(int feedbackTarget)
         int i;
 	for (i=0; i<change_in_echo; i++)
             {
+			//Move the Servo a 10 microsecond PW
             system("sudo echo 0=+1 > /dev/servoblaster");
 	    delayMicroseconds(30000);
             }
         }
     sleep(3);
+}
 
-    }
+void Tilt_Gusset(int feedbackTarget)
+{
+    printf("Tilt Gusset....\n");
+    int current_echo_value = FB_to_PW_Conv(1);
+    int change_in_echo = FB_to_PW(feedbackTarget, 1) - current_echo_value; //gives the difference between desired echo and current echo value
+    printf("%d --feedback target echo value \n", FB_to_PW(feedbackTarget, 1));
+    printf("%d --change in echo necessary \n", change_in_echo);
+    if (change_in_echo<0)
+        {
+        change_in_echo=-change_in_echo;
+        int i;
+	for (i=0; i < change_in_echo; i++)
+            {
+			//Move the Servo a 10 microsecond PW
+            system("sudo echo 1=-1 > /dev/servoblaster");
+            delayMicroseconds(30000);
+            }
+        }
+    else
+        {
+        int i;
+	for (i=0; i < change_in_echo; i++)
+            {
+			//Move the Servo a 10 microsecond PW
+            system("sudo echo 1=+1 > /dev/servoblaster");
+            delayMicroseconds(30000);
+            }
+        }
+        sleep(3);
+}
 
 void move_and_check_Position(int feedbackTarget, int motor)
 {
@@ -167,54 +208,6 @@ void move_and_check_Position(int feedbackTarget, int motor)
     }
 	sleep(1);
 	printf("Exiting move and pan/tilt\n");
-}
-
-void Tilt_Gusset(int feedbackTarget)
-{
-    printf("Tilt Gusset....\n");
-    int current_echo_value = FB_to_PW_Conv(1);
-    int change_in_echo = FB_to_PW(feedbackTarget, 1) - current_echo_value; //gives the difference between desired echo and current echo value
-    printf("%d --feedback target echo value \n", FB_to_PW(feedbackTarget, 1));
-    printf("%d --change in echo necessary \n", change_in_echo);
-    if (change_in_echo<0)
-        {
-        change_in_echo=-change_in_echo;
-        int i;
-	for (i=0; i < change_in_echo; i++)
-            {
-            system("sudo echo 1=-1 > /dev/servoblaster");
-            delayMicroseconds(30000);
-		if(i>=30)
-		sleep(3);
-            }
-        }
-    else
-        {
-        int i;
-	for (i=0; i < change_in_echo; i++)
-            {
-            system("sudo echo 1=+1 > /dev/servoblaster");
-            delayMicroseconds(30000);
-		if(i==30)
-		sleep(3);
-            }
-        }
-        sleep(3);
-    }
-
-void Mov_Motor(int Motor_Num, int Motor_Loc) //Motor number (0 or 1), and Motor Location (50-250)
-{
-    int n=35;
-    int cx=0;
-    if(Motor_Num==1)
-	system("echo ./servod min={100}");
-    char command[n];
-    cx=snprintf(command, n, "echo %d=%d > /dev/servoblaster", Motor_Num, Motor_Loc); //assigns the echo call as the command, with the limit of n characters
-    if(cx>n)
-        printf("Command Length Too Long");
-    else
-        system(command);
-    sleep(2);
 }
 
 void Cap_Image()
