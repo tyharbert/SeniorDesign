@@ -114,7 +114,7 @@ Corners BMP::fast() {
     
     int min_x = 13;
     int max_x = this->width() - 13;
-    int min_y = BTM_PX_IGNORE + 3;
+    int min_y = 13;
     int max_y = this->height() - 13;
         
     this->fast(min_x, max_x/2, min_y, max_y/2, corners[0], &BMP::fast_sw);
