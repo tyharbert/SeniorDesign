@@ -13,10 +13,6 @@ const char DEFAULT_RED = (DEFAULT_COLOR) & 0xFF;
 const char DEFAULT_GREEN = (DEFAULT_COLOR >> 8) & 0xFF;
 const char DEFAULT_BLUE = (DEFAULT_COLOR >> 16) & 0xFF;
 
-// we must ignore the bottom 21 pixels of an image because
-// of a red bar
-const int BTM_PX_IGNORE = 22;
-
 // values for the fast algorithm
 // these values have been adjusted using trial and error
 // threshold of luminance value
