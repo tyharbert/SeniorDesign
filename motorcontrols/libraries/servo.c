@@ -69,12 +69,13 @@ void CaptureSavedLocations(const char* location_file_path) {
     }
 }
 
-int FB_to_PW_Conv(int Servo)
+int FB_to_PW_Conv(int Servo, int feedback_target)
 {
   if (Servo==0) //Pan Motor
     {
 
         int Read=ADC_Rd(0x83C5); //read from ADC A0
+		printf("%d --current feedback value vs %d --desired feedback value\n", Read, feedback_target);
         int current_echo_value = FB_to_PW(Read, 0);
         printf("%d --current pan servo position echo value\n", current_echo_value);
 
@@ -83,6 +84,7 @@ int FB_to_PW_Conv(int Servo)
     else if(Servo==1) //Tilt Motor
     {
         int Read=ADC_Rd(0x83D5); //read from ADC A1
+		printf("%d --current feedback value vs %d --desired feedback value\n", Read, feedback_target);
         int current_echo_value = FB_to_PW(Read, 1); 
         printf("%d  --current tilt servo position echo value\n", current_echo_value);
 
@@ -108,12 +110,12 @@ int FB_to_PW(int feedback, int motor){
 void Pan_Gusset(int feedbackTarget)
 {
     printf("Pan Gusset....\n");
-    int current_echo_value=FB_to_PW_Conv(0);
+    int current_echo_value=FB_to_PW_Conv(0, feedbackTarget);
     int change_in_echo= FB_to_PW(feedbackTarget, 0) - current_echo_value;
 	//Gives the difference between desired echo and current echo value
 	
     printf("%d --feedback target echo value \n", FB_to_PW(feedbackTarget, 0));
-    printf("%d --change in echo necessary \n", change_in_echo);
+    printf("%d --change in echo necessary \n\n", change_in_echo);
 	//1 echo value is a 10 microsecond pulse width
     if (change_in_echo<0)
         {
@@ -142,10 +144,10 @@ void Pan_Gusset(int feedbackTarget)
 void Tilt_Gusset(int feedbackTarget)
 {
     printf("Tilt Gusset....\n");
-    int current_echo_value = FB_to_PW_Conv(1);
+    int current_echo_value = FB_to_PW_Conv(1, feedbackTarget);
     int change_in_echo = FB_to_PW(feedbackTarget, 1) - current_echo_value; //gives the difference between desired echo and current echo value
     printf("%d --feedback target echo value \n", FB_to_PW(feedbackTarget, 1));
-    printf("%d --change in echo necessary \n", change_in_echo);
+    printf("%d --change in echo necessary \n\n", change_in_echo);
     if (change_in_echo<0)
         {
         change_in_echo=-change_in_echo;

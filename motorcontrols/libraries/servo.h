@@ -21,7 +21,7 @@ void Mov_Motor(int Motor_Num, int Motor_Loc);
 void Tilt_Gusset(int feedbackTarget);
 void move_and_check_Position(int feedbackTarget, int motor);
 void CaptureSavedLocations(const char*);
-int FB_to_PW_Conv(int Servo);
+int FB_to_PW_Conv(int Servo, int feedback_target);
 int FB_to_PW(int feedback, int motor); 
 int* getPositions(int* length, const char*);
 int numPositions(char buffer[buffSize]);
