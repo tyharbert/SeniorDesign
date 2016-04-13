@@ -60,8 +60,8 @@ void CaptureSavedLocations(const char* location_file_path) {
                 i++;
                 move_and_check_Position(positions[i], 1); //Tilt Motor
                 i++;
-		move_and_check_Position(positions[i-2], 0);//Double check Pan Motor
-		move_and_check_Position(positions[i-1], 1);//Double check Tilt Motor
+				move_and_check_Position(positions[i-2], 0);//Double check Pan Motor
+				move_and_check_Position(positions[i-1], 1);//Double check Tilt Motor
                 Cap_Image();
             }
             break;
@@ -176,7 +176,7 @@ void move_and_check_Position(int feedbackTarget, int motor)
     int Read=-1;
     if (motor==0)
     {
-        while (Read < (feedbackTarget - 10) || Read > (feedbackTarget + 10))
+        while (Read < (feedbackTarget - 5) || Read > (feedbackTarget + 5))
         {
 	Pan_Gusset(feedbackTarget);
         Read=ADC_Rd(0x83C5);
@@ -193,7 +193,7 @@ void move_and_check_Position(int feedbackTarget, int motor)
     else
     {
 
-    while (Read < (feedbackTarget - 10) || Read > (feedbackTarget + 10))
+    while (Read < (feedbackTarget - 5) || Read > (feedbackTarget + 5))
         {
 	Tilt_Gusset(feedbackTarget);
         Read=ADC_Rd(0x83D5);
