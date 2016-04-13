@@ -40,7 +40,6 @@ void JPEG_to_BMP(std::string j_image_path, std::string b_image_path) {
 
     std::string command = "djpeg -BMP " + j_image_path + " > " + b_image_path;
     system(command.c_str());
-    sleep(2);
 
     printf("Conversion complete.\n\n");
 }
@@ -51,7 +50,6 @@ void BMP_to_JPEG(std::string b_image_path, std::string j_image_path) {
 
     std::string command = "cjpeg " + b_image_path + " > " + j_image_path;
     system(command.c_str());
-    sleep(2);
 
     printf("Conversion complete.\n\n");
 }
