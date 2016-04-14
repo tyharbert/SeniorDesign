@@ -10,28 +10,30 @@ unsigned short ADC_Rd(unsigned short address) //Read channel 0 or 1 adc, Pan Mot
     int result;
 
     result=wiringPiI2CSetup(0x48); //device address
-	
+
 	//Address for the register, and configuring the read channel 0
-    wiringPiI2CWriteReg16(result, 0x01, address); 
+    wiringPiI2CWriteReg16(result, 0x01, address);
     adc_hex= wiringPiI2CReadReg16(result,0x00);
 
     wiringPiI2CWriteReg16(result, 0x01, address);
 	//device address, assigning device to read only
-    adc_hex = wiringPiI2CReadReg16(result,0x00); 
+    adc_hex = wiringPiI2CReadReg16(result,0x00);
 
     adc_hex = Rd_Rev(adc_hex); //Reverses the order of the hex value taken in
     // printf("%d \n",adc_hex);
     return adc_hex;
     }
 
-//Reverses the order of Hex Feedback Value 
+//Reverses the order of Hex Feedback Value
 //to enable the conversion from to decimal value
-unsigned short Rd_Rev(unsigned short a) 
+unsigned short Rd_Rev(unsigned short a)
     {
      return ((a << 4) | (a >> 12)) & 0x0FFF;
     }
 
-void CaptureSavedLocations(const char* location_file_path) {
+int CaptureSavedLocations(const char* location_file_path) {
+    int length;
+
     system("echo ./servod --p1pins=7, 11, 0, 0, 0, 0, 0, 0");
     system("echo ./servod --step-size=1us");
     system("sudo echo 0=150 > /dev/servoblaster");
@@ -46,7 +48,6 @@ void CaptureSavedLocations(const char* location_file_path) {
         //if (digitalRead(butPin)==1)
         {
             int i = 0;
-            int length;
             int* positions;
             positions = getPositions(&length, location_file_path);
 
@@ -67,6 +68,8 @@ void CaptureSavedLocations(const char* location_file_path) {
             break;
         }
     }
+
+    return length/2; // this includes pan and tilt locations
 }
 
 int FB_to_PW_Conv(int Servo, int feedback_target)
@@ -216,13 +219,27 @@ void Cap_Image()
 {
     int n=75;
     int cx=0;
+    int j=0;
     static int i=0;
     char command[n];
-    cx=snprintf(command, n, "fswebcam -r 2592x1944 --jpeg 100 -D 1 -S 13 1 ../images/testing%d.jpeg", i); //assigns the echo call as the command, with the limit of n characters
-    if(cx>n)
-        printf("Command Length Too Long");
-    else
-        system(command);
+    char file_path[n];
+
+    cx=snprintf(file_path, n, "../images/testing%d.jpeg", i);
+    if(cx>n) {
+	printf("Command Length for File Too Long");
+	return;
+    }
+    while (!fopen(file_path, "r")) {
+        cx=snprintf(command, n, "fswebcam -r 2592x1944 --jpeg 100 -D 1 -S 13 1 ../images/testing%d.jpeg", i); //assigns the echo call as the command, with the limit of n characters
+        if(cx>n)
+            printf("Command Length Too Long");
+        else
+            system(command);
+	j++;
+	if(j>4)
+	    break;
+    }
+
     i++;
 }
 
