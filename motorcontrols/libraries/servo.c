@@ -100,7 +100,7 @@ int FB_to_PW(int feedback, int motor){
 	float new_echo;
 	if (motor==0){
 		//Second order Algorithm For Tilt Motor Pulse Width Value
-		new_echo=-0.000000006994*fb*fb*fb+0.000041253*fb*fb+.0.019523*fb+34.879; 
+		new_echo=-0.000000006994*fb*fb*fb+0.000041253*fb*fb+0.019523*fb+34.879; 
 	}
 	if (motor==1){
 		//Third order Algorithm For Tilt Motor Pulse Width Value
