@@ -5,7 +5,7 @@
 
 // these are based on the reference rectangle
 // ratio from height to width
-const double rr_height_cm = 43.33875; // centimeters
+const double rr_height_cm = 40.79875; // centimeters
 const double rr_width_cm = 53.49875; // centimeters
 
 // Opens the file passed in
