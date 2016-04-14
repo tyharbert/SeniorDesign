@@ -20,8 +20,11 @@ int main()
 	int locations = 4; // max locations 4
 
 	// remove amx of 4 existing images
-	for (int i=0; i < locations; i++)
-	  remove(imgPath("testing", i, ".jpeg"));
+	//for (int i=0; i < locations; i++)
+//	  remove("../images/testing0.jpeg");
+//	  remove("../images/testing1.jpeg");
+//	  remove("../images/testing2.jpeg");
+//	  remove("../images/testing3.jpeg");
 
 	calibrationNeeded(); // checks if jumper is set to calibrate system
 
@@ -29,19 +32,23 @@ int main()
 	//saves images in image folder called testing0.jpeg, testing1.jpeg, etc.
 	locations = CaptureSavedLocations("../motorcontrols/locations/locations.txt");
 
-	for (int i=0; i < locations; i++ ) {
+	//for (int i=0; i < locations; i++ ) {
 	    //fucntions to convert .jpeg to .bmp
-	    JPEG_to_BMP(imgPath("testing", i, ".jpeg"), imgPath("test_in", i, ".bmp"));
+//	    JPEG_to_BMP("../images/testing0.jpeg", "../images/test_in0.bmp");
+//	    JPEG_to_BMP("../images/testing1.jpeg", "../images/test_in1.bmp");
+//	    JPEG_to_BMP("../images/testing2.jpeg", "../images/test_in2.bmp");
 
 	    //transforms gussets
-	    transformGusset(imgPath("image", 4, ".bmp"), imgPath("test_out", i, ".bmp"));
+//	    transformGusset("../images/test_in0.bmp", "../images/test_out0.bmp");
 
 	    //function to convert .bmp to .jpeg
-	    BMP_to_JPEG(imgPath("test_out", i, ".bmp"), imgPath("test_out", i, ".jpeg"));
+//	    BMP_to_JPEG("../images/test_out0.bmp", "../images/test_out0.jpeg");
 
 	    //transmits all images to base station
-	    transmitImageToBase(imgPath("test_out", i, ".jpeg"));
-	}
+//	    transmitImageToBase("../images/test_out0.jpeg");
+//	    transmitImageToBase("../images/testing1.jpeg");
+//	    transmitImageToBase("../images/testing2.jpeg");
+	//}
 
         //send PIC micro command to cut power after R Pi shutdown
 	SPI_shutdown();

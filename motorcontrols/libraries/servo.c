@@ -181,7 +181,7 @@ void move_and_check_Position(int feedbackTarget, int motor)
     int Read=-1;
     if (motor==0)
     {
-        while (Read < (feedbackTarget - 5) || Read > (feedbackTarget + 5))
+        while (Read < (feedbackTarget - 6) || Read > (feedbackTarget + 6))
         {
 	Pan_Gusset(feedbackTarget);
         Read=ADC_Rd(0x83C5);
@@ -198,7 +198,7 @@ void move_and_check_Position(int feedbackTarget, int motor)
     else
     {
 
-    while (Read < (feedbackTarget - 5) || Read > (feedbackTarget + 5))
+    while (Read < (feedbackTarget - 6) || Read > (feedbackTarget + 6))
         {
 	Tilt_Gusset(feedbackTarget);
         Read=ADC_Rd(0x83D5);
@@ -230,7 +230,7 @@ void Cap_Image()
 	return;
     }
     while (!fopen(file_path, "r")) {
-        cx=snprintf(command, n, "fswebcam -r 2592x1944 --jpeg 100 -D 1 -S 13 1 ../images/testing%d.jpeg", i); //assigns the echo call as the command, with the limit of n characters
+        cx=snprintf(command, n, "fswebcam -r 2592x1944 --jpeg 100 -D 1 -S 13 -F 5 --no-banner 1 ../images/testing%d.jpeg", i); //assigns the echo call as the command, with the limit of n characters
         if(cx>n)
             printf("Command Length Too Long");
         else
