@@ -18,7 +18,7 @@ for(;;)
 	  {
 	    std::cout << "Attempting to receive\n";
 	    oss.str(std::string());
-	    oss << "Image" << imageCounter;
+	    oss << "Image" << imageCounter << ".jpeg";
 	    tempFileName = oss.str();
 	    fileName = tempFileName.c_str();
 //	    snprintf(fileName, "Image%03d.jpeg", imageCounter);
