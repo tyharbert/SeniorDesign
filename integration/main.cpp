@@ -8,6 +8,7 @@ extern "C"
 
 #include <iostream>
 #include <string>
+#include <vector>
 
 #define JUMPER 18
 
@@ -15,9 +16,21 @@ void transmitImageToBase(const char*);
 void calibrationNeeded();
 std::string imgPath(std::string, int, std::string);
 
-int main()
+int main(int argc, char* argv[])
 {
 	int locations = 4; // max locations 4
+	std::vector<std::string> args;
+	bool assisted = false;
+
+	// make all arguments strings
+	for (int i=0; i < argc; i++)
+		args.push_back(argv[i]);
+
+	// check all arguments
+	for (int i=0; i < args.size(); i++) {
+		if (args[i] == "-a")
+			assisted = true;
+	}
 
 	// remove amx of 4 existing images
 	for (int i=0; i < locations; i++)
@@ -36,17 +49,25 @@ int main()
 	}
 
 	for (int i=0; i < locations; i++ ) {
-	    //fucntions to convert .jpeg to .bmp
-	    JPEG_to_BMP(imgPath("temp", i, ".jpeg").c_str(), imgPath("temp_in", i, ".bmp").c_str());
 
-	    //transforms gussets
-	    transformGusset(imgPath("temp_in", i, ".bmp").c_str(), imgPath("temp_out", i, ".bmp").c_str());
+	   //fucntions to convert .jpeg to .bmp
+	   JPEG_to_BMP(imgPath("temp", i, ".jpeg").c_str(), imgPath("temp_in", i, ".bmp").c_str());
 
-	    //function to convert .bmp to .jpeg
-	    BMP_to_JPEG(imgPath("temp_out", i, ".bmp").c_str(), imgPath("temp_out", i, ".jpeg").c_str());
+	    // in assisted mode the captured images are simply transmitted
+	    // otherwise the transformation is performed and that is transmitted
+	    if (!assisted) {
+	        //transforms gussets
+	        transformGusset(imgPath("temp_in", i, ".bmp").c_str(), imgPath("temp_out", i, ".bmp").c_str());
 
-	    //transmits all images to base station
-	    transmitImageToBase(imgPath("temp_out", i, ".jpeg").c_str());
+	        //function to convert .bmp to .jpeg
+	        BMP_to_JPEG(imgPath("temp_out", i, ".bmp").c_str(), imgPath("temp_out", i, ".jpeg").c_str());
+
+	        //transmits all images to base station
+	        transmitImageToBase(imgPath("temp_out", i, ".jpeg").c_str());
+	    } else {
+	        //transmits all images to base station
+	        transmitImageToBase(imgPath("temp", i, ".jpeg").c_str());
+            }
 
 	}
 

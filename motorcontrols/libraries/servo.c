@@ -217,20 +217,20 @@ void move_and_check_Position(int feedbackTarget, int motor)
 
 void Cap_Image()
 {
-    int n=75;
+    int n=90;
     int cx=0;
     int j=0;
     static int i=0;
     char command[n];
     char file_path[n];
 
-    cx=snprintf(file_path, n, "../images/testing%d.jpeg", i);
+    cx=snprintf(file_path, n, "../images/temp%d.jpeg", i);
     if(cx>n) {
 	printf("Command Length for File Too Long");
 	return;
     }
     while (!fopen(file_path, "r")) {
-        cx=snprintf(command, n, "fswebcam -r 2592x1944 --jpeg 100 -D 1 -S 13 -F 5 --no-banner 1 ../images/testing%d.jpeg", i); //assigns the echo call as the command, with the limit of n characters
+        cx=snprintf(command, n, "fswebcam -r 2592x1944 --jpeg 100 -D 1 -S 13 --no-banner 1 ../images/temp%d.jpeg", i); //assigns the echo call as the command, with the limit of n characters
         if(cx>n)
             printf("Command Length Too Long");
         else
