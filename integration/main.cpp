@@ -6,35 +6,43 @@ extern "C"
 #include "SPI_shutdown.h"
 }
 
+#include <iostream>
+#include <string>
+
 #define JUMPER 18
 
-void transmitImageToBase();
+void transmitImageToBase(const char*);
 void calibrationNeeded();
+const char* imgPath(std::string, int, std::string);
 
 int main()
 {
+	int locations = 4; // max locations 4
+
+	// remove amx of 4 existing images
+	for (int i=0; i < locations; i++)
+	  remove(imgPath("testing", i, ".jpeg"));
+
 	calibrationNeeded(); // checks if jumper is set to calibrate system
 
 	//Captures all the images from the locations in locations.txt
 	//saves images in image folder called testing0.jpeg, testing1.jpeg, etc.
-	CaptureSavedLocations("../motorcontrols/locations/locations.txt");
+	locations = CaptureSavedLocations("../motorcontrols/locations/locations.txt");
 
-	//fucntions to convert .jpeg to .bmp
-	JPEG_to_BMP("../images/testing0.jpeg", "../images/test_in0.bmp");
-//	JPEG_to_BMP("../images/testing1.jpeg", "../images/test_in1.bmp");
+	for (int i=0; i < locations; i++ ) {
+	    //fucntions to convert .jpeg to .bmp
+	    JPEG_to_BMP(imgPath("testing", i, ".jpeg"), imgPath("test_in", i, ".bmp"));
 
-	//transforms gussets
-	transformGusset("../images/test_in0.bmp", "../images/test_out0.bmp");
-//	transformGusset("../images/test_in1.bmp", "../images/test_out1.bmp");
+	    //transforms gussets
+	    transformGusset(imgPath("image", 4, ".bmp"), imgPath("test_out", i, ".bmp"));
 
-	//function to convert .bmp to .jpeg
-	BMP_to_JPEG("../images/test_out0.bmp", "../images/test_out0.jpeg");
-//	BMP_to_JPEG("../images/test_out1.bmp", "../images/test_out1.jpeg");
+	    //function to convert .bmp to .jpeg
+	    BMP_to_JPEG(imgPath("test_out", i, ".bmp"), imgPath("test_out", i, ".jpeg"));
 
-	//transmits all images to base station
-	transmitImageToBase();
+	    //transmits all images to base station
+	    transmitImageToBase(imgPath("test_out", i, ".jpeg"));
+	}
 
-	//sleep(5); // for testing
         //send PIC micro command to cut power after R Pi shutdown
 	SPI_shutdown();
 
@@ -42,7 +50,7 @@ int main()
 }
 
 
-void transmitImageToBase()
+void transmitImageToBase(const char* file_path)
 {
         char *device = (char *)"/dev/ttyUSB0";
 	int result;
@@ -55,21 +63,7 @@ void transmitImageToBase()
         msg.sendingImage();
 
         std::cout << "Attempting to Transmit Image\n";
-        result = XSend(fd, "../images/test_out0.jpeg");
-
-        if(result == 0){
-                std::cout << "Image transmitted successfully\n";
-        }
-        else{
-                std::cout << "Error during image transmission\nError code: " << result << "\n";
-        }
-
-//TRANSMIT IMAGE 2
-        std::cout << "Send Image signal\n";
-        msg.sendingImage();
-
-        std::cout << "Attempting to Transmit Image\n";
-        result = XSend(fd, "../images/testing0.jpeg");
+        result = XSend(fd, file_path);
 
         if(result == 0){
                 std::cout << "Image transmitted successfully\n";
@@ -91,4 +85,10 @@ void calibrationNeeded()
 	{
 		calibrateLocations("../motorcontrols/locations/locations.txt"); // run calibration program
 	}
+}
+
+const char* imgPath(std::string name, int index, std::string extension) {
+	std::string path = "../images/";
+
+	return (path + name + std::to_string(index) + extension).c_str();
 }

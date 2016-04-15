@@ -70,7 +70,8 @@ void loadLocations(const char* location_file_path) {
                 cnt++;
             }
         }
-        locations[cnt/2].push_back(std::stoi(num));
+	if (num != "")
+            locations[cnt/2].push_back(std::stoi(num));
     }
     loc_file.close();
 }
